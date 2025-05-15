@@ -1,0 +1,2 @@
+C:/Users/12981/Desktop/NewMobile/Mobile_Application_Assignment_Flutter/android/app/.cxx/Debug/314r1b6l/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/12981/Desktop/NewMobile/Mobile_Application_Assignment_Flutter/android/app/.cxx/Debug/314r1b6l/armeabi-v7a/CMakeFiles/rebuild_cache.dir
