@@ -1,10 +1,12 @@
-# Flutter Grocery App Template Assignment fLUTTER project qyj yqy lyq
+
+# Flutter Grocery App Template Assignment fLUTTER project qyj
+
 
 
 
 This Flutter app template is designed for building various e-commerce apps but mostly focuses on grocery and vegetable stores. It includes a range of screens 👇
 
-- **Splash Screen:** A welcoming first view.
+- **Splash Screen:** A welcoming first view projet.
 - **Onboarding:** Guides users through the app’s features.
 - **Login/Signup Pages:** Easy access to user accounts.
 - **Forget/Reset Password:** Hassle-free password recovery.
