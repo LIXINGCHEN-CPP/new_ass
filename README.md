@@ -1,4 +1,4 @@
-# Flutter Grocery App Template Assignment
+# Flutter Grocery App Template Assignment fLUTTER
 
 ## [Watch Video intro](https://youtu.be/-RjEULM8a4w)
 
