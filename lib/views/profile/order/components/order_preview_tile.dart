@@ -49,7 +49,7 @@ class OrderPreviewTile extends StatelessWidget {
                           ?.copyWith(color: Colors.black),
                     ),
                     const Spacer(),
-                    const Text('25 Nov'),
+                    const Text('21 May'),
                   ],
                 ),
                 Row(
@@ -152,15 +152,15 @@ class OrderPreviewTile extends StatelessWidget {
   Color _orderColor() {
     switch (status) {
       case OrderStatus.confirmed:
-        return const Color(0xFF4044AA);
+        return const Color(0xFF7375D4);
       case OrderStatus.processing:
-        return const Color(0xFF41A954);
+        return const Color(0xFFFFA731);
       case OrderStatus.shipped:
-        return const Color(0xFFE19603);
+        return const Color(0xFF61A2F9);
       case OrderStatus.delivery:
-        return const Color(0xFF41AA55);
+        return const Color(0xFF76BB78);
       case OrderStatus.cancelled:
-        return const Color(0xFFFF1F1F);
+        return const Color(0xFFDD4031);
 
       default:
         return Colors.red;

@@ -11,6 +11,34 @@ class AddressPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final addresses = [
+  {
+    'label': 'Home',
+    'address': '1234 Elm Street',
+    'number': '+8613012345678',
+  },
+  {
+    'label': 'Office',
+    'address': '789 Business Ave',
+    'number': '+8613512345678',
+  },
+  {
+    'label': 'Parents House',
+    'address': 'No. 1 Happy Lane',
+    'number': '+8613812345678',
+  },
+  {
+    'label': 'Friend\'s Place',
+    'address': '56 Green Road',
+    'number': '+8615012345678',
+  },
+  {
+    'label': 'Temporary',
+    'address': '404 Nowhere St.',
+    'number': '+8617012345678',
+  },
+];
+
     return Scaffold(
       backgroundColor: AppColors.cardColor,
       appBar: AppBar(
@@ -30,14 +58,16 @@ class AddressPage extends StatelessWidget {
           children: [
             ListView.separated(
               itemBuilder: (context, index) {
+                final item = addresses[index];
                 return AddressTile(
-                  label: 'Puraton Custom, Chhatak',
-                  address: '216/c East Road',
-                  number: '+88017100710000',
-                  isActive: index == 0,
+                label: item['label']!,
+                address: item['address']!,
+                number: item['number']!,
+                isActive: index == 0,
                 );
               },
-              itemCount: 5,
+              itemCount: addresses.length,
+
               separatorBuilder: (context, index) =>
                   const Divider(thickness: 0.2),
             ),
