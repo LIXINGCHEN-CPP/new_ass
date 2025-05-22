@@ -19,7 +19,7 @@ class SocialLogins extends StatelessWidget {
             child: OutlinedButton(
               onPressed: () {},
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.red),
+                side: const BorderSide(color: Colors.black),
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppDefaults.padding * 2,
                   vertical: AppDefaults.padding,
@@ -36,7 +36,7 @@ class SocialLogins extends StatelessWidget {
                   Text(
                     'Google',
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: Colors.red,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
