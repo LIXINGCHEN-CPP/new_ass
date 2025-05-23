@@ -20,7 +20,7 @@ class CategoryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.scaffoldBackground,
+      color: Colors.transparent,
       child: InkWell(
         borderRadius: AppDefaults.borderRadius,
         onTap: onTap,

@@ -81,7 +81,7 @@ class ProductDetailsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Duis aute veniam veniam qui aliquip irure duis sint magna occaecat dolore nisi culpa do. Est nisi incididunt aliquip  commodo aliqua tempor.',
+                      'Fresh broccoli is green and full, tender and crispy, rich in vitamin C and dietary fiber, and is an ideal choice for a healthy diet. It is suitable for stir-frying, steaming or adding to soups. It is nutritious, delicious and easy to make.'
                   ),
                 ],
               ),

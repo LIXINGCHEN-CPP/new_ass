@@ -19,6 +19,13 @@ class NotificationPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.only(top: AppDefaults.padding),
         children: const [
+
+          NotificationTile(
+            imageLink: 'https://i.imgur.com/XYbd8Tj.png',
+            title: 'eGrocery Message',
+            subtitle: 'Your order #232425627 Beef is out of stock. You can request a refund.',
+            time: 'Now',
+          ),
           NotificationTile(
             imageLink: 'https://i.imgur.com/MFO1R5K.png',
             title: 'Gifts Offer',

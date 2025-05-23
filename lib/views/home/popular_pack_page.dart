@@ -13,6 +13,7 @@ class PopularPackPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bundles = Dummy.bundles;
     return Scaffold(
+      backgroundColor: const Color(0xFFf3f3f5),
       appBar: AppBar(
         title: const Text('Popular Packs'),
         leading: const AppBackButton(),
@@ -27,7 +28,7 @@ class PopularPackPage extends StatelessWidget {
                 padding: const EdgeInsets.only(top: AppDefaults.padding),
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 200,
-                  childAspectRatio: 0.73,
+                  childAspectRatio: 0.75,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),

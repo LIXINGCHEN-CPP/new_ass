@@ -40,7 +40,7 @@ class CateogoriesGrid extends StatelessWidget {
         crossAxisCount: 3,
         children: [
           CategoryTile(
-            imageLink: 'https://img.picui.cn/free/2025/05/22/682e31aa3b93e.png',
+            imageLink: 'https://i.imgur.com/Gbf50lM.png',
             label: 'Vegetables',
             backgroundColor: const Color(0xFFccefdc),
             onTap: () {
@@ -49,14 +49,14 @@ class CateogoriesGrid extends StatelessWidget {
           ),
           CategoryTile(
             imageLink: 'https://img.picui.cn/free/2025/05/22/682e33389bd4e.png',
-            label: 'Meat And Fish',
+            label: 'Meat&Fish',
             backgroundColor: const Color(0xFFccefdc),
             onTap: () {
               Navigator.pushNamed(context, AppRoutes.categoryDetails);
             },
           ),
           CategoryTile(
-            imageLink: 'https://img.picui.cn/free/2025/05/22/682e3384800c0.png',
+            imageLink: 'https://i.imgur.com/yHdeMr7.png',
             label: 'Medicine',
             backgroundColor: const Color(0xFFccefdc),
             onTap: () {
@@ -64,7 +64,7 @@ class CateogoriesGrid extends StatelessWidget {
             },
           ),
           CategoryTile(
-            imageLink: 'https://img.picui.cn/free/2025/05/22/682e363d08edc.png',
+            imageLink: 'https://i.imgur.com/uGEmzyU.png',
             label: 'Baby Care',
             backgroundColor: const Color(0xFFccefdc),
             onTap: () {
@@ -72,7 +72,7 @@ class CateogoriesGrid extends StatelessWidget {
             },
           ),
           CategoryTile(
-            imageLink: 'https://img.picui.cn/free/2025/05/22/682e369e11457.png',
+            imageLink: 'https://i.imgur.com/ShO7Pdz.png',
             label: 'Office Supplies',
             backgroundColor: const Color(0xFFccefdc),
             onTap: () {
@@ -80,7 +80,7 @@ class CateogoriesGrid extends StatelessWidget {
             },
           ),
           CategoryTile(
-            imageLink: 'https://img.picui.cn/free/2025/05/22/682e371a5a7b8.png',
+            imageLink: 'https://i.imgur.com/zyXxqa5.png',
             label: 'Beauty',
             backgroundColor: const Color(0xFFccefdc),
             onTap: () {
@@ -88,7 +88,7 @@ class CateogoriesGrid extends StatelessWidget {
             },
           ),
           CategoryTile(
-            imageLink: 'https://img.picui.cn/free/2025/05/22/682e37b1d2f8f.png',
+            imageLink: 'https://i.imgur.com/VRSBMt5.png',
             label: 'Gym Equipment',
             backgroundColor: const Color(0xFFccefdc),
             onTap: () {
@@ -96,7 +96,7 @@ class CateogoriesGrid extends StatelessWidget {
             },
           ),
           CategoryTile(
-            imageLink: 'https://img.picui.cn/free/2025/05/22/682e381ea2c5c.png',
+            imageLink: 'https://i.imgur.com/rpN3TSz.png',
             label: 'Gardening Tools',
             backgroundColor: const Color(0xFFccefdc),
             onTap: () {
@@ -104,7 +104,7 @@ class CateogoriesGrid extends StatelessWidget {
             },
           ),
           CategoryTile(
-            imageLink: 'https://img.picui.cn/free/2025/05/22/682e386b565e0.png',
+            imageLink: 'https://i.imgur.com/vwJBZ6M.png',
             label: 'Pet Care',
             backgroundColor: const Color(0xFFccefdc),
             onTap: () {
@@ -112,7 +112,7 @@ class CateogoriesGrid extends StatelessWidget {
             },
           ),
           CategoryTile(
-            imageLink: 'https://img.picui.cn/free/2025/05/22/682e38be18d3c.png',
+            imageLink: 'https://i.imgur.com/Kjwt5ve.png',
             label: 'Eye Wears',
             backgroundColor: const Color(0xFFccefdc),
             onTap: () {
@@ -120,7 +120,7 @@ class CateogoriesGrid extends StatelessWidget {
             },
           ),
           CategoryTile(
-            imageLink: 'https://img.picui.cn/free/2025/05/22/682e392e5afb3.png',
+            imageLink: 'https://i.imgur.com/okTi0ck.png',
             label: 'Pack',
             backgroundColor: const Color(0xFFccefdc),
             onTap: () {

@@ -11,6 +11,7 @@ class CategoryProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final products = DummyCategory.products;
     return Scaffold(
+      backgroundColor: const Color(0xFFf3f3f5),
       appBar: AppBar(
         title: const Text('Vegetables'),
         leading: const AppBackButton(),

@@ -3,20 +3,45 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../core/components/app_back_button.dart';
 import '../../../core/components/app_settings_tile.dart';
+import '../../../core/constants/app_icons.dart';
 import '../../../core/constants/constants.dart';
 import '../../../core/themes/app_themes.dart';
 
-class LanguageSettingsPage extends StatelessWidget {
+class LanguageSettingsPage extends StatefulWidget {
   const LanguageSettingsPage({super.key});
 
   @override
+  State<LanguageSettingsPage> createState() => _LanguageSettingsPageState();
+}
+
+class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
+  // 全部国家/地区和推荐语言
+  final List<String> _allCountries = [
+    'Australia','Bangladesh', 'Canada', 'Chinese','Cuba', 'English', 'French', 'Germany','Greece', 'Malay', 'Spanish',
+       'USA'
+  ];
+  final List<String> _suggested = [
+    'English', 'Chinese', 'Malay'
+  ];
+
+  // 当前搜索关键字、已选语言
+  String _searchText = '';
+  String _selected = 'English';
+
+  @override
   Widget build(BuildContext context) {
+    // 根据搜索关键字过滤列表
+    final filteredSuggested = _suggested
+        .where((lang) => lang.toLowerCase().contains(_searchText.toLowerCase()))
+        .toList();
+    final filteredAll = _allCountries
+        .where((c) => c.toLowerCase().contains(_searchText.toLowerCase()))
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
         leading: const AppBackButton(),
-        title: const Text(
-          'Language Settings',
-        ),
+        title: const Text('Language Settings'),
       ),
       backgroundColor: AppColors.cardColor,
       body: SingleChildScrollView(
@@ -30,85 +55,76 @@ class LanguageSettingsPage extends StatelessWidget {
             color: AppColors.scaffoldBackground,
             borderRadius: AppDefaults.borderRadius,
           ),
-          child: const Column(
+          child: Column(
             children: [
-              _SearchField(),
-              _SuggestedLanguage(),
-              _AllCountries(),
+              // 搜索框
+              Theme(
+                data: Theme.of(context).copyWith(
+                  inputDecorationTheme: AppTheme.secondaryInputDecorationTheme,
+                ),
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Search',
+                    hintText: 'Type a word',
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.all(AppDefaults.padding),
+                      child: SvgPicture.asset(AppIcons.search),
+                    ),
+                    suffixIconConstraints: const BoxConstraints(),
+                  ),
+                  onChanged: (v) {
+                    setState(() {
+                      _searchText = v;
+                    });
+                  },
+                ),
+              ),
+
+              // 推荐语言
+              if (filteredSuggested.isNotEmpty) ...[
+                const SizedBox(height: AppDefaults.padding),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('Suggested'),
+                ),
+                const SizedBox(height: AppDefaults.padding),
+                ...filteredSuggested.map((lang) {
+                  return AppSettingsListTile(
+                    label: lang,
+                    trailing: _selected == lang
+                        ? const Icon(Icons.check, color: Colors.green)
+                        : null,
+                    onTap: () {
+                      setState(() {
+                        _selected = lang;
+                      });
+                    },
+                  );
+                }),
+              ],
+
+              // 所有国家/地区
+              const SizedBox(height: AppDefaults.padding),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text('All Countries/Regions'),
+              ),
+              const SizedBox(height: AppDefaults.padding),
+              ...filteredAll.map((country) {
+                return AppSettingsListTile(
+                  label: country,
+                  trailing: _selected == country
+                      ? const Icon(Icons.check, color: Colors.green)
+                      : null,
+                  onTap: () {
+                    setState(() {
+                      _selected = country;
+                    });
+                  },
+                );
+              }),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AllCountries extends StatelessWidget {
-  const _AllCountries();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: AppDefaults.padding),
-        Text('All Countries/Regions'),
-        SizedBox(height: AppDefaults.padding),
-        AppSettingsListTile(label: 'Bangladesh'),
-        AppSettingsListTile(label: 'Canada'),
-        AppSettingsListTile(label: 'Cuba'),
-        AppSettingsListTile(label: 'Spain'),
-        AppSettingsListTile(label: 'Australia'),
-        AppSettingsListTile(label: 'Greece'),
-      ],
-    );
-  }
-}
-
-class _SuggestedLanguage extends StatelessWidget {
-  const _SuggestedLanguage();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: AppDefaults.padding),
-        Text('Suggested'),
-        SizedBox(height: AppDefaults.padding),
-        AppSettingsListTile(label: 'Bangladesh'),
-        AppSettingsListTile(label: 'Canada'),
-        AppSettingsListTile(label: 'Australia'),
-        AppSettingsListTile(
-          label: 'United States',
-          trailing: Icon(
-            Icons.check,
-            color: Colors.green,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SearchField extends StatelessWidget {
-  const _SearchField();
-
-  @override
-  Widget build(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        inputDecorationTheme: AppTheme.secondaryInputDecorationTheme,
-      ),
-      child: TextField(
-        decoration: InputDecoration(
-          labelText: 'Search',
-          hintText: 'Type a word',
-          suffixIcon: Padding(
-            padding: const EdgeInsets.all(AppDefaults.padding),
-            child: SvgPicture.asset(AppIcons.search),
-          ),
-          suffixIconConstraints: const BoxConstraints(),
         ),
       ),
     );

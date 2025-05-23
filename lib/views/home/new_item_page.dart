@@ -11,6 +11,7 @@ class NewItemsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final products = Dummy.products;
     return Scaffold(
+      backgroundColor: const Color(0xFFf3f3f5),
       appBar: AppBar(
         title: const Text('New Item'),
         leading: const AppBackButton(),
@@ -22,7 +23,7 @@ class NewItemsPage extends StatelessWidget {
             padding: const EdgeInsets.only(top: AppDefaults.padding),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 200,
-              childAspectRatio: 0.64,
+              childAspectRatio: 0.67,
               mainAxisSpacing: 16,
             ),
             itemCount: products.length,

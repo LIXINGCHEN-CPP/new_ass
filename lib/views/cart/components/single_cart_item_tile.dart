@@ -26,7 +26,7 @@ class SingleCartItemTile extends StatelessWidget {
                 child: AspectRatio(
                   aspectRatio: 1 / 1,
                   child: NetworkImageWithLoader(
-                    'https://i.imgur.com/F53fZuS.jpeg',
+                    'https://i.imgur.com/9GqopLf.png',
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -193,7 +193,7 @@ class SingleCartItemTile extends StatelessWidget {
                 child: AspectRatio(
                   aspectRatio: 1 / 1,
                   child: NetworkImageWithLoader(
-                    'https://i.imgur.com/LbgzhdC.jpeg',
+                    'https://i.imgur.com/FFnxmbr.png',
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -210,7 +210,7 @@ class SingleCartItemTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Tray of eggs',
+                          'Tray of Eggs',
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -261,7 +261,7 @@ class SingleCartItemTile extends StatelessWidget {
                     icon: SvgPicture.asset(AppIcons.delete),
                   ),
                   const SizedBox(height: 16),
-                  const Text('\$20'),
+                  const Text('\$30'),
                 ],
               )
             ],

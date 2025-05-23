@@ -11,7 +11,7 @@ class AdSpace extends StatelessWidget {
   final List<String> adImageUrls = const [
     'https://i.imgur.com/8hBIsS5.png',
     'https://i.imgur.com/BuVEdyX.png',
-    'https://i.imgur.com/wORa2qS.png',
+    'https://i.imgur.com/lu7VPJj.png',
   ];
 
   @override

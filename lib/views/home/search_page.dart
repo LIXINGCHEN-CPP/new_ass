@@ -9,159 +9,122 @@ import '../../core/routes/app_routes.dart';
 import '../../core/utils/ui_util.dart';
 import 'dialogs/product_filters_dialog.dart';
 
-class SearchPage extends StatelessWidget {
-  const SearchPage({super.key});
+// 引入假数据模型
+import '../../core/constants/dummy_data.dart';
+import '../../core/constants/dummy_data_category.dart';
+import '../../core/models/dummy_product_model.dart';
+
+class SearchPage extends StatefulWidget {
+  const SearchPage({Key? key}) : super(key: key);
+
+  @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  final TextEditingController _controller = TextEditingController();
+  String _query = '';
+
+  /// 所有商品列表（合并两份假数据）
+  late final List<ProductModel> _allProducts = [
+    ...Dummy.products,
+    ...DummyCategory.products,
+  ];
+
+  /// 根据 _query 动态过滤后的商品
+  List<ProductModel> get _filtered {
+    if (_query.isEmpty) return [];
+    final q = _query.toLowerCase();
+    return _allProducts.where((p) {
+      return p.name.toLowerCase().contains(q) ||
+          p.weight.toLowerCase().contains(q);
+    }).toList();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTapProduct(ProductModel product) {
+    Navigator.pushNamed(
+      context,
+      AppRoutes.productDetails,
+      arguments: product,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            _SearchPageHeader(),
-            SizedBox(height: 8),
-            _RecentSearchList(),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        leading: const AppBackButton(),
+        title: TextField(
+          controller: _controller,
+          decoration: const InputDecoration(
+            hintText: 'Search products',
+            border: InputBorder.none,
+            prefixIcon: Icon(Icons.search),
+          ),
+          textInputAction: TextInputAction.search,
+          onChanged: (v) => setState(() => _query = v),
+          onSubmitted: (v) {
+            // 可选：提交时焦点收起
+            FocusScope.of(context).unfocus();
+          },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: () {
+              UiUtil.openBottomSheet(
+                context: context,
+                widget: const ProductFiltersDialog(),
+              );
+            },
+          )
+        ],
+      ),
+      backgroundColor: AppColors.scaffoldBackground,
+      body: _query.isEmpty
+          ? const _RecentSearchList()    // 可以保留历史或提示
+          : ListView.separated(
+        padding: const EdgeInsets.all(AppDefaults.padding),
+        itemCount: _filtered.length,
+        separatorBuilder: (_, __) => const Divider(),
+        itemBuilder: (context, idx) {
+          final product = _filtered[idx];
+          return ListTile(
+            leading: Image.network(product.cover, width: 48, height: 48),
+            title: Text(product.name),
+            subtitle: Text(product.weight),
+            trailing: Text('\$${product.price}'),
+            onTap: () => _onTapProduct(product),
+          );
+        },
       ),
     );
   }
 }
 
+/// 原先的历史搜索列表，可选保留或删除
 class _RecentSearchList extends StatelessWidget {
   const _RecentSearchList();
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return SingleChildScrollView(
       child: Column(
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Recent Search',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.black,
-                    ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.only(top: 16),
-              itemBuilder: (context, index) {
-                return const SearchHistoryTile();
-              },
-              separatorBuilder: (context, index) => const Divider(
-                thickness: 0.1,
-              ),
-              itemCount: 16,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class _SearchPageHeader extends StatelessWidget {
-  const _SearchPageHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppDefaults.padding),
-      child: Row(
-        children: [
-          const AppBackButton(),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Stack(
-              children: [
-                /// Search Box
-                Form(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Search',
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(AppDefaults.padding),
-                        child: SvgPicture.asset(
-                          AppIcons.search,
-                          colorFilter: const ColorFilter.mode(
-                            AppColors.primary,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                      ),
-                      prefixIconConstraints: const BoxConstraints(),
-                      contentPadding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                    textInputAction: TextInputAction.search,
-                    autofocus: true,
-                    onChanged: (String? value) {},
-                    onFieldSubmitted: (v) {
-                      Navigator.pushNamed(context, AppRoutes.searchResult);
-                    },
-                  ),
-                ),
-                Positioned(
-                  right: 0,
-                  height: 56,
-                  child: SizedBox(
-                    width: 56,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        UiUtil.openBottomSheet(
-                          context: context,
-                          widget: const ProductFiltersDialog(),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: SvgPicture.asset(AppIcons.filter),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SearchHistoryTile extends StatelessWidget {
-  const SearchHistoryTile({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 8,
-          horizontal: 16,
-        ),
-        child: Row(
-          children: [
-            Text(
-              'Vegetables',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const Spacer(),
-            SvgPicture.asset(AppIcons.searchTileArrow),
-          ],
-        ),
+        children: List.generate(6, (i) {
+          return ListTile(
+            title: Text('Recent: Item ${i+1}'),
+            leading: const Icon(Icons.history),
+            onTap: () {
+              // 可直接填充到搜索框
+            },
+          );
+        }),
       ),
     );
   }
