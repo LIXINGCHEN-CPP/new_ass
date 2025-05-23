@@ -24,23 +24,23 @@ class HelpTopics extends StatelessWidget {
         ),
         const SizedBox(height: AppDefaults.padding / 2),
         AppSettingsListTile(
-          label: 'My Account',
+          label: 'My account',
           trailing: SvgPicture.asset(AppIcons.right),
         ),
         AppSettingsListTile(
-          label: 'Payment and Wallet',
+          label: 'Payment method and Wallet',
           trailing: SvgPicture.asset(AppIcons.right),
         ),
         AppSettingsListTile(
-          label: 'Shipping & Delivery',
+          label: 'Shipping and Delivery',
           trailing: SvgPicture.asset(AppIcons.right),
         ),
         AppSettingsListTile(
-          label: 'Vouchers & Promotions',
+          label: 'Vouchers and Promotion',
           trailing: SvgPicture.asset(AppIcons.right),
         ),
         AppSettingsListTile(
-          label: 'Ordering',
+          label: 'Order tracking',
           trailing: SvgPicture.asset(AppIcons.right),
         ),
       ],

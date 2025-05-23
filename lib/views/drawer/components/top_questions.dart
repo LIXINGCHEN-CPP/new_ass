@@ -24,23 +24,23 @@ class TopQuestions extends StatelessWidget {
         ),
         const SizedBox(height: AppDefaults.padding / 2),
         AppSettingsListTile(
-          label: 'How do I return my Items',
+          label: 'How do I checkout my items',
           trailing: SvgPicture.asset(AppIcons.right),
         ),
         AppSettingsListTile(
-          label: 'How to use collection point?',
+          label: 'How to use voucher promotion?',
           trailing: SvgPicture.asset(AppIcons.right),
         ),
         AppSettingsListTile(
-          label: 'What is Grocery?',
+          label: 'How to buy one new packet?',
           trailing: SvgPicture.asset(AppIcons.right),
         ),
         AppSettingsListTile(
-          label: 'How can i add new delivery address?',
+          label: 'How can I add new delivery address?',
           trailing: SvgPicture.asset(AppIcons.right),
         ),
         AppSettingsListTile(
-          label: 'How can i avail Sticker Price?',
+          label: 'How can I get the order status?',
           trailing: SvgPicture.asset(AppIcons.right),
         ),
       ],

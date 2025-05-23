@@ -26,7 +26,10 @@ class AboutUsPage extends StatelessWidget {
             ),
             const SizedBox(height: AppDefaults.padding),
             const Text(
-                '''In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus.\n\nMaecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien.\n\nAliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet.''')
+                ''' 
+eGrocery is our online one-stop destination for fresh produce and everyday essentials, delivering the trusted shopping experience you love from our shop directly to your door.      \n
+Our Mission is to empower everyone with the confidence and convenience of premium ingredients, while using technology to simplify every step of the shopping journey.      \n
+Our vision is to become one trusted online marketplace, seamlessly blending quality and convenience for every family. and we follow quality first and maintain strict sourcing standards and full traceability across our supply chain.      \n ''')
           ],
         ),
       ),
