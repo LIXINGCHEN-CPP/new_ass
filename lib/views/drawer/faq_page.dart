@@ -16,13 +16,17 @@ class FAQPage extends StatelessWidget {
       body: const Column(
         children: [
           TitleAndParagraph(
-              title: '1. How it will take to delivery?',
+              title: '1. What are the delivery hours?',
               paragraph:
-                  '''In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.'''),
+                  '''We deliver every day from 8 AM to 10 PM. Orders placed before 8 PM usually arrive the same evening, while later orders are scheduled for the next available slot. During peak periods or public holidays, please allow an extra hour for delivery to ensure we meet quality and freshness standards.'''),
           TitleAndParagraph(
-              title: '3. What is refund system?',
+              title: '2. How do we make sure product quality?',
               paragraph:
-                  '''In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi.\n\nMaecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien.\n\nAliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet.'''),
+                  '''All items undergo strict quality checks at our central warehouse and partner stores. Fresh produce is inspected daily, and perishable goods are stored under temperature control. Any product failing to meet standards is immediately replaced at no extra cost.'''),
+          TitleAndParagraph(
+              title: '3. How does the refund system work?',
+              paragraph:
+                  '''If there's an issue with any item, please contact us within 24 hours. Once confirmed, we will process a full refund to your original payment method within 3-5 business days. You can track the your payment account at that period.'''),
         ],
       ),
     );

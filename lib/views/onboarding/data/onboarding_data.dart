@@ -7,7 +7,7 @@ class OnboardingData {
       imageUrl: AppImages.onboarding1,
       headline: 'Discover popular and new products',
       description:
-          'Browse handpicked items from top-rated sellers across all categories.',
+          'Browse trending items and new arrivals for top deals and fresh inspiration.',
     ),
     OnboardingModel(
       imageUrl: AppImages.onboarding2,

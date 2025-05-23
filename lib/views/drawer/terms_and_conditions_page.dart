@@ -17,24 +17,26 @@ class TermsAndConditionsPage extends StatelessWidget {
         children: [
           TitleAndParagraph(
               isTitleHeadline: false,
-              title: 'General site usage last revised\nDecember 12-01-2020.',
+              title: 'General site usage last revised\n 23-05-2025.',
               paragraph:
-                  '''Welcome to www.saydulmoon.info. Officia irure irure anim nisi exercitation velit cupidatat qui Lorem id ad. Amet quis occaecat quis voluptate cupidatat quis irure irure consequat irure.'''),
+                  '''Welcome to eGrocery. By accessing or using our app and services, you agree to be bound by these Terms & Conditions. Please read them carefully before placing any orders.'''),
           TitleAndParagraph(
               isTitleHeadline: false,
               title: '1. Agreement',
               paragraph:
-                  '''Officia irure irure anim nisi exercitation velit cupidatat qui Lorem id ad. Amet quis occaecat quis voluptate cupidatat quis irure irure consequat irure.'''),
+                  '''By creating an account or placing an order, you confirm that you are at least 18 years old and legally capable of entering into binding contracts. You agree to comply with all applicable laws and regulations in connection with your use of eGrocery.'''),
           TitleAndParagraph(
               isTitleHeadline: false,
               title: '2. Account',
               paragraph:
-                  '''Officia irure irure anim nisi exercitation velit cupidatat qui Lorem id ad. Amet quis occaecat quis voluptate cupidatat quis irure irure consequat irure.'''),
+                  '''To place orders, you must register with accurate and up-to-date information. You are responsible for maintaining the confidentiality of your login credentials and for all activities under your account. Notify us immediately if you suspect any unauthorized use.'''),
           TitleAndParagraph(
               isTitleHeadline: false,
-              title: '3. Relationship With Groceries',
+              title: '3. Changes to Terms',
               paragraph:
-                  '''Officia irure irure anim nisi exercitation velit cupidatat qui Lorem id ad. Amet quis occaecat quis voluptate cupidatat quis irure irure consequat irure.Officia irure irure anim nisi exercitation velit cupidatat qui Lorem id ad. Amet quis occaecat quis '''),
+                  '''We may update these Terms & Conditions from time to time. The last revised date above reflects the most recent update. Continued use of eGrocery after changes constitutes your acceptance of the new terms.
+
+'''),
         ],
       ),
     );
