@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/components/app_back_button.dart';
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_defaults.dart';
+import '../../../core/constants/constants.dart';
 import 'components/coupon_card.dart';
 
 class CouponDetailsPage extends StatelessWidget {
@@ -22,15 +21,16 @@ class CouponDetailsPage extends StatelessWidget {
           const SizedBox(height: AppDefaults.padding),
           CouponCard(
             title: 'Black\nCoffee',
-            discounts: '41%',
+            discounts: '40%',
+            couponBackground: AppImages.couponBackgrounds[2],
             expire: 'Exp-28/12/2020',
-            color: const Color(0xFF402FBE),
+            color: const Color(0xFFA3D6CA),
             onTap: () {},
           ),
           Padding(
             padding: const EdgeInsets.all(AppDefaults.padding),
             child: Text(
-              '41% off only for you. To get this discount\ncollect and apply the voucher.',
+              '40% off only for you. To get this discount\ncollect and apply the voucher.',
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
@@ -44,7 +44,7 @@ class CouponDetailsPage extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(AppDefaults.padding),
               child: Text(
-                'Exp 12/12/2020',
+                'Exp 28/12/2025',
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge

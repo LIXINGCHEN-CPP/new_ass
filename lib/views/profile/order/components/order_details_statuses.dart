@@ -14,28 +14,29 @@ class OrderStatusColumn extends StatelessWidget {
       children: [
         OrderStatusRow(
           status: OrderStatus.confirmed,
-          date: '12.12.2022',
+          date: '21.5.2025',
           time: '01.00 PM',
           isStart: true,
           isActive: true,
         ),
         OrderStatusRow(
           status: OrderStatus.processing,
-          date: '12.12.2022',
+          date: '21.5.2025',
           time: '03.00 PM',
           isActive: true,
         ),
         OrderStatusRow(
           status: OrderStatus.shipped,
-          date: '12.12.2022',
+          date: '21.5.2025',
           time: '05.00 PM',
           isActive: true,
         ),
         OrderStatusRow(
           status: OrderStatus.delivery,
-          date: '12.12.2022',
+          date: '21.5.2025',
           time: '07.00 PM',
           isEnd: true,
+          isActive: true,
         ),
       ],
     );

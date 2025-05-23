@@ -16,31 +16,31 @@ class RunningTab extends StatelessWidget {
       children: [
         OrderPreviewTile(
           orderID: '232425627',
-          date: '25 Nov',
+          date: '21 May',
           status: OrderStatus.confirmed,
           onTap: () => Navigator.pushNamed(context, AppRoutes.orderDetails),
         ),
         OrderPreviewTile(
           orderID: '232425627',
-          date: '25 Nov',
+          date: '21 May',
           status: OrderStatus.processing,
           onTap: () => Navigator.pushNamed(context, AppRoutes.orderDetails),
         ),
         OrderPreviewTile(
           orderID: '232425627',
-          date: '25 Nov',
+          date: '21 May',
           status: OrderStatus.shipped,
           onTap: () => Navigator.pushNamed(context, AppRoutes.orderDetails),
         ),
         OrderPreviewTile(
           orderID: '232425627',
-          date: '25 Nov',
+          date: '21 May',
           status: OrderStatus.delivery,
           onTap: () => Navigator.pushNamed(context, AppRoutes.orderDetails),
         ),
         OrderPreviewTile(
           orderID: '232425627',
-          date: '25 Nov',
+          date: '21 May',
           status: OrderStatus.cancelled,
           onTap: () => Navigator.pushNamed(context, AppRoutes.orderDetails),
         ),

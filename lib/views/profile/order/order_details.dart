@@ -31,7 +31,7 @@ class OrderDetailsPage extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Order id #30398505202',
+                  'Order id #232425627',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold, color: Colors.black),
                 ),
