@@ -29,8 +29,6 @@ class CartPage extends StatelessWidget {
           child: Column(
             children: [
               const SingleCartItemTile(),
-              const SingleCartItemTile(),
-              const SingleCartItemTile(),
               const CouponCodeField(),
               const ItemTotalsAndPrice(),
               SizedBox(

@@ -9,6 +9,7 @@ class NewItemsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final products = Dummy.products;
     return Scaffold(
       appBar: AppBar(
         title: const Text('New Item'),
@@ -24,10 +25,10 @@ class NewItemsPage extends StatelessWidget {
               childAspectRatio: 0.64,
               mainAxisSpacing: 16,
             ),
-            itemCount: 8,
+            itemCount: products.length,
             itemBuilder: (context, index) {
               return ProductTileSquare(
-                data: Dummy.products.first,
+                data: products[index],
               );
             },
           ),

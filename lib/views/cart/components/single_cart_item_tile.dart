@@ -26,7 +26,7 @@ class SingleCartItemTile extends StatelessWidget {
                 child: AspectRatio(
                   aspectRatio: 1 / 1,
                   child: NetworkImageWithLoader(
-                    'https://i.imgur.com/4YEHvGc.png',
+                    'https://i.imgur.com/F53fZuS.jpeg',
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -43,7 +43,7 @@ class SingleCartItemTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Sulphurfree Bura',
+                          'Fresh Milk',
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -72,6 +72,173 @@ class SingleCartItemTile extends StatelessWidget {
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: SvgPicture.asset(AppIcons.removeQuantity),
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              const Spacer(),
+
+              /// Price and Delete labelLarge
+              Column(
+                children: [
+                  IconButton(
+                    constraints: const BoxConstraints(),
+                    onPressed: () {},
+                    icon: SvgPicture.asset(AppIcons.delete),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text('\$20'),
+                ],
+              )
+            ],
+          ),
+          const Divider(thickness: 0.1),
+
+          Row(
+            children: [
+              /// Thumbnail
+              const SizedBox(
+                width: 70,
+                child: AspectRatio(
+                  aspectRatio: 1 / 1,
+                  child: NetworkImageWithLoader(
+                    'https://i.imgur.com/alNCH7W.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+
+              /// Quantity and Name
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Beef',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(color: Colors.black),
+                        ),
+                        Text(
+                          '2000 g',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: SvgPicture.asset(AppIcons.addQuantity),
+                        constraints: const BoxConstraints(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '1',
+                          style:
+                          Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: SvgPicture.asset(AppIcons.removeQuantity),
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              const Spacer(),
+
+              /// Price and Delete labelLarge
+              Column(
+                children: [
+                  IconButton(
+                    constraints: const BoxConstraints(),
+                    onPressed: () {},
+                    icon: SvgPicture.asset(AppIcons.delete),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text('\$20'),
+                ],
+              )
+            ],
+          ),
+          const Divider(thickness: 0.1),
+
+
+          Row(
+            children: [
+              /// Thumbnail
+              const SizedBox(
+                width: 70,
+                child: AspectRatio(
+                  aspectRatio: 1 / 1,
+                  child: NetworkImageWithLoader(
+                    'https://i.imgur.com/LbgzhdC.jpeg',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+
+              /// Quantity and Name
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Tray of eggs',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(color: Colors.black),
+                        ),
+                        Text(
+                          '1000 g',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: SvgPicture.asset(AppIcons.addQuantity),
+                        constraints: const BoxConstraints(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '1',
+                          style:
+                          Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                       IconButton(

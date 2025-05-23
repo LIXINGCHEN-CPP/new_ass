@@ -19,16 +19,16 @@ class AddressSelector extends StatelessWidget {
           isHeadline: false,
         ),
         AddressCard(
-          label: 'Home Address',
-          phoneNumber: '(309) 071-9396-939',
-          address: '1749 Custom Road, Chhatak',
+          label: 'Bell Suites',
+          phoneNumber: '(60) 123-627-496',
+          address: '10-02, Bell Suites, Kota Warisan',
           isActive: false,
           onTap: () {},
         ),
         AddressCard(
-          label: 'Office Address',
-          phoneNumber: '(309) 071-9396-939',
-          address: '1749 Custom Road, Chhatak',
+          label: 'Xiamen University Malaysia',
+          phoneNumber: '(60) 11-2423-4875',
+          address: 'Jalan Sunsuria, Bandar Sunsuria',
           isActive: true,
           onTap: () {},
         )

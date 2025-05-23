@@ -52,9 +52,9 @@ class DeliverySuccessfullDialog extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.submitReview);
+                  Navigator.pushNamed(context, AppRoutes.entryPoint);
                 },
-                child: const Text('Rate The Product'),
+                child: const Text('Browse Home'),
               ),
             ),
             const SizedBox(height: AppDefaults.padding),
@@ -62,15 +62,16 @@ class DeliverySuccessfullDialog extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.entryPoint);
+                  // Navigator.pushNamed(context, AppRoutes.submitReview);
                 },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
                   side: const BorderSide(color: AppColors.primary),
                 ),
-                child: const Text('Browse Home'),
+                child: const Text('Rate The Product'),
               ),
             ),
+
           ],
         ),
       ),

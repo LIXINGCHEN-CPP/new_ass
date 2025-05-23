@@ -29,7 +29,11 @@ class TitleAndActionButton extends StatelessWidget {
                 ? Theme.of(context)
                     .textTheme
                     .headlineSmall
-                    ?.copyWith(color: Colors.black)
+                    ?.copyWith(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      )
                 : Theme.of(context)
                     .textTheme
                     .bodyLarge

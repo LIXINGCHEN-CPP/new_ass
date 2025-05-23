@@ -11,6 +11,7 @@ class PopularPackPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bundles = Dummy.bundles;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Popular Packs'),
@@ -30,10 +31,10 @@ class PopularPackPage extends StatelessWidget {
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),
-                itemCount: 8,
+                itemCount: bundles.length,
                 itemBuilder: (context, index) {
                   return BundleTileSquare(
-                    data: Dummy.bundles.first,
+                    data: bundles[index],
                   );
                 },
               ),

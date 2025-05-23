@@ -9,6 +9,7 @@ class CategoryProductPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final products = DummyCategory.products;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Vegetables'),
@@ -16,15 +17,15 @@ class CategoryProductPage extends StatelessWidget {
       ),
       body: GridView.builder(
         padding: const EdgeInsets.only(top: AppDefaults.padding),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 200,
           mainAxisSpacing: 16,
-          childAspectRatio: 0.85,
+          childAspectRatio: 0.64,
         ),
-        itemCount: 16,
+        itemCount: products.length,
         itemBuilder: (context, index) {
           return ProductTileSquare(
-            data: Dummy.products.first,
+            data: products[index],
           );
         },
       ),
