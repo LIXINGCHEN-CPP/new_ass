@@ -20,7 +20,7 @@ class LoginPageHeader extends StatelessWidget {
           ),
         ),
         Text(
-          'Welcome to our',
+          'Welcome to the',
           style: Theme.of(context)
               .textTheme
               .titleLarge
