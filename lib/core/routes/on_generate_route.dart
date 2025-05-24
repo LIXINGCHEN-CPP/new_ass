@@ -49,6 +49,8 @@ import '../../views/save/save_page.dart';
 import 'app_routes.dart';
 import 'unknown_page.dart';
 import '../../views/menu/menu_page.dart';
+import '../../views/drawer/privacy_policy_page.dart';
+
 
 class RouteGenerator {
   static Route? onGenerate(RouteSettings settings) {
@@ -85,6 +87,10 @@ class RouteGenerator {
       case AppRoutes.login:
         return CupertinoPageRoute(builder: (_) => const LoginPage());
 
+      case AppRoutes.privacyPolicy:
+        return CupertinoPageRoute(
+          builder: (_) => const PrivacyPolicyPage(),
+        );
       case AppRoutes.signup:
         return CupertinoPageRoute(builder: (_) => const SignUpPage());
 

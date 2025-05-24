@@ -17,8 +17,7 @@ class LanguageSettingsPage extends StatefulWidget {
 class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
   // 全部国家/地区和推荐语言
   final List<String> _allCountries = [
-    'Australia','Bangladesh', 'Canada', 'Chinese','Cuba', 'English', 'French', 'Germany','Greece', 'Malay', 'Spanish',
-       'USA'
+     'Chinese', 'English', 'Filipino', 'Malay', 'Tamil', 'Thai'
   ];
   final List<String> _suggested = [
     'English', 'Chinese', 'Malay'

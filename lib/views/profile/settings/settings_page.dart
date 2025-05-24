@@ -56,16 +56,16 @@ class SettingsPage extends StatelessWidget {
                   Navigator.pushNamed(context, AppRoutes.changePhoneNumber),
             ),
             AppSettingsListTile(
-              label: 'Edit Home Address',
+              label: 'Edit Address',
               trailing: SvgPicture.asset(AppIcons.right),
               onTap: () =>
                   Navigator.pushNamed(context, AppRoutes.deliveryAddress),
             ),
-            AppSettingsListTile(
-              label: 'Location',
-              trailing: SvgPicture.asset(AppIcons.right),
-              onTap: () {},
-            ),
+            // AppSettingsListTile(
+            //   label: 'Location',
+            //   trailing: SvgPicture.asset(AppIcons.right),
+            //   onTap: () {},
+            // ),
             AppSettingsListTile(
               label: 'Profile Setting',
               trailing: SvgPicture.asset(AppIcons.right),

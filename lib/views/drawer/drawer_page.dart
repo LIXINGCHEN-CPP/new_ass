@@ -21,10 +21,10 @@ class DrawerPage extends StatelessWidget {
         padding: const EdgeInsets.all(AppDefaults.padding),
         child: Column(
           children: [
-            AppSettingsListTile(
-              label: 'Invite Friend',
-              trailing: SvgPicture.asset(AppIcons.right),
-            ),
+            // AppSettingsListTile(
+            //   label: 'Invite Friend',
+            //   trailing: SvgPicture.asset(AppIcons.right),
+            // ),
             AppSettingsListTile(
               label: 'About Us',
               trailing: SvgPicture.asset(AppIcons.right),
@@ -46,15 +46,15 @@ class DrawerPage extends StatelessWidget {
               trailing: SvgPicture.asset(AppIcons.right),
               onTap: () => Navigator.pushNamed(context, AppRoutes.help),
             ),
-            AppSettingsListTile(
-              label: 'Rate This App',
-              trailing: SvgPicture.asset(AppIcons.right),
-              // onTap: () => Navigator.pushNamed(context, AppRoutes.help),
-            ),
+            // AppSettingsListTile(
+            //   label: 'Rate This App',
+            //   trailing: SvgPicture.asset(AppIcons.right),
+            //   // onTap: () => Navigator.pushNamed(context, AppRoutes.help),
+            // ),
             AppSettingsListTile(
               label: 'Privacy Policy',
               trailing: SvgPicture.asset(AppIcons.right),
-              // onTap: () => Navigator.pushNamed(context, AppRoutes.),
+              onTap: () => Navigator.pushNamed(context, AppRoutes.privacyPolicy),
             ),
             AppSettingsListTile(
               label: 'Contact Us',

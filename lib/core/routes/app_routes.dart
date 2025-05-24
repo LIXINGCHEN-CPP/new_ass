@@ -69,6 +69,7 @@ class AppRoutes {
   static const termsAndConditions = '/termsAndConditions';
   static const help = '/help';
   static const contactUs = '/contactUs';
+  static const privacyPolicy = '/privacyPolicy';
 
   /* <---- Payment Method -----> */
   static const paymentMethod = '/paymentMethod';

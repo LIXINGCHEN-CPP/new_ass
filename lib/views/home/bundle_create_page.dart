@@ -12,6 +12,7 @@ class BundleCreatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFf3f3f5),
       appBar: AppBar(
         leading: const AppBackButton(),
         title: const Text('Create My Pack'),
