@@ -1,6 +1,7 @@
-# eGrocery
 
-![eGrocery Logo](assets/images/app_logo.svg)
+<p align="center">
+  <img src="assets/images/app_logo.svg" alt="eGrocery Logo" />
+</p>
 
 ## Project Overview
 
@@ -91,10 +92,17 @@ Tapping a tab updates the `currentIndex` to switch pages without reloading them.
 
 ## Running the App
 
+Before running the app, clone the repository and navigate into the project folder:
+
+```bash
+git clone https://github.com/7Packanyet/Mobile_Application_Assignment_Flutter.git
+cd Mobile_Application_Assignment_Flutter
+```
+
+Then execute the Flutter commands:
+
 ```bash
 flutter clean
 flutter pub get
 flutter run
 ```
-
-*© 2025 eGrocery*
