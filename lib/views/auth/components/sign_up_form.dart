@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/utils/validators.dart';
 import 'already_have_accout.dart';
 import 'sign_up_button.dart';
 
-class SignUpForm extends StatelessWidget {
-  const SignUpForm({
-    super.key,
-  });
+class SignUpForm extends StatefulWidget {
+  const SignUpForm({Key? key}) : super(key: key);
+
+  @override
+  _SignUpFormState createState() => _SignUpFormState();
+}
+
+class _SignUpFormState extends State<SignUpForm> {
+  // 用来控制密码是否隐藏
+  bool _obscureText = true;
+
+  // 切换 _obscureText 的方法
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +59,15 @@ class SignUpForm extends StatelessWidget {
           TextFormField(
             validator: Validators.required.call,
             textInputAction: TextInputAction.next,
-            obscureText: true,
+            // 根据 _obscureText 决定是否隐藏
+            obscureText: _obscureText,
             decoration: InputDecoration(
               suffixIcon: Material(
                 color: Colors.transparent,
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: _togglePasswordVisibility,
                   icon: SvgPicture.asset(
+                    // 根据状态切换图标
                     AppIcons.eye,
                     width: 24,
                   ),

@@ -10,102 +10,135 @@ class ContactUsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final horizontalPadding = AppDefaults.padding;
+    final verticalPadding = AppDefaults.padding * 2;
+
     return Scaffold(
       appBar: AppBar(
         leading: const AppBackButton(),
         title: const Text('Contact Us'),
       ),
       backgroundColor: AppColors.cardColor,
-      body: Container(
-        margin: const EdgeInsets.all(AppDefaults.padding),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDefaults.padding,
-          vertical: AppDefaults.padding * 2,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.scaffoldBackground,
-          borderRadius: AppDefaults.borderRadius,
-        ),
-        child: Column(
-          children: [
-            const SizedBox(height: AppDefaults.padding),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Contact Us',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(AppDefaults.padding),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.scaffoldBackground,
+              borderRadius: AppDefaults.borderRadius,
+            ),
+            // 改用 SingleChildScrollView 包裹
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: verticalPadding,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 标题
+                  Text(
+                    'Contact Us',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.copyWith(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  const SizedBox(height: AppDefaults.padding * 2),
+
+                  // 电话行
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(AppIcons.contactPhone),
+                      const SizedBox(width: AppDefaults.padding),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '+60142355625',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(color: Colors.black),
+                            ),
+                            const SizedBox(height: AppDefaults.padding / 2),
+                            Text(
+                              '+60132699546',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppDefaults.padding),
+
+                  // 邮箱行
+                  Row(
+                    children: [
+                      SvgPicture.asset(AppIcons.contactEmail),
+                      const SizedBox(width: AppDefaults.padding),
+                      Expanded(
+                        child: Text(
+                          'alena123456@gmail.com',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppDefaults.padding),
+
+                  // 地址行
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(AppIcons.contactMap),
+                      const SizedBox(width: AppDefaults.padding),
+                      Expanded(
+                        child: Text(
+                          '2, Jalan Hang Kasturi, City Centre, 50050 Kuala Lumpur',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppDefaults.padding),
+
+                  // 图片
+                  LayoutBuilder(
+                    builder: (ctx, constraints) {
+                      // 宽度不要超过剩余空间
+                      final width = constraints.maxWidth;
+                      return SizedBox(
+                        width: width,
+                        child: AspectRatio(
+                          aspectRatio: 3 / 2,
+                          child: NetworkImageWithLoader(
+                            'https://i.imgur.com/lg6cLrQ.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
-
-            const SizedBox(height: AppDefaults.padding * 2),
-
-            /// Number
-            Row(
-              children: [
-                SvgPicture.asset(AppIcons.contactPhone),
-                const SizedBox(width: AppDefaults.padding),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '+60142355625',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.black,
-                          ),
-                    ),
-                    const SizedBox(height: AppDefaults.padding / 2),
-                    Text(
-                      '+60132699546',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.black,
-                          ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDefaults.padding),
-            Row(
-              children: [
-                SvgPicture.asset(AppIcons.contactEmail),
-                const SizedBox(width: AppDefaults.padding),
-                Text(
-                  'alena123456@gmail.com',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.black,
-                      ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppDefaults.padding),
-            Row(
-              children: [
-                SvgPicture.asset(AppIcons.contactMap),
-                const SizedBox(width: AppDefaults.padding),
-                Text(
-                  '2, Jalan Hang Kasturi, City Centre,\n50050 Kuala Lumpur',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.black,
-                      ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDefaults.padding),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: const AspectRatio(
-                aspectRatio: 3 / 2,
-                child: NetworkImageWithLoader(
-                  'https://i.imgur.com/lg6cLrQ.png',
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

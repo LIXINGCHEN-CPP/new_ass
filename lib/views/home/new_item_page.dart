@@ -23,7 +23,7 @@ class NewItemsPage extends StatelessWidget {
             padding: const EdgeInsets.only(top: AppDefaults.padding),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 200,
-              childAspectRatio: 0.67,
+              childAspectRatio: 0.68,
               mainAxisSpacing: 16,
             ),
             itemCount: products.length,

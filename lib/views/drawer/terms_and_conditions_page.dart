@@ -22,7 +22,7 @@ class TermsAndConditionsPage extends StatelessWidget {
             isTitleHeadline: false,
             title: 'General site usage last revised\n23-05-2025.',
             paragraph: '''
-Welcome to eGrocery. By accessing or using our app and services, you agree to be bound by these Terms & Conditions. Please read them carefully before placing any orders.''',
+Welcome to E-Grocery. By accessing or using our app and services, you agree to be bound by these Terms & Conditions. Please read them carefully before placing any orders.''',
           ),
           SizedBox(height: 10),
           TitleAndParagraph(

@@ -14,24 +14,29 @@ class OnboardingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // 原来的图片容器
-          Container(
-            height: MediaQuery.of(context).size.width,
+    return Column(
+      children: [
+        // 图片部分：分掉 6 份高度中的 4 份
+        Flexible(
+          flex: 4,
+          child: Padding(
             padding: const EdgeInsets.all(AppDefaults.padding * 2),
             child: NetworkImageWithLoader(
               data.imageUrl,
               fit: BoxFit.contain,
             ),
           ),
+        ),
 
-          // 文本区域
-          Padding(
-            padding: const EdgeInsets.all(AppDefaults.padding),
+        // 文本部分：分掉 6 份高度中的 2 份
+        Flexible(
+          flex: 2,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDefaults.padding,
+            ),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   data.headline,
@@ -48,9 +53,8 @@ class OnboardingView extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
-
 }

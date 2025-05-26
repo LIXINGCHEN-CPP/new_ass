@@ -37,7 +37,7 @@ class _Footer extends StatelessWidget {
             padding: const EdgeInsets.all(AppDefaults.padding),
             child: ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, AppRoutes.login),
-              child: const Text('Login With Email'),
+              child: const Text('Login With Phone Number'),
             ),
           ),
         ),

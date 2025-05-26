@@ -16,19 +16,24 @@ class CategoryProductPage extends StatelessWidget {
         title: const Text('Vegetables'),
         leading: const AppBackButton(),
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.only(top: AppDefaults.padding),
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 200,
-          mainAxisSpacing: 16,
-          childAspectRatio: 0.64,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
+          child: GridView.builder(
+            padding: const EdgeInsets.only(top: AppDefaults.padding),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200,
+              childAspectRatio: 0.64,
+              mainAxisSpacing: 16,
+            ),
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              return ProductTileSquare(
+                data: products[index],
+              );
+            },
+          ),
         ),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          return ProductTileSquare(
-            data: products[index],
-          );
-        },
       ),
     );
   }

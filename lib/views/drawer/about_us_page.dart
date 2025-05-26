@@ -26,7 +26,7 @@ class AboutUsPage extends StatelessWidget {
             ),
             const SizedBox(height: AppDefaults.padding),
             const Text(
-              'eGrocery is our online one-stop destination for fresh produce '
+              'E-Grocery is our online one-stop destination for fresh produce '
                   'and everyday essentials, delivering the trusted shopping experience '
                   'you love from our shop directly to your door.\n\n'
                   'Our Mission is to empower everyone with the confidence and convenience '

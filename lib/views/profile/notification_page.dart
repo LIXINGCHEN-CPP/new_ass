@@ -22,7 +22,7 @@ class NotificationPage extends StatelessWidget {
 
           NotificationTile(
             imageLink: 'https://i.imgur.com/XYbd8Tj.png',
-            title: 'eGrocery Message',
+            title: 'E-Grocery Message',
             subtitle: 'Your order #232425627 Beef is out of stock. You can request a refund.',
             time: 'Now',
           ),
