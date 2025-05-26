@@ -24,9 +24,9 @@ class ProfileHeader extends StatelessWidget {
               elevation: 0,
               backgroundColor: Colors.transparent,
               titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const _UserData(),
             const ProfileHeaderOptions()
@@ -52,12 +52,12 @@ class _UserData extends StatelessWidget {
             height: 100,
             child: ClipOval(
               child: AspectRatio(
-                  aspectRatio: 1 / 1,
-                  child: Image.asset(
-                      'assets/images/local_avatar.png',
-                      fit: BoxFit.cover,
-                      ),
-                      ),
+                aspectRatio: 1 / 1,
+                child: Image.asset(
+                  'assets/images/local_avatar.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
           const SizedBox(width: AppDefaults.padding),

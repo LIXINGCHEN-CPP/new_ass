@@ -9,13 +9,18 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.cardColor,
-      child: const Column(
-        children: [
-          ProfileHeader(),
-          ProfileMenuOptions(),
-        ],
+    return Scaffold(
+      backgroundColor: AppColors.cardColor,
+      body: SafeArea(
+        // 用 ListView 代替 Column，让内容超出时可以滚动
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: const [
+            ProfileHeader(),
+            // SizedBox(height: 5),
+            ProfileMenuOptions(),
+          ],
+        ),
       ),
     );
   }

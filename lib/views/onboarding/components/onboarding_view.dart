@@ -14,42 +14,43 @@ class OnboardingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.width,
-          child: Padding(
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // 原来的图片容器
+          Container(
+            height: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.all(AppDefaults.padding * 2),
             child: NetworkImageWithLoader(
               data.imageUrl,
               fit: BoxFit.contain,
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(AppDefaults.padding),
-          child: Column(
-            children: [
-              Text(
-                data.headline,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(AppDefaults.padding),
-                child: Text(
+
+          // 文本区域
+          Padding(
+            padding: const EdgeInsets.all(AppDefaults.padding),
+            child: Column(
+              children: [
+                Text(
+                  data.headline,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(
                   data.description,
                   textAlign: TextAlign.center,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
+
 }
