@@ -106,7 +106,7 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
               const SizedBox(height: AppDefaults.padding),
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text('All Countries/Regions'),
+                child: Text('All languages'),
               ),
               const SizedBox(height: AppDefaults.padding),
               ...filteredAll.map((country) {
