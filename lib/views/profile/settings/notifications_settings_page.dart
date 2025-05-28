@@ -5,8 +5,18 @@ import '../../../core/components/app_back_button.dart';
 import '../../../core/components/app_settings_tile.dart';
 import '../../../core/constants/constants.dart';
 
-class NotificationSettingsPage extends StatelessWidget {
+class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({super.key});
+
+  @override
+  State<NotificationSettingsPage> createState() => _NotificationSettingsPageState();
+}
+
+class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
+  // 状态变量来控制每个开关的状态
+  bool appNotification = true;
+  bool phoneNumberNotification = true;
+  bool offerNotification = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +48,12 @@ class NotificationSettingsPage extends StatelessWidget {
                 trailing: Transform.scale(
                   scale: 0.7,
                   child: CupertinoSwitch(
-                    value: true,
-                    onChanged: (v) {},
+                    value: appNotification,
+                    onChanged: (value) {
+                      setState(() {
+                        appNotification = value;
+                      });
+                    },
                   ),
                 ),
               ),
@@ -48,8 +62,12 @@ class NotificationSettingsPage extends StatelessWidget {
                 trailing: Transform.scale(
                   scale: 0.7,
                   child: CupertinoSwitch(
-                    value: true,
-                    onChanged: (v) {},
+                    value: phoneNumberNotification,
+                    onChanged: (value) {
+                      setState(() {
+                        phoneNumberNotification = value;
+                      });
+                    },
                   ),
                 ),
               ),
@@ -58,8 +76,12 @@ class NotificationSettingsPage extends StatelessWidget {
                 trailing: Transform.scale(
                   scale: 0.7,
                   child: CupertinoSwitch(
-                    value: false,
-                    onChanged: (v) {},
+                    value: offerNotification,
+                    onChanged: (value) {
+                      setState(() {
+                        offerNotification = value;
+                      });
+                    },
                   ),
                 ),
               ),

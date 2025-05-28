@@ -20,6 +20,7 @@ class ProductImagesSlider extends StatefulWidget {
 class _ProductImagesSliderState extends State<ProductImagesSlider> {
   late PageController controller;
   int currentIndex = 0;
+  bool isLiked = false; // 添加状态变量来追踪heart按钮状态
 
   List<String> images = [];
 
@@ -86,7 +87,12 @@ class _ProductImagesSliderState extends State<ProductImagesSlider> {
               color: Colors.transparent,
               borderRadius: AppDefaults.borderRadius,
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  // 点击时切换状态
+                  setState(() {
+                    isLiked = !isLiked;
+                  });
+                },
                 iconSize: 56,
                 constraints: const BoxConstraints(minHeight: 56, minWidth: 56),
                 icon: Container(
@@ -95,7 +101,13 @@ class _ProductImagesSliderState extends State<ProductImagesSlider> {
                     color: AppColors.scaffoldBackground,
                     shape: BoxShape.circle,
                   ),
-                  child: SvgPicture.asset(AppIcons.heart),
+                  child: isLiked
+                      ? const Icon(
+                    Icons.favorite, // 实心爱心
+                    color: Colors.red,
+                    size: 24,
+                  )
+                      : SvgPicture.asset(AppIcons.heart), // 空心爱心（原始状态）
                 ),
               ),
             ),

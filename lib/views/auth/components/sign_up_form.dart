@@ -62,17 +62,30 @@ class _SignUpFormState extends State<SignUpForm> {
             // 根据 _obscureText 决定是否隐藏
             obscureText: _obscureText,
             decoration: InputDecoration(
-              suffixIcon: Material(
-                color: Colors.transparent,
-                child: IconButton(
-                  onPressed: _togglePasswordVisibility,
-                  icon: SvgPicture.asset(
-                    // 根据状态切换图标
+              suffixIcon: GestureDetector(
+                onTap: _togglePasswordVisibility,
+                child: Container(
+                  margin: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: !_obscureText
+                        ? Colors.green.withOpacity(0.1) // 显示密码时的背景色
+                        : Colors.transparent,          // 隐藏密码时透明背景
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: SvgPicture.asset(
                     AppIcons.eye,
                     width: 24,
+                    colorFilter: ColorFilter.mode(
+                      !_obscureText
+                          ? Colors.green    // 显示密码时的图标颜色
+                          : Colors.grey,   // 隐藏密码时的图标颜色
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),
+              suffixIconConstraints: const BoxConstraints(),
             ),
           ),
           const SizedBox(height: AppDefaults.padding),

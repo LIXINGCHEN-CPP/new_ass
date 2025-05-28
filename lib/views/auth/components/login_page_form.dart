@@ -64,16 +64,30 @@ class _LoginPageFormState extends State<LoginPageForm> {
                 textInputAction: TextInputAction.done,
                 obscureText: !isPasswordShown,
                 decoration: InputDecoration(
-                  suffixIcon: Material(
-                    color: Colors.transparent,
-                    child: IconButton(
-                      onPressed: onPassShowClicked,
-                      icon: SvgPicture.asset(
+                  suffixIcon: GestureDetector(
+                    onTap: onPassShowClicked,
+                    child: Container(
+                      margin: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: isPasswordShown
+                            ? Colors.green.withOpacity(0.1) // 显示密码时的背景色
+                            : Colors.transparent,          // 隐藏密码时透明背景
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: SvgPicture.asset(
                         AppIcons.eye,
                         width: 24,
+                        colorFilter: ColorFilter.mode(
+                          isPasswordShown
+                              ? Colors.green    // 显示密码时的图标颜色
+                              : Colors.grey,   // 隐藏密码时的图标颜色
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
                   ),
+                  suffixIconConstraints: const BoxConstraints(),
                 ),
               ),
 

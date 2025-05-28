@@ -79,14 +79,14 @@ class ProfileEditPage extends StatelessWidget {
               /* <---- Password -----> */
 
               /* <---- Birthday -----> */
-              const Text("Password"),
-              const SizedBox(height: 8),
-              TextFormField(
-                keyboardType: TextInputType.visiblePassword,
-                textInputAction: TextInputAction.next,
-                obscureText: true,
-              ),
-              const SizedBox(height: AppDefaults.padding),
+              // const Text("Password"),
+              // const SizedBox(height: 8),
+              // TextFormField(
+              //   keyboardType: TextInputType.visiblePassword,
+              //   textInputAction: TextInputAction.next,
+              //   obscureText: true,
+              // ),
+              // const SizedBox(height: AppDefaults.padding),
 
               /* <---- Submit -----> */
               const SizedBox(height: AppDefaults.padding),

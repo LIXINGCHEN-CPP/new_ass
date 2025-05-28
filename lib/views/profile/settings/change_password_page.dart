@@ -4,8 +4,18 @@ import 'package:flutter_svg/svg.dart';
 import '../../../core/components/app_back_button.dart';
 import '../../../core/constants/constants.dart';
 
-class ChangePasswordPage extends StatelessWidget {
+class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
+
+  @override
+  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
+}
+
+class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  // 控制每个密码字段的可见性
+  bool _isCurrentPasswordVisible = false;
+  bool _isNewPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +49,33 @@ class ChangePasswordPage extends StatelessWidget {
                 TextFormField(
                   keyboardType: TextInputType.visiblePassword,
                   textInputAction: TextInputAction.next,
+                  obscureText: !_isCurrentPasswordVisible, // 控制密码可见性
                   decoration: InputDecoration(
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: SvgPicture.asset(AppIcons.eye),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isCurrentPasswordVisible = !_isCurrentPasswordVisible;
+                        });
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: _isCurrentPasswordVisible
+                              ? Colors.green.withOpacity(0.1) // 显示密码时的背景色
+                              : Colors.transparent,          // 隐藏密码时透明背景
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: SvgPicture.asset(
+                          AppIcons.eye,
+                          colorFilter: ColorFilter.mode(
+                            _isCurrentPasswordVisible
+                                ? Colors.green    // 显示密码时的图标颜色
+                                : Colors.grey,   // 隐藏密码时的图标颜色
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
                     ),
                     suffixIconConstraints: const BoxConstraints(),
                   ),
@@ -55,10 +88,33 @@ class ChangePasswordPage extends StatelessWidget {
                 TextFormField(
                   keyboardType: TextInputType.visiblePassword,
                   textInputAction: TextInputAction.next,
+                  obscureText: !_isNewPasswordVisible, // 控制密码可见性
                   decoration: InputDecoration(
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: SvgPicture.asset(AppIcons.eye),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isNewPasswordVisible = !_isNewPasswordVisible;
+                        });
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: _isNewPasswordVisible
+                              ? Colors.green.withOpacity(0.1) // 显示密码时的背景色
+                              : Colors.transparent,          // 隐藏密码时透明背景
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: SvgPicture.asset(
+                          AppIcons.eye,
+                          colorFilter: ColorFilter.mode(
+                            _isNewPasswordVisible
+                                ? Colors.green    // 显示密码时的图标颜色
+                                : Colors.grey,   // 隐藏密码时的图标颜色
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
                     ),
                     suffixIconConstraints: const BoxConstraints(),
                   ),
@@ -71,10 +127,33 @@ class ChangePasswordPage extends StatelessWidget {
                 TextFormField(
                   keyboardType: TextInputType.visiblePassword,
                   textInputAction: TextInputAction.done,
+                  obscureText: !_isConfirmPasswordVisible, // 控制密码可见性
                   decoration: InputDecoration(
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: SvgPicture.asset(AppIcons.eye),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                        });
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: _isConfirmPasswordVisible
+                              ? Colors.green.withOpacity(0.1) // 显示密码时的背景色
+                              : Colors.transparent,          // 隐藏密码时透明背景
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: SvgPicture.asset(
+                          AppIcons.eye,
+                          colorFilter: ColorFilter.mode(
+                            _isConfirmPasswordVisible
+                                ? Colors.green    // 显示密码时的图标颜色
+                                : Colors.grey,   // 隐藏密码时的图标颜色
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
                     ),
                     suffixIconConstraints: const BoxConstraints(),
                   ),

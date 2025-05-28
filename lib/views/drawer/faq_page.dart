@@ -13,7 +13,7 @@ class FAQPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: const AppBackButton(),
-        title: const Text('FAQ'),
+        title: const Text('FAQs'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppDefaults.padding),

@@ -17,10 +17,10 @@ class LanguageSettingsPage extends StatefulWidget {
 class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
   // 全部国家/地区和推荐语言
   final List<String> _allCountries = [
-     'Chinese', 'English', 'Filipino', 'Malay', 'Tamil', 'Thai'
+     'Chinese', 'English', 'Malay'
   ];
   final List<String> _suggested = [
-    'English', 'Chinese', 'Malay'
+    'English'
   ];
 
   // 当前搜索关键字、已选语言

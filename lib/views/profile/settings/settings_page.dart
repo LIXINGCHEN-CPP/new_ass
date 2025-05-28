@@ -55,22 +55,22 @@ class SettingsPage extends StatelessWidget {
               onTap: () =>
                   Navigator.pushNamed(context, AppRoutes.changePhoneNumber),
             ),
-            AppSettingsListTile(
-              label: 'Edit Address',
-              trailing: SvgPicture.asset(AppIcons.right),
-              onTap: () =>
-                  Navigator.pushNamed(context, AppRoutes.deliveryAddress),
-            ),
+            // AppSettingsListTile(
+            //   label: 'Edit Address',
+            //   trailing: SvgPicture.asset(AppIcons.right),
+            //   onTap: () =>
+            //       Navigator.pushNamed(context, AppRoutes.deliveryAddress),
+            // ),
             // AppSettingsListTile(
             //   label: 'Location',
             //   trailing: SvgPicture.asset(AppIcons.right),
             //   onTap: () {},
             // ),
-            AppSettingsListTile(
-              label: 'Profile Setting',
-              trailing: SvgPicture.asset(AppIcons.right),
-              onTap: () => Navigator.pushNamed(context, AppRoutes.profileEdit),
-            ),
+            // AppSettingsListTile(
+            //   label: 'Profile Setting',
+            //   trailing: SvgPicture.asset(AppIcons.right),
+            //   onTap: () => Navigator.pushNamed(context, AppRoutes.profileEdit),
+            // ),
             AppSettingsListTile(
               label: 'Deactivate Account',
               trailing: SvgPicture.asset(AppIcons.right),
