@@ -95,7 +95,6 @@ Tapping a tab updates the `currentIndex` to switch pages without reloading them.
 Before running the app, clone the repository and navigate into the project folder:
 
 ```bash
-git clone https://github.com/7Packanyet/Mobile_Application_Assignment_Flutter.git
 cd Mobile_Application_Assignment_Flutter
 ```
 
