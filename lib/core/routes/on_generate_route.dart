@@ -82,7 +82,10 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => const CheckoutPage());
 
       case AppRoutes.categoryDetails:
-        return CupertinoPageRoute(builder: (_) => const CategoryProductPage());
+        return CupertinoPageRoute(
+          builder: (_) => const CategoryProductPage(),
+          settings: settings,
+        );
 
       case AppRoutes.login:
         return CupertinoPageRoute(builder: (_) => const LoginPage());
@@ -115,13 +118,18 @@ class RouteGenerator {
 
       case AppRoutes.bundleProduct:
         return CupertinoPageRoute(
-            builder: (_) => const BundleProductDetailsPage());
+          builder: (_) => const BundleProductDetailsPage(),
+          settings: settings,
+        );
 
       case AppRoutes.bundleDetailsPage:
         return CupertinoPageRoute(builder: (_) => const BundleDetailsPage());
 
       case AppRoutes.productDetails:
-        return CupertinoPageRoute(builder: (_) => const ProductDetailsPage());
+        return CupertinoPageRoute(
+          builder: (_) => const ProductDetailsPage(),
+          settings: settings,
+        );
 
       case AppRoutes.createMyPack:
         return CupertinoPageRoute(builder: (_) => const BundleCreatePage());

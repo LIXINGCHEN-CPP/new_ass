@@ -5,10 +5,16 @@ class ItemRow extends StatelessWidget {
     super.key,
     required this.title,
     required this.value,
+    this.titleStyle,
+    this.valueStyle,
+    this.valueColor,
   });
 
   final String title;
   final String value;
+  final TextStyle? titleStyle;
+  final TextStyle? valueStyle;
+  final Color? valueColor;
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +24,15 @@ class ItemRow extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            style: titleStyle ?? Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Colors.black,
                 ),
           ),
           const Spacer(),
           Text(
             value,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.black,
+            style: valueStyle ?? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: valueColor ?? Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
           ),

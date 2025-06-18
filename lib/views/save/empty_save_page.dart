@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-// 如果你的包名是 package:grocery，请这样导入；如果不是，请替换成你自己项目的包名
-import 'package:grocery/views/home/new_item_page.dart';
-
 import '../../core/components/network_image.dart';
 import '../../core/constants/app_defaults.dart';
+import '../../core/routes/app_routes.dart';
 
 class EmptySavePage extends StatelessWidget {
   const EmptySavePage({Key? key}) : super(key: key);
@@ -20,22 +18,21 @@ class EmptySavePage extends StatelessWidget {
         children: [
           const Spacer(flex: 2),
 
-          // 演示图片
+          // Demo image
           SizedBox(
             width: width * 0.7,
             child: Padding(
               padding: const EdgeInsets.all(AppDefaults.padding * 2),
               child: AspectRatio(
                 aspectRatio: 1,
-                child: NetworkImageWithLoader(
-                  // 这里使用位置参数，不要写 imageUrl:
+                child: const NetworkImageWithLoader(
                   'https://i.imgur.com/mbjap7k.png',
                 ),
               ),
             ),
           ),
 
-          // 标题
+          // Title
           Text(
             'Oppss!',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -45,7 +42,7 @@ class EmptySavePage extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          // 副标题
+          // Subtitle
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 24.0),
             child: Text(
@@ -56,22 +53,20 @@ class EmptySavePage extends StatelessWidget {
 
           const Spacer(),
 
-          // “Start Adding” 按钮
+          // "Start Browsing" button
           SizedBox(
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.all(AppDefaults.padding * 2),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushNamedAndRemoveUntil(
                     context,
-                    MaterialPageRoute(
-                      // 如果你的 NewItemPage 类使用了 const 构造，保留 const
-                      builder: (_) => const NewItemsPage(),
-                    ),
+                    AppRoutes.entryPoint,
+                    (route) => false,
                   );
                 },
-                child: const Text('Start Adding'),
+                child: const Text('Start Browsing'),
               ),
             ),
           ),

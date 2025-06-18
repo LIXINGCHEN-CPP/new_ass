@@ -63,7 +63,7 @@ class AppTheme {
         showValueIndicator: ShowValueIndicator.always,
         thumbColor: Colors.white,
       ),
-      tabBarTheme: const TabBarTheme(
+      tabBarTheme: const TabBarThemeData(
         labelColor: AppColors.primary,
         unselectedLabelColor: AppColors.placeholder,
         labelPadding: EdgeInsets.all(AppDefaults.padding),

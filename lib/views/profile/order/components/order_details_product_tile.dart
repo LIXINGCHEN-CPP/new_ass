@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/components/network_image.dart';
-import '../../../../core/models/dummy_product_model.dart';
+import '../../../../core/models/product_model.dart';
 
 class OrderDetailsProductTile extends StatelessWidget {
   const OrderDetailsProductTile({
@@ -20,7 +20,7 @@ class OrderDetailsProductTile extends StatelessWidget {
           child: AspectRatio(
             aspectRatio: 1 / 1,
             child: NetworkImageWithLoader(
-              data.cover,
+              data.coverImage,
               fit: BoxFit.contain,
             ),
           ),
@@ -46,7 +46,7 @@ class OrderDetailsProductTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '\$${data.price.toInt()}',
+              '\$${data.currentPrice.toInt()}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
