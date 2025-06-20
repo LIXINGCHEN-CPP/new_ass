@@ -19,7 +19,7 @@ class ProductGridView extends StatelessWidget {
           
           if (products.isEmpty) {
             return const Center(
-              child: Text('暂无商品'),
+              child: Text('No products available'),
             );
           }
           

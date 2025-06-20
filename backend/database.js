@@ -13,6 +13,8 @@ class Database {
       this.client = new MongoClient(config.mongodbUri);
       await this.client.connect();
       this.db = this.client.db(config.databaseName);
+      // Ensure a text index on the product name field for efficient full-text search (runs only if not created)
+      await this.db.collection('products').createIndex({ name: 'text' });
       console.log('Successfully connected to MongoDB Atlas');
       return true;
     } catch (error) {
@@ -74,12 +76,27 @@ class Database {
 
   async searchProducts(searchTerm) {
     const db = this.getDb();
+
+    // 1. Try using MongoDB text search on the name field (requires the index ensured in connect())
+    try {
+      const textResults = await db.collection('products')
+        .find(
+          { $text: { $search: searchTerm } },
+          { projection: { score: { $meta: 'textScore' } } }
+        )
+        .sort({ score: { $meta: 'textScore' } })
+        .toArray();
+
+      if (textResults.length) {
+        return textResults;
+      }
+    } catch (err) {
+      console.error('Text search failed, falling back to regex search:', err);
+    }
+
+    // 2. Fallback: case-insensitive regex that matches only the name field
     return await db.collection('products').find({
-      $or: [
-        { name: { $regex: searchTerm, $options: 'i' } },
-        { description: { $regex: searchTerm, $options: 'i' } },
-        { tags: { $in: [new RegExp(searchTerm, 'i')] } }
-      ]
+      name: { $regex: searchTerm, $options: 'i' }
     }).toArray();
   }
 

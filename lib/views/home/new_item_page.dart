@@ -26,7 +26,7 @@ class NewItemsPage extends StatelessWidget {
               
               if (products.isEmpty) {
                 return const Center(
-                  child: Text('暂无新品商品'),
+                  child: Text('No new products available'),
                 );
               }
               

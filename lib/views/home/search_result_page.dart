@@ -27,7 +27,7 @@ class SearchResultPage extends StatelessWidget {
               
               if (products.isEmpty) {
                 return const Center(
-                  child: Text('暂无搜索结果'),
+                  child: Text('No search results'),
                 );
               }
               

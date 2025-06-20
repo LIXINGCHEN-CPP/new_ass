@@ -4,6 +4,32 @@ import 'package:http/http.dart' as http;
 import '../models/category_model.dart';
 import '../models/product_model.dart';
 import '../models/bundle_model.dart';
+import 'dart:math' as math;
+
+/// Product search data structure
+class ProductSearchData {
+  final String name;
+
+  ProductSearchData({
+    required this.name,
+  });
+}
+
+/// Keyword scoring result
+class _KeywordScoreResult {
+  final double score;
+  final String matchType;
+
+  _KeywordScoreResult({required this.score, required this.matchType});
+}
+
+/// Field scoring result
+class _FieldScoreResult {
+  final double score;
+  final String matchType;
+
+  _FieldScoreResult({required this.score, required this.matchType});
+}
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -13,7 +39,7 @@ class DatabaseService {
   bool _isConnected = false;
   bool _useLocalData = false;
 
-  // Backend API配置 - 使用10.0.2.2来访问主机localhost（适用于Android模拟器）
+  // Backend API configuration - using 10.0.2.2 to access localhost (for Android emulator)
   static const String baseUrl = 'http://10.0.2.2:3000/api';
   static const String healthUrl = 'http://10.0.2.2:3000/health';
   static const Duration timeoutDuration = Duration(seconds: 10);
@@ -290,11 +316,7 @@ class DatabaseService {
   Future<List<ProductModel>> searchProducts(String query) async {
     if (_useLocalData) {
       final products = _getMockProducts();
-      return products.where((product) => 
-        product.name.toLowerCase().contains(query.toLowerCase()) ||
-        (product.description?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
-        product.tags.any((tag) => tag.toLowerCase().contains(query.toLowerCase()))
-      ).toList();
+      return _searchProductsWithScoring(products, query);
     }
     
     try {
@@ -302,19 +324,145 @@ class DatabaseService {
       
       if (responseData['success'] == true) {
         final List<dynamic> data = responseData['data'];
-        return data.map((json) => ProductModel.fromJson(json)).toList();
+        final products = data.map((json) => ProductModel.fromJson(json)).toList();
+        // Re-rank using local scoring algorithm to ensure frontend rule compliance
+        return _searchProductsWithScoring(products, query);
       } else {
         throw Exception(responseData['message'] ?? 'Search failed');
       }
     } catch (e) {
       debugPrint('Product search failed: $e, using local search');
       final products = await getProducts();
-      return products.where((product) => 
-        product.name.toLowerCase().contains(query.toLowerCase()) ||
-        (product.description?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
-        product.tags.any((tag) => tag.toLowerCase().contains(query.toLowerCase()))
-      ).toList();
+      return _searchProductsWithScoring(products, query);
     }
+  }
+
+  /// Smart multi-keyword search algorithm: supports space-separated keywords, searches product name only
+  List<ProductModel> _searchProductsWithScoring(List<ProductModel> products, String query) {
+    if (query.isEmpty) return [];
+    
+    final originalQuery = query.trim();
+    final keywords = _splitQuery(originalQuery);
+    final List<MapEntry<ProductModel, double>> scoredResults = [];
+    
+    debugPrint('🔍 Search query: "$originalQuery"');
+    debugPrint('📝 Split keywords: ${keywords.join(", ")}');
+    
+    for (final product in products) {
+      final ProductSearchData searchData = ProductSearchData(
+        name: product.name.toLowerCase(),
+      );
+      
+      double totalScore = 0;
+      List<String> matchDetails = [];
+      int matchedKeywords = 0;
+      
+      // Calculate score for each keyword
+      for (final keyword in keywords) {
+        final keywordScore = _calculateKeywordScore(searchData, keyword);
+        if (keywordScore.score > 0) {
+          totalScore += keywordScore.score;
+          matchedKeywords++;
+          matchDetails.add('${keyword}(${keywordScore.score.toStringAsFixed(0)}${keywordScore.matchType})');
+        }
+      }
+      
+      // Only products matching all keywords are included in results
+      if (matchedKeywords == keywords.length) {
+        // Multi-keyword bonus: more keywords matched, higher reward
+        double multiKeywordBonus = keywords.length > 1 ? (keywords.length - 1) * 100 : 0;
+        totalScore += multiKeywordBonus;
+        
+        // Length weight: shorter product names get higher scores
+        double lengthBonus = math.max(0, (30 - searchData.name.length) * 3);
+        totalScore += lengthBonus;
+        
+        // Completeness bonus: more complete matches get higher scores
+        double completenessBonus = (matchedKeywords / keywords.length) * 200;
+        totalScore += completenessBonus;
+        
+        debugPrint('  ✅ ${product.name} -> Score: ${totalScore.toStringAsFixed(1)} (${matchDetails.join(", ")})');
+        scoredResults.add(MapEntry(product, totalScore));
+      } else {
+        debugPrint('  ❌ ${product.name} -> Partial match ($matchedKeywords/${keywords.length} keywords)');
+      }
+    }
+    
+    // Sort by score in descending order
+    scoredResults.sort((a, b) => b.value.compareTo(a.value));
+    
+    debugPrint('🏆 Search results sorted (total ${scoredResults.length}):');
+    for (int i = 0; i < math.min(5, scoredResults.length); i++) {
+      final entry = scoredResults[i];
+      debugPrint('  ${i + 1}. ${entry.key.name} (${entry.value.toStringAsFixed(1)})');
+    }
+    
+    return scoredResults.map((entry) => entry.key).toList();
+  }
+  
+  /// Split query into multiple keywords
+  List<String> _splitQuery(String query) {
+    return query.toLowerCase()
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((keyword) => keyword.isNotEmpty)
+        .toList();
+  }
+
+  /// Calculate score of a single keyword in product name
+  _KeywordScoreResult _calculateKeywordScore(ProductSearchData searchData, String keyword) {
+    // Search only in product name
+    final nameScore = _calculateFieldScore(searchData.name, keyword, 1.0);
+    return _KeywordScoreResult(
+      score: nameScore.score, 
+      matchType: nameScore.matchType,
+    );
+  }
+
+  /// Calculate field matching score
+  _FieldScoreResult _calculateFieldScore(String field, String keyword, double fieldWeight) {
+    if (field.isEmpty || keyword.isEmpty) {
+      return _FieldScoreResult(score: 0, matchType: '');
+    }
+    
+    double baseScore = 0;
+    String matchType = '';
+    
+    // 1. Exact match (highest score)
+    if (field == keyword) {
+      baseScore = 1000;
+      matchType = '=';
+    }
+    // 2. Starts with keyword (high score)
+    else if (field.startsWith(keyword)) {
+      baseScore = 900;
+      matchType = '^';
+    }
+    // 3. Word starts match (medium-high score)
+    else if (_wordStartsMatch(field, keyword)) {
+      baseScore = 700;
+      matchType = 'W';
+    }
+    // 4. Contains match (medium score)
+    else if (field.contains(keyword)) {
+      // Base score determined by keyword length, single character gets lower score
+      baseScore = keyword.length == 1 ? 300 : 500;
+      matchType = '~';
+      // Position weight: earlier position gets higher weight
+      int position = field.indexOf(keyword);
+      baseScore = baseScore - (position * 5);
+    }
+    
+    // Apply field weight
+    double finalScore = baseScore * fieldWeight;
+    
+    return _FieldScoreResult(score: finalScore, matchType: matchType);
+  }
+
+  /// Check if any word starts with the keyword
+  bool _wordStartsMatch(String text, String keyword) {
+    final words = text.split(RegExp(r'[^a-zA-Z0-9]+'));
+    return words.any((word) => word.startsWith(keyword) && word.isNotEmpty);
   }
 
   // Mock data methods
@@ -430,7 +578,7 @@ class DatabaseService {
         images: ['https://i.imgur.com/6unJlSL.png'],
         currentPrice: 13,
         originalPrice: 15,
-        categoryId: '12', // Others category (修正从Beauty改为Others)
+        categoryId: '12', // Others category (corrected from Beauty to Others)
         stock: 50,
         isNew: true,
         tags: ['ice cream', 'dessert', 'banana'],
@@ -444,7 +592,7 @@ class DatabaseService {
         images: ['https://i.imgur.com/oaCY49b.png'],
         currentPrice: 12,
         originalPrice: 15,
-        categoryId: '12', // Others category (修正从Beauty改为Others)
+        categoryId: '12', // Others category (corrected from Beauty to Others)
         stock: 30,
         isNew: true,
         tags: ['ice cream', 'dessert', 'vanilla'],
