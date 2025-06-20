@@ -7,7 +7,7 @@ import '../../../core/constants/constants.dart';
 class AdSpace extends StatelessWidget {
   const AdSpace({super.key});
 
-  // 你的广告图列表
+  // Your advertisement image list
   final List<String> adImageUrls = const [
     'https://i.imgur.com/8hBIsS5.png',
     'https://i.imgur.com/BuVEdyX.png',
@@ -16,14 +16,14 @@ class AdSpace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 屏幕可用宽度
+    // Available screen width
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
       child: SizedBox(
         width: screenWidth,
-        // 保证宽高比 16:9
+        // Ensure aspect ratio 16:9
         child: AspectRatio(
           aspectRatio: 16 / 9,
           child: CarouselSlider.builder(
@@ -38,23 +38,23 @@ class AdSpace extends StatelessWidget {
               );
             },
             options: CarouselOptions(
-              // 视口占满整个 AspectRatio 区域
+              // Viewport fills the entire AspectRatio area
               viewportFraction: 1.0,
-              // 自动播放
+              // Auto play
               autoPlay: true,
-              // 中心放大，去掉也行，按需设
+              // Center enlargement, optional, set as needed
               enlargeCenterPage: true,
-              // 不再使用 aspectRatio 参数，外层 AspectRatio 已固定大小
+              // No longer use aspectRatio parameter, outer AspectRatio has fixed size
               // aspectRatio: 16/9,
 
-              // 每隔 5 秒切换一次
+              // Switch every 5 seconds
               autoPlayInterval: const Duration(seconds: 3),
-              // 滑动动画持续 800 毫秒
+              // Sliding animation lasts 800 milliseconds
               autoPlayAnimationDuration: const Duration(milliseconds: 600),
-              // 动画曲线（可选）
+              // Animation curve (optional)
               autoPlayCurve: Curves.easeInOut,
 
-              // 外层 AspectRatio 已固定大小，无需在此重复设置
+              // Outer AspectRatio has fixed size, no need to set again here
             ),
           ),
         ),

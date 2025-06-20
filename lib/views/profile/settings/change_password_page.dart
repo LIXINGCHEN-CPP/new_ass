@@ -12,7 +12,7 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  // 控制每个密码字段的可见性
+  // Control visibility of each password field
   bool _isCurrentPasswordVisible = false;
   bool _isNewPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -49,7 +49,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 TextFormField(
                   keyboardType: TextInputType.visiblePassword,
                   textInputAction: TextInputAction.next,
-                  obscureText: !_isCurrentPasswordVisible, // 控制密码可见性
+                  obscureText: !_isCurrentPasswordVisible, // Control password visibility
                   decoration: InputDecoration(
                     suffixIcon: GestureDetector(
                       onTap: () {
@@ -62,16 +62,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: _isCurrentPasswordVisible
-                              ? Colors.green.withOpacity(0.1) // 显示密码时的背景色
-                              : Colors.transparent,          // 隐藏密码时透明背景
+                              ? Colors.green.withOpacity(0.1) // Background color when password is visible
+                              : Colors.transparent,          // Transparent background when password is hidden
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: SvgPicture.asset(
                           AppIcons.eye,
                           colorFilter: ColorFilter.mode(
                             _isCurrentPasswordVisible
-                                ? Colors.green    // 显示密码时的图标颜色
-                                : Colors.grey,   // 隐藏密码时的图标颜色
+                                ? Colors.green    // Icon color when password is visible
+                                : Colors.grey,   // Icon color when password is hidden
                             BlendMode.srcIn,
                           ),
                         ),
@@ -88,7 +88,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 TextFormField(
                   keyboardType: TextInputType.visiblePassword,
                   textInputAction: TextInputAction.next,
-                  obscureText: !_isNewPasswordVisible, // 控制密码可见性
+                  obscureText: !_isNewPasswordVisible, // Control password visibility
                   decoration: InputDecoration(
                     suffixIcon: GestureDetector(
                       onTap: () {
@@ -101,16 +101,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: _isNewPasswordVisible
-                              ? Colors.green.withOpacity(0.1) // 显示密码时的背景色
-                              : Colors.transparent,          // 隐藏密码时透明背景
+                              ? Colors.green.withOpacity(0.1) // Background color when password is visible
+                              : Colors.transparent,          // Transparent background when password is hidden
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: SvgPicture.asset(
                           AppIcons.eye,
                           colorFilter: ColorFilter.mode(
                             _isNewPasswordVisible
-                                ? Colors.green    // 显示密码时的图标颜色
-                                : Colors.grey,   // 隐藏密码时的图标颜色
+                                ? Colors.green    // Icon color when password is visible
+                                : Colors.grey,   // Icon color when password is hidden
                             BlendMode.srcIn,
                           ),
                         ),
@@ -127,7 +127,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 TextFormField(
                   keyboardType: TextInputType.visiblePassword,
                   textInputAction: TextInputAction.done,
-                  obscureText: !_isConfirmPasswordVisible, // 控制密码可见性
+                  obscureText: !_isConfirmPasswordVisible, // Control password visibility
                   decoration: InputDecoration(
                     suffixIcon: GestureDetector(
                       onTap: () {
@@ -140,16 +140,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: _isConfirmPasswordVisible
-                              ? Colors.green.withOpacity(0.1) // 显示密码时的背景色
-                              : Colors.transparent,          // 隐藏密码时透明背景
+                              ? Colors.green.withOpacity(0.1) // Background color when password is visible
+                              : Colors.transparent,          // Transparent background when password is hidden
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: SvgPicture.asset(
                           AppIcons.eye,
                           colorFilter: ColorFilter.mode(
                             _isConfirmPasswordVisible
-                                ? Colors.green    // 显示密码时的图标颜色
-                                : Colors.grey,   // 隐藏密码时的图标颜色
+                                ? Colors.green    // Icon color when password is visible
+                                : Colors.grey,   // Icon color when password is hidden
                             BlendMode.srcIn,
                           ),
                         ),

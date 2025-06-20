@@ -19,7 +19,8 @@ class CardDetails extends StatelessWidget {
           const Text("Card Name"),
           const SizedBox(height: 8),
           TextFormField(
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.name,
+            initialValue: "Shirley Hart",
             // validator: Validators.requiredWithFieldName('Card'),
             textInputAction: TextInputAction.next,
           ),
@@ -30,6 +31,7 @@ class CardDetails extends StatelessWidget {
           const SizedBox(height: 8),
           TextFormField(
             keyboardType: TextInputType.number,
+            initialValue: "1464 *** 5456",
             // validator: Validators.requiredWithFieldName('Card Number'),
             textInputAction: TextInputAction.next,
           ),
@@ -42,11 +44,12 @@ class CardDetails extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Number Field
+                    // Expiration Date Field
                     const Text("Expiration Date"),
                     const SizedBox(height: 8),
                     TextFormField(
                       keyboardType: TextInputType.number,
+                      initialValue: "10/28",
                       // validator: Validators.requiredWithFieldName('Card'),
                       textInputAction: TextInputAction.next,
                     ),
@@ -59,11 +62,12 @@ class CardDetails extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Number Field
+                    // CVV Field
                     const Text("CVV"),
                     const SizedBox(height: 8),
                     TextFormField(
                       keyboardType: TextInputType.number,
+                      initialValue: "542",
                       // validator: Validators.requiredWithFieldName('Card'),
                       textInputAction: TextInputAction.next,
                     ),

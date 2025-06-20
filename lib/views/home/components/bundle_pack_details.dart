@@ -29,7 +29,7 @@ class PackDetails extends StatelessWidget {
             ),
           ),
           /* <---- Items here -----> */
-          // 如果有具体的产品详情，显示产品详情
+          // If there are specific product details, show product details
           if (bundle.items.isNotEmpty) ...[
             ...bundle.items.map((item) => ListTile(
               leading: AspectRatio(
@@ -62,7 +62,7 @@ class PackDetails extends StatelessWidget {
               ),
             )),
           ] else ...[
-            // 如果没有详细产品信息，显示模拟数据
+            // If there's no detailed product information, show mock data
             ...List.generate(
               bundle.itemNames.length.clamp(1, 5),
               (index) => ListTile(

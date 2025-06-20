@@ -12,7 +12,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.cardColor,
       body: SafeArea(
-        // 用 ListView 代替 Column，让内容超出时可以滚动
+        // Use ListView instead of Column to allow scrolling when content overflows
         child: ListView(
           padding: EdgeInsets.zero,
           children: const [

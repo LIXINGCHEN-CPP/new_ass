@@ -6,7 +6,9 @@ import '../../../core/constants/app_defaults.dart';
 import '../../../core/routes/app_routes.dart';
 
 class DeliverySuccessfullDialog extends StatelessWidget {
-  const DeliverySuccessfullDialog({super.key});
+  final String? orderId;
+
+  const DeliverySuccessfullDialog({super.key, this.orderId});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class DeliverySuccessfullDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '#15425050',
+                  orderId != null ? '#$orderId' : '#',
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge
@@ -62,7 +64,17 @@ class DeliverySuccessfullDialog extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  // Navigator.pushNamed(context, AppRoutes.submitReview);
+                  if (orderId != null && orderId!.isNotEmpty) {
+                    Navigator.of(context, rootNavigator: true).pushReplacementNamed(
+                      AppRoutes.orderDetails,
+                      arguments: orderId,
+                    );
+                  } else {
+                    // Fallback: navigate to My Orders page
+                    Navigator.of(context, rootNavigator: true).pushReplacementNamed(
+                      AppRoutes.myOrder,
+                    );
+                  }
                 },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,

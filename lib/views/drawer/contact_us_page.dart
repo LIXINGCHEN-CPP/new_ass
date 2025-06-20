@@ -27,7 +27,7 @@ class ContactUsPage extends StatelessWidget {
               color: AppColors.scaffoldBackground,
               borderRadius: AppDefaults.borderRadius,
             ),
-            // 改用 SingleChildScrollView 包裹
+            // Use SingleChildScrollView wrapper
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(
                 horizontal: horizontalPadding,
@@ -36,7 +36,7 @@ class ContactUsPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 标题
+                  // Title
                   Text(
                     'Contact Us',
                     style: Theme.of(context)
@@ -49,7 +49,7 @@ class ContactUsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: AppDefaults.padding * 2),
 
-                  // 电话行
+                  // Phone row
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -81,7 +81,7 @@ class ContactUsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: AppDefaults.padding),
 
-                  // 邮箱行
+                  // Email row
                   Row(
                     children: [
                       SvgPicture.asset(AppIcons.contactEmail),
@@ -99,7 +99,7 @@ class ContactUsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: AppDefaults.padding),
 
-                  // 地址行
+                  // Address row
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -118,10 +118,10 @@ class ContactUsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: AppDefaults.padding),
 
-                  // 图片
+                  // Image
                   LayoutBuilder(
                     builder: (ctx, constraints) {
-                      // 宽度不要超过剩余空间
+                      // Width should not exceed remaining space
                       final width = constraints.maxWidth;
                       return SizedBox(
                         width: width,

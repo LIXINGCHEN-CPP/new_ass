@@ -15,7 +15,7 @@ class LanguageSettingsPage extends StatefulWidget {
 }
 
 class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
-  // 全部国家/地区和推荐语言
+  // All countries/regions and recommended languages
   final List<String> _allCountries = [
      'Chinese', 'English', 'Malay'
   ];
@@ -23,13 +23,13 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
     'English'
   ];
 
-  // 当前搜索关键字、已选语言
+  // Current search keyword and selected language
   String _searchText = '';
   String _selected = 'English';
 
   @override
   Widget build(BuildContext context) {
-    // 根据搜索关键字过滤列表
+    // Filter list based on search keyword
     final filteredSuggested = _suggested
         .where((lang) => lang.toLowerCase().contains(_searchText.toLowerCase()))
         .toList();
@@ -56,7 +56,7 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
           ),
           child: Column(
             children: [
-              // 搜索框
+              // Search box
               Theme(
                 data: Theme.of(context).copyWith(
                   inputDecorationTheme: AppTheme.secondaryInputDecorationTheme,
@@ -79,7 +79,7 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
                 ),
               ),
 
-              // 推荐语言
+              // Recommended languages
               if (filteredSuggested.isNotEmpty) ...[
                 const SizedBox(height: AppDefaults.padding),
                 const Align(
@@ -102,7 +102,7 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
                 }),
               ],
 
-              // 所有国家/地区
+              // All countries/regions
               const SizedBox(height: AppDefaults.padding),
               const Align(
                 alignment: Alignment.centerLeft,

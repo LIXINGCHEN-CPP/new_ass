@@ -8,6 +8,7 @@ import 'core/providers/app_provider.dart';
 import 'core/providers/cart_provider.dart';
 import 'core/providers/favorite_provider.dart';
 import 'core/providers/order_provider.dart';
+import 'core/providers/notification_provider.dart';
 import 'core/services/database_service.dart';
 
 void main() async {
@@ -49,6 +50,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => OrderProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => NotificationProvider(),
         ),
       ],
       child: MaterialApp(

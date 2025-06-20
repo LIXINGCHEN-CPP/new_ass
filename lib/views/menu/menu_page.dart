@@ -59,7 +59,7 @@ class CategoriesGrid extends StatelessWidget {
                   Navigator.pushNamed(
                     context, 
                     AppRoutes.categoryDetails,
-                    arguments: category.id, // 传递分类ID以便动态显示商品
+                    arguments: category.id, // Pass category ID for dynamic product display
                   );
                 },
               );

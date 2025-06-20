@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import '../../core/components/app_back_button.dart';
-import '../../core/constants/app_defaults.dart';    // ← 一定要加这行
-import 'components/faq_item.dart';                  // 你的 TitleAndParagraph 定义在这里
+import '../../core/constants/app_defaults.dart';    // Must add this line
+import 'components/faq_item.dart';                  // Your TitleAndParagraph defined here
 
 class FAQPage extends StatelessWidget {
   const FAQPage({super.key});

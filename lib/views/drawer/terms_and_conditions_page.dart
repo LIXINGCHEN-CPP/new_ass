@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import '../../core/components/app_back_button.dart';
-import '../../core/constants/app_defaults.dart';  // 如果要用 padding
-import 'components/faq_item.dart';                // 你的 TitleAndParagraph
+import '../../core/constants/app_defaults.dart';  // If you want to use padding
+import 'components/faq_item.dart';                // Your TitleAndParagraph
 
 class TermsAndConditionsPage extends StatelessWidget {
   const TermsAndConditionsPage({super.key});

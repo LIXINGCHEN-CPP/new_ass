@@ -15,10 +15,10 @@ class SignUpForm extends StatefulWidget {
 }
 
 class _SignUpFormState extends State<SignUpForm> {
-  // 用来控制密码是否隐藏
+  // Used to control whether password is hidden
   bool _obscureText = true;
 
-  // 切换 _obscureText 的方法
+  // Method to toggle _obscureText
   void _togglePasswordVisibility() {
     setState(() {
       _obscureText = !_obscureText;
@@ -59,7 +59,7 @@ class _SignUpFormState extends State<SignUpForm> {
           TextFormField(
             validator: Validators.required.call,
             textInputAction: TextInputAction.next,
-            // 根据 _obscureText 决定是否隐藏
+            // Decide whether to hide based on _obscureText
             obscureText: _obscureText,
             decoration: InputDecoration(
               suffixIcon: GestureDetector(
@@ -69,8 +69,8 @@ class _SignUpFormState extends State<SignUpForm> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: !_obscureText
-                        ? Colors.green.withOpacity(0.1) // 显示密码时的背景色
-                        : Colors.transparent,          // 隐藏密码时透明背景
+                        ? Colors.green.withOpacity(0.1) // Background color when password is visible
+                        : Colors.transparent,          // Transparent background when password is hidden
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: SvgPicture.asset(
@@ -78,8 +78,8 @@ class _SignUpFormState extends State<SignUpForm> {
                     width: 24,
                     colorFilter: ColorFilter.mode(
                       !_obscureText
-                          ? Colors.green    // 显示密码时的图标颜色
-                          : Colors.grey,   // 隐藏密码时的图标颜色
+                          ? Colors.green    // Icon color when password is visible
+                          : Colors.grey,   // Icon color when password is hidden
                       BlendMode.srcIn,
                     ),
                   ),

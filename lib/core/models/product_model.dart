@@ -37,7 +37,7 @@ class ProductModel {
     this.updatedAt,
   });
 
-  // 保持兼容性的getter，映射到新的字段名
+  // Compatibility getter, mapped to new field name
   String get cover => coverImage;
   double get price => currentPrice;
   double get mainPrice => originalPrice;

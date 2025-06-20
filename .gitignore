@@ -108,5 +108,9 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
+# Documentation files
+*.md
+*.txt
+
 Suggestions.txt
 recoding.txt

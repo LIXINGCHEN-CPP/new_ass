@@ -33,12 +33,12 @@ class _HelpPageState extends State<HelpPage> {
     HelpItem(
       question: 'How can I get the order status?',
       answer:
-      'Open My Orders, tap the order you want, and you’ll see its current status and history.',
+      'Open My Orders, tap the order you want, and you will see its current status and history.',
     ),
     HelpItem(
       question: 'How to apply a voucher?',
       answer:
-      'On the Checkout screen enter your voucher code under “Apply Voucher” and tap Apply.',
+      'On the Checkout screen enter your voucher code under "Apply Voucher" and tap Apply.',
     ),
     HelpItem(
       question: 'What payment methods are supported?',
@@ -48,7 +48,7 @@ class _HelpPageState extends State<HelpPage> {
     HelpItem(
       question: 'How do I reset my password?',
       answer:
-      'On the Login screen tap “Forgot Password”, enter your email/phone and follow the steps.',
+      'On the Login screen tap "Forgot Password", enter your email/phone and follow the steps.',
     ),
     HelpItem(
       question: 'How can I contact customer support?',
@@ -96,7 +96,7 @@ class _HelpPageState extends State<HelpPage> {
         padding: const EdgeInsets.all(AppDefaults.padding),
         child: Column(
           children: [
-            // 搜索框
+            // Search box
             Material(
               color: Colors.white,
               elevation: 2,
@@ -125,7 +125,7 @@ class _HelpPageState extends State<HelpPage> {
 
             const SizedBox(height: AppDefaults.padding),
 
-            // 结果列表
+            // Results list
             Expanded(
               child: results.isEmpty
                   ? Center(

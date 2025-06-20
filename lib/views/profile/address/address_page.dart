@@ -11,33 +11,19 @@ class AddressPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Updated to match checkout page addresses
     final addresses = [
-  {
-    'label': 'Home',
-    'address': '1234 Elm Street',
-    'number': '+8613012345678',
-  },
-  {
-    'label': 'Office',
-    'address': '789 Business Ave',
-    'number': '+8613512345678',
-  },
-  {
-    'label': 'Parents House',
-    'address': 'No. 1 Happy Lane',
-    'number': '+8613812345678',
-  },
-  {
-    'label': 'Friend\'s Place',
-    'address': '56 Green Road',
-    'number': '+8615012345678',
-  },
-  {
-    'label': 'Temporary',
-    'address': '404 Nowhere St.',
-    'number': '+8617012345678',
-  },
-];
+      {
+        'label': 'Bell Suites',
+        'phoneNumber': '(60) 123-627-496',
+        'address': '10-02, Bell Suites, Kota Warisan',
+      },
+      {
+        'label': 'Xiamen University Malaysia',
+        'phoneNumber': '(60) 11-2423-4875',
+        'address': 'Jalan Sunsuria, Bandar Sunsuria',
+      },
+    ];
 
     return Scaffold(
       backgroundColor: AppColors.cardColor,
@@ -47,40 +33,45 @@ class AddressPage extends StatelessWidget {
           'Delivery Address',
         ),
       ),
-      body: Container(
-        margin: const EdgeInsets.all(AppDefaults.margin),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppDefaults.padding),
-        decoration: BoxDecoration(
-          color: AppColors.scaffoldBackground,
-          borderRadius: AppDefaults.borderRadius,
-        ),
-        child: Stack(
+        child: Column(
           children: [
-            ListView.separated(
+            // Address list
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: addresses.length,
               itemBuilder: (context, index) {
-                final item = addresses[index];
+                final address = addresses[index];
                 return AddressTile(
-                label: item['label']!,
-                address: item['address']!,
-                number: item['number']!,
-                isActive: index == 0,
+                  label: address['label']!,
+                  phoneNumber: address['phoneNumber']!,
+                  address: address['address']!,
+                  isActive: index == 1, // Xiamen University Malaysia is active by default
+                  onTap: () {
+                    // Handle address selection
+                  },
                 );
               },
-              itemCount: addresses.length,
-
-              separatorBuilder: (context, index) =>
-                  const Divider(thickness: 0.2),
             ),
-            Positioned(
-              bottom: 16,
-              right: 16,
-              child: FloatingActionButton(
+            
+            const SizedBox(height: AppDefaults.padding * 2),
+            
+            // Add new address button
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
                 onPressed: () {
                   Navigator.pushNamed(context, AppRoutes.newAddress);
                 },
-                backgroundColor: AppColors.primary,
-                splashColor: AppColors.primary,
-                child: const Icon(Icons.add),
+                icon: const Icon(Icons.add),
+                label: const Text('Add New Address'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.all(AppDefaults.padding),
+                  side: const BorderSide(color: AppColors.primary),
+                  foregroundColor: AppColors.primary,
+                ),
               ),
             ),
           ],
@@ -93,65 +84,127 @@ class AddressPage extends StatelessWidget {
 class AddressTile extends StatelessWidget {
   const AddressTile({
     super.key,
-    required this.address,
     required this.label,
-    required this.number,
+    required this.phoneNumber,
+    required this.address,
     required this.isActive,
+    required this.onTap,
   });
 
-  final String address;
   final String label;
-  final String number;
+  final String phoneNumber;
+  final String address;
   final bool isActive;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppRadio(isActive: isActive),
-          const SizedBox(width: AppDefaults.padding),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.black,
-                    ),
+      padding: const EdgeInsets.symmetric(
+        vertical: AppDefaults.padding / 2,
+      ),
+      child: Material(
+        color: isActive
+            ? AppColors.coloredBackground
+            : AppColors.textInputBackground,
+        borderRadius: AppDefaults.borderRadius,
+        child: InkWell(
+          borderRadius: AppDefaults.borderRadius,
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.all(AppDefaults.padding),
+            decoration: BoxDecoration(
+              borderRadius: AppDefaults.borderRadius,
+              border: Border.all(
+                color: isActive ? AppColors.primary : Colors.grey,
+                width: isActive ? 1 : 0.3,
               ),
-              const SizedBox(height: 4),
-              Text(address),
-              const SizedBox(height: 4),
-              Text(
-                number,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.black,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppRadio(isActive: isActive),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        phoneNumber,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey[600],
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        address,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey[600],
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Column(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        // Handle edit
+                        Navigator.pushNamed(context, AppRoutes.newAddress);
+                      },
+                      icon: SvgPicture.asset(AppIcons.edit),
+                      constraints: const BoxConstraints(),
+                      iconSize: 16,
+                      tooltip: 'Edit Address',
                     ),
-              )
-            ],
+                    const SizedBox(height: AppDefaults.margin / 2),
+                    IconButton(
+                      onPressed: () {
+                        // Handle delete with confirmation
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Delete Address'),
+                            content: Text('Are you sure you want to delete "$label" address?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('$label address deleted')),
+                                  );
+                                },
+                                child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      icon: SvgPicture.asset(AppIcons.deleteOutline),
+                      constraints: const BoxConstraints(),
+                      iconSize: 16,
+                      tooltip: 'Delete Address',
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          const Spacer(),
-          Column(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset(AppIcons.edit),
-                constraints: const BoxConstraints(),
-                iconSize: 14,
-              ),
-              const SizedBox(height: AppDefaults.margin / 2),
-              IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset(AppIcons.deleteOutline),
-                constraints: const BoxConstraints(),
-                iconSize: 14,
-              ),
-            ],
-          )
-        ],
+        ),
       ),
     );
   }

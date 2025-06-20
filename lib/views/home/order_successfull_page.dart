@@ -4,9 +4,16 @@ import '../../core/components/network_image.dart';
 import '../../core/constants/app_defaults.dart';
 import '../../core/utils/ui_util.dart';
 import '../cart/dialogs/delivered_successfull.dart';
+import '../../core/routes/app_routes.dart';
 
 class OrderSuccessfullPage extends StatelessWidget {
   const OrderSuccessfullPage({super.key});
+
+  String? _getOrderId(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is String) return args;
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +69,10 @@ class OrderSuccessfullPage extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
+                        final orderId = _getOrderId(context);
                         UiUtil.openDialog(
                           context: context,
-                          widget: const DeliverySuccessfullDialog(),
+                          widget: DeliverySuccessfullDialog(orderId: orderId),
                         );
                       },
                       child: const Text('Continue'),
@@ -78,7 +86,9 @@ class OrderSuccessfullPage extends StatelessWidget {
                   child: SizedBox(
                     width: double.infinity,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.myOrder);
+                      },
                       child: const Text('Track Order'),
                     ),
                   ),

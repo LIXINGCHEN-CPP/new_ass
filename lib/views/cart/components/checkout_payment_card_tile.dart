@@ -29,32 +29,45 @@ class PaymentCardTile extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: AppDefaults.borderRadius,
-          child: Container(
-            height: 66,
-            width: 135,
-            padding: const EdgeInsets.symmetric(),
-            decoration: BoxDecoration(
-              borderRadius: AppDefaults.borderRadius,
-              border: Border.all(
-                color: isActive ? AppColors.primary : AppColors.placeholder,
-                width: isActive ? 1 : 0.2,
+                      child: Container(
+              height: 78,
+              width: 140,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                borderRadius: AppDefaults.borderRadius,
+                border: Border.all(
+                  color: isActive ? AppColors.primary : AppColors.placeholder,
+                  width: isActive ? 1 : 0.2,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (icon.startsWith('http'))
+                    Image.network(
+                      icon,
+                      width: 24,
+                      height: 24,
+                    )
+                  else
+                    SvgPicture.asset(icon),
+                  const SizedBox(height: 6),
+                  Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(
+                          color: Colors.black,
+                          fontSize: 13,
+                        ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(icon),
-                const SizedBox(height: 8),
-                Text(
-                  label,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(color: Colors.black),
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );

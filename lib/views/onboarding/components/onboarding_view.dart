@@ -16,7 +16,7 @@ class OnboardingView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // 图片部分：分掉 6 份高度中的 4 份
+        // Image section: takes 4 out of 6 parts of height
         Flexible(
           flex: 4,
           child: Padding(
@@ -28,7 +28,7 @@ class OnboardingView extends StatelessWidget {
           ),
         ),
 
-        // 文本部分：分掉 6 份高度中的 2 份
+        // Text section: takes 2 out of 6 parts of height
         Flexible(
           flex: 2,
           child: Padding(

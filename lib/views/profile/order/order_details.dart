@@ -6,6 +6,8 @@ import '../../../core/components/app_back_button.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_defaults.dart';
 import '../../../core/providers/order_provider.dart';
+import '../../../core/providers/notification_provider.dart';
+import '../../../core/enums/dummy_order_status.dart';
 import 'components/order_details_statuses.dart';
 import 'components/order_details_total_amount_and_paid.dart';
 import 'components/order_details_total_order_product_details.dart';
@@ -104,6 +106,65 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             ),
           );
         },
+      ),
+      floatingActionButton: kDebugMode ? Consumer2<OrderProvider, NotificationProvider>(
+        builder: (context, orderProvider, notificationProvider, child) {
+          final order = orderProvider.currentOrder;
+          if (order == null) return const SizedBox.shrink();
+          
+          return FloatingActionButton(
+            onPressed: () {
+              _showStatusUpdateDialog(context, order, notificationProvider);
+            },
+            child: const Icon(Icons.notification_add),
+          );
+        },
+      ) : null,
+    );
+  }
+
+  void _showStatusUpdateDialog(BuildContext context, order, NotificationProvider notificationProvider) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Test Notification'),
+        content: const Text('Add a status update notification for this order?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              // Create a copy of the order with next status
+              final currentStatus = order.status;
+              OrderStatus? nextStatus;
+              
+              switch (currentStatus) {
+                case OrderStatus.confirmed:
+                  nextStatus = OrderStatus.processing;
+                  break;
+                case OrderStatus.processing:
+                  nextStatus = OrderStatus.shipped;
+                  break;
+                case OrderStatus.shipped:
+                  nextStatus = OrderStatus.delivery;
+                  break;
+                default:
+                  nextStatus = OrderStatus.confirmed;
+              }
+              
+              final updatedOrder = order.copyWith(status: nextStatus);
+              await notificationProvider.addOrderStatusNotification(updatedOrder);
+              
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Status notification added!')),
+              );
+            },
+            child: const Text('Add Notification'),
+          ),
+        ],
       ),
     );
   }
