@@ -122,6 +122,68 @@ class Database {
     const db = this.getDb();
     return await db.collection('bundles').findOne({ _id: new require('mongodb').ObjectId(id) });
   }
+
+  // Orders
+  async createOrder(orderData) {
+    const db = this.getDb();
+    const result = await db.collection('orders').insertOne({
+      ...orderData,
+      createdAt: new Date(),
+      confirmedAt: new Date() // Auto-confirm orders for now
+    });
+    return result.insertedId;
+  }
+
+  async getOrders(filters = {}) {
+    const db = this.getDb();
+    const query = {};
+    
+    if (filters.status !== undefined) {
+      query.status = filters.status;
+    }
+    
+    return await db.collection('orders').find(query).sort({ createdAt: -1 }).toArray();
+  }
+
+  async getOrderById(id) {
+    const db = this.getDb();
+    return await db.collection('orders').findOne({ _id: new require('mongodb').ObjectId(id) });
+  }
+
+  async getOrderByOrderId(orderId) {
+    const db = this.getDb();
+    return await db.collection('orders').findOne({ orderId: orderId });
+  }
+
+  async updateOrderStatus(id, status, timestamp = null) {
+    const db = this.getDb();
+    const updateData = { status };
+    
+    // Add timestamp based on status
+    const now = timestamp || new Date();
+    switch (status) {
+      case 0: // confirmed
+        updateData.confirmedAt = now;
+        break;
+      case 1: // processing
+        updateData.processingAt = now;
+        break;
+      case 2: // shipped
+        updateData.shippedAt = now;
+        break;
+      case 3: // delivery
+        updateData.deliveredAt = now;
+        break;
+      case 4: // cancelled
+        updateData.cancelledAt = now;
+        break;
+    }
+
+    return await db.collection('orders').updateOne(
+      { _id: new require('mongodb').ObjectId(id) },
+      { $set: updateData }
+    );
+  }
 }
 
 module.exports = new Database(); 

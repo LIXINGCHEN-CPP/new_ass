@@ -9,12 +9,16 @@ class OrderPreviewTile extends StatelessWidget {
     required this.orderID,
     required this.date,
     required this.status,
+    required this.totalAmount,
+    required this.items,
     required this.onTap,
   });
 
   final String orderID;
   final String date;
   final OrderStatus status;
+  final double totalAmount;
+  final List<dynamic> items; // Can be CartItemModel or similar
   final void Function() onTap;
 
   @override
@@ -39,19 +43,39 @@ class OrderPreviewTile extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Text('Order ID:'),
-                    const SizedBox(width: 5),
                     Text(
-                      '2324252627',
+                      date,
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge
                           ?.copyWith(color: Colors.black),
                     ),
                     const Spacer(),
-                    const Text('21 May'),
+                    Text(
+                      '\$${totalAmount.toStringAsFixed(2)}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
                   ],
                 ),
+                const SizedBox(height: 8),
+                // Product items preview
+                if (items.isNotEmpty) ...[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: _buildProductPreview(),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
                 Row(
                   children: [
                     const Text('Status'),
@@ -165,5 +189,64 @@ class OrderPreviewTile extends StatelessWidget {
       default:
         return Colors.red;
     }
+  }
+
+  List<Widget> _buildProductPreview() {
+    // Show only the first 3 unique products
+    final uniqueProducts = <String, dynamic>{};
+    
+    for (final item in items) {
+      final name = item.name ?? item['name'] ?? 'Unknown Product';
+      if (uniqueProducts.length < 3 && !uniqueProducts.containsKey(name)) {
+        uniqueProducts[name] = item;
+      }
+    }
+    
+    final widgets = <Widget>[];
+    
+    for (final entry in uniqueProducts.entries) {
+      final item = entry.value;
+      final name = entry.key;
+      final quantity = item.quantity ?? item['quantity'] ?? 1;
+      
+      widgets.add(
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            '$name×$quantity',
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+      );
+    }
+    
+    // Add "..." if there are more items
+    if (items.length > uniqueProducts.length) {
+      widgets.add(
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Text(
+            '...',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.black54,
+            ),
+          ),
+        ),
+      );
+    }
+    
+    return widgets;
   }
 }
