@@ -65,9 +65,10 @@ class FavoriteItemTile extends StatelessWidget {
                     arguments: favoriteItem.productDetails,
                   );
                 } else {
+                  // Navigate to bundleProduct page for complete bundle details
                   Navigator.pushNamed(
                     context,
-                    AppRoutes.bundleDetailsPage,
+                    AppRoutes.bundleProduct,
                     arguments: favoriteItem.bundleDetails,
                   );
                 }

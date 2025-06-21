@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/components/app_back_button.dart';
 import '../../core/constants/app_defaults.dart';
+import '../../core/constants/app_icons.dart';
 import '../../core/providers/favorite_provider.dart';
+import '../../core/routes/app_routes.dart';
 import 'components/favorite_item_tile.dart';
 import 'empty_save_page.dart';
 
@@ -24,7 +27,17 @@ class SavePage extends StatelessWidget {
           appBar: isHomePage
               ? null
               : AppBar(
-                  leading: const AppBackButton(),
+                  leading: IconButton(
+                    onPressed: () {
+                      // Always return to home (entrypoint with home tab)
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        AppRoutes.entryPoint,
+                        (route) => false,
+                      );
+                    },
+                    icon: SvgPicture.asset(AppIcons.arrowBackward),
+                  ),
                   title: Text('Favorites (${favoriteProvider.totalFavoritesCount})'),
                   actions: [
                     if (!favoriteProvider.isEmpty)

@@ -32,7 +32,7 @@ class BuyNowRow extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(AppDefaults.padding * 1.2),
               ),
-              child: const Text('Buy Now'),
+              child: const Text('Add to Cart'),
             ),
           ),
         ],
