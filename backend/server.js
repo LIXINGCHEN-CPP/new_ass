@@ -10,6 +10,10 @@ const apiRoutes = require('./routes/api');
 
 const app = express();
 
+// Trust proxy for cloud platforms (Render, Heroku, etc.)
+// This is required for rate limiting to work correctly behind reverse proxies
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 

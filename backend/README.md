@@ -1,6 +1,68 @@
 # Grocery Store Backend API
 
-Node.js backend service that connects to MongoDB Atlas database and provides API services for Flutter applications.
+Node.js/Express backend API for the Grocery Store Flutter application.
+
+## Features
+- REST API endpoints for categories, products, bundles, and orders
+- MongoDB Atlas integration
+- CORS enabled for Flutter app
+- Health check endpoint
+- Error handling and logging
+
+## Quick Deploy to Cloud
+
+### 1. Render (Recommended - Free)
+1. Fork/push this repository to GitHub
+2. Create account at [render.com](https://render.com)
+3. Create new Web Service from your GitHub repo
+4. Set build command: `npm install`
+5. Set start command: `npm start`
+6. Add environment variables:
+   - `NODE_ENV=production`
+   - `MONGODB_URI=your_mongodb_atlas_uri`
+
+### 2. Railway
+1. Create account at [railway.app](https://railway.app)
+2. Deploy from GitHub repo
+3. Add environment variable: `MONGODB_URI`
+
+### 3. Vercel
+1. Install Vercel CLI: `npm i -g vercel`
+2. Run: `vercel --prod`
+3. Set environment variables in Vercel dashboard
+
+## Environment Variables Required
+```
+NODE_ENV=production
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/grocery-store
+PORT=3000 (optional, defaults to 3000)
+```
+
+## After Deployment
+1. Get your deployed URL (e.g., `https://your-app.onrender.com`)
+2. Update Flutter app's `database_service.dart`:
+   ```dart
+   static const String baseUrl = 'https://your-app.onrender.com/api';
+   static const String healthUrl = 'https://your-app.onrender.com/health';
+   ```
+3. Test endpoints:
+   - Health: `GET /health`
+   - Categories: `GET /api/categories`
+   - Products: `GET /api/products`
+
+## Local Development
+```bash
+npm install
+npm run dev
+```
+
+## API Endpoints
+- `GET /health` - Health check
+- `GET /api/categories` - Get all categories
+- `GET /api/products` - Get all products
+- `GET /api/bundles` - Get all bundles
+- `POST /api/orders` - Create new order
+- And more...
 
 ## Quick Start
 

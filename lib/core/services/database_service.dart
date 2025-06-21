@@ -7,6 +7,7 @@ import '../models/bundle_model.dart';
 import '../models/order_model.dart';
 import '../models/cart_item_model.dart';
 import '../enums/dummy_order_status.dart';
+import '../constants/api_constants.dart';
 import 'dart:math' as math;
 
 /// Product search data structure
@@ -41,20 +42,15 @@ class DatabaseService {
 
   bool _isConnected = false;
   bool _useLocalData = false;
-
-  // Backend API configuration - using 10.0.2.2 to access localhost (for Android emulator)
-  static const String baseUrl = 'http://10.0.2.2:3000/api';
-  static const String healthUrl = 'http://10.0.2.2:3000/health';
-  static const Duration timeoutDuration = Duration(seconds: 10);
   
   // Test backend connection
   Future<bool> connect() async {
     try {
-      debugPrint('Testing backend API connection to: $healthUrl');
+      debugPrint('Testing backend API connection to: ${ApiConstants.healthUrl}');
       final response = await http.get(
-        Uri.parse(healthUrl),
+        Uri.parse(ApiConstants.healthUrl),
         headers: {'Content-Type': 'application/json'},
-      ).timeout(timeoutDuration);
+      ).timeout(ApiConstants.timeoutDuration);
       
       debugPrint('Health check response: ${response.statusCode}');
       debugPrint('Health check body: ${response.body}');
@@ -80,9 +76,9 @@ class DatabaseService {
   Future<Map<String, dynamic>> _makeRequest(String endpoint) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl$endpoint'),
+        Uri.parse('${ApiConstants.baseUrl}$endpoint'),
         headers: {'Content-Type': 'application/json'},
-      ).timeout(timeoutDuration);
+      ).timeout(ApiConstants.timeoutDuration);
 
       if (response.statusCode == 200) {
         return json.decode(response.body);
@@ -1026,14 +1022,14 @@ class DatabaseService {
         'deliveryAddress': deliveryAddress,
       };
 
-      debugPrint('Sending order request to: $baseUrl/orders');
+      debugPrint('Sending order request to: ${ApiConstants.baseUrl}/orders');
       debugPrint('Request body: ${json.encode(requestBody)}');
 
       final response = await http.post(
-        Uri.parse('$baseUrl/orders'),
+        Uri.parse('${ApiConstants.baseUrl}/orders'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(requestBody),
-      ).timeout(timeoutDuration);
+      ).timeout(ApiConstants.timeoutDuration);
 
       debugPrint('Order response status: ${response.statusCode}');
       debugPrint('Order response body: ${response.body}');
@@ -1157,10 +1153,10 @@ class DatabaseService {
 
     try {
       final response = await http.put(
-        Uri.parse('$baseUrl/orders/$orderId/status'),
+        Uri.parse('${ApiConstants.baseUrl}/orders/$orderId/status'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'status': newStatus.index}),
-      ).timeout(timeoutDuration);
+      ).timeout(ApiConstants.timeoutDuration);
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
