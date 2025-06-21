@@ -5,7 +5,20 @@
 
 ## Project Overview
 
-This Flutter application uses the **Material** component library along with third-party packages such as `flutter_svg` and `cached_network_image` to build its UI. All UI-related source code is located under the `lib` directory. The high-level structure is as follows:
+This is a complete **Flutter grocery store application** with a cloud-deployed **Node.js backend** and **MongoDB Atlas database**. The app features a modern Material Design interface, shopping cart functionality, order management, user authentication, and real-time backend integration.
+
+### 🚀 **Live Backend**: https://grocery-store-flutter-app.onrender.com
+### 📱 **Platform**: Android APK ready for distribution
+
+## Architecture
+
+- **Frontend**: Flutter (Dart) with Material Design
+- **Backend**: Node.js + Express.js (deployed on Render)
+- **Database**: MongoDB Atlas (cloud database)
+- **State Management**: Provider pattern
+- **HTTP Client**: Native Dart HTTP package
+
+The application uses the **Material** component library along with third-party packages such as `flutter_svg` and `cached_network_image` to build its UI. All UI-related source code is located under the `lib` directory. The high-level structure is as follows:
 
 * **Core Module (`lib/core`)**: Defines global constants, routing, shared components (themes, icons, colors, defaults, etc.).
 * **Views Module (`lib/views`)**: Organized into feature subdirectories (`home`, `menu`, `cart`, `auth`, `profile`, etc.), each containing page (`*Page.dart`) and widget files.
@@ -90,18 +103,107 @@ Tapping a tab updates the `currentIndex` to switch pages without reloading them.
 
 * **`save_page.dart`**: Displays either a list of saved products or an `EmptySavePage` with a prompt to add items.
 
-## Running the App
+## Backend API
 
-Before running the app, clone the repository and navigate into the project folder:
+The backend provides RESTful APIs for all app functionality:
 
+- **Health Check**: `GET /health`
+- **Categories**: `GET /api/categories`
+- **Products**: `GET /api/products` (with filtering support)
+- **Bundles**: `GET /api/bundles` 
+- **Orders**: `POST /api/orders`, `GET /api/orders`
+- **Search**: `GET /api/products/search/{query}`
+
+### Database Schema
+
+- **Categories**: 12 product categories with images and descriptions
+- **Products**: 18 products across all categories with pricing, images, and inventory
+- **Bundles**: Product bundles with combined pricing
+- **Orders**: Order management with status tracking
+
+## Features
+
+✅ **Complete E-commerce Flow**
+- Product browsing by categories
+- Search functionality with smart filtering
+- Shopping cart with quantity management
+- Order placement and tracking
+- Favorites/wishlist management
+
+✅ **User Management**
+- User authentication and registration
+- Profile management
+- Address management
+- Payment method storage
+
+✅ **Modern UI/UX**
+- Material Design 3 components
+- Smooth animations and transitions
+- Responsive layout
+- Dark/light theme support
+
+✅ **Backend Integration**
+- Real-time data from cloud database
+- Automatic fallback to local mock data
+- Error handling and offline support
+
+## Quick Start
+
+### Prerequisites
+- Flutter SDK (3.5.0+)
+- Android Studio/VS Code
+- Git
+
+### Installation
+
+1. **Clone the repository**:
 ```bash
-cd Mobile_Application_Assignment_Flutter
+git clone https://github.com/LIXINGCHEN-CPP/grocery-store-flutter-app.git
+cd grocery-store-flutter-app
 ```
 
-Then execute the Flutter commands:
-
+2. **Install dependencies**:
 ```bash
 flutter clean
 flutter pub get
-flutter run
 ```
+
+3. **Run the app**:
+```bash
+# Debug mode (connects to cloud backend)
+flutter run
+
+# Release APK (for distribution)
+flutter build apk --release
+```
+
+### APK Installation
+The release APK will be generated at:
+```
+build/app/outputs/flutter-apk/app-release.apk
+```
+
+Install on Android device:
+```bash
+adb install build/app/outputs/flutter-apk/app-release.apk
+```
+
+## Development Notes
+
+- **API Configuration**: All backend URLs are configured in `lib/core/constants/api_constants.dart`
+- **State Management**: Uses Provider pattern for cart, favorites, and app state
+- **Database Service**: Centralized API calls in `lib/core/services/database_service.dart`
+- **Offline Support**: App falls back to mock data if backend is unavailable
+
+## Backend Development
+
+The backend is located in the `/backend` directory:
+
+```bash
+cd backend
+npm install
+npm run dev  # Development mode with auto-restart
+npm start    # Production mode
+```
+
+**Note**: The backend is already deployed on Render and doesn't need local setup for app usage.
