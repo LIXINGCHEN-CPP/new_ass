@@ -69,7 +69,7 @@ class _ProductImagesSliderState extends State<ProductImagesSlider> {
           children: [
             /// Image Slider
             SizedBox(
-              height: 300,
+              height: 350,
               child: PageView.builder(
                 controller: controller,
                 itemCount: images.length,
@@ -79,8 +79,24 @@ class _ProductImagesSliderState extends State<ProductImagesSlider> {
                   });
                 },
                 itemBuilder: (context, index) => Container(
-                  padding: const EdgeInsets.all(AppDefaults.padding * 2),
-                  child: NetworkImageWithLoader(images[index]),
+                  margin: const EdgeInsets.all(AppDefaults.padding),
+                  child: Center(
+                    child: Container(
+                      height: 280,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(AppDefaults.radius),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppDefaults.radius),
+                        child: NetworkImageWithLoader(
+                          images[index],
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
