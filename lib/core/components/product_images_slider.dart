@@ -9,6 +9,7 @@ import '../models/favorite_item_model.dart';
 import '../models/product_model.dart';
 import '../models/bundle_model.dart';
 import 'network_image.dart';
+import 'custom_toast.dart';
 
 class ProductImagesSlider extends StatefulWidget {
   const ProductImagesSlider({
@@ -119,15 +120,11 @@ class _ProductImagesSliderState extends State<ProductImagesSlider> {
                     }
                     
                     // Show feedback
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(isFavorite 
-                            ? 'Removed from favorites' 
-                            : 'Added to favorites'),
-                        duration: const Duration(milliseconds: 800),
-                        backgroundColor: isFavorite ? Colors.orange : Colors.green,
-                      ),
-                    );
+                    if (isFavorite) {
+                      context.showWarningToast('Removed from favorites');
+                    } else {
+                      context.showSuccessToast('Added to favorites');
+                    }
                   },
                   iconSize: 56,
                   constraints: const BoxConstraints(minHeight: 56, minWidth: 56),

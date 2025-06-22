@@ -7,6 +7,7 @@ import '../models/favorite_item_model.dart';
 import '../providers/favorite_provider.dart';
 import '../routes/app_routes.dart';
 import 'network_image.dart';
+import 'custom_toast.dart';
 
 class BundleTileSquare extends StatelessWidget {
   const BundleTileSquare({
@@ -65,15 +66,11 @@ class BundleTileSquare extends StatelessWidget {
                               bundle: data,
                             );
                             
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(isFavorite 
-                                    ? 'Removed from favorites' 
-                                    : 'Added to favorites'),
-                                duration: const Duration(milliseconds: 800),
-                                backgroundColor: isFavorite ? Colors.orange : Colors.green,
-                              ),
-                            );
+                            if (isFavorite) {
+                              context.showInfoToast('Removed from favorites');
+                            } else {
+                              context.showSuccessToast('Added to favorites');
+                            }
                           },
                           child: Container(
                             width: 24,
