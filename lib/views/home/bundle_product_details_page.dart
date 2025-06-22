@@ -6,6 +6,7 @@ import '../../core/components/buy_now_row_button.dart';
 import '../../core/components/quantity_selector.dart';
 import '../../core/components/product_images_slider.dart';
 import '../../core/components/review_row_button.dart';
+import '../../core/components/custom_toast.dart';
 import '../../core/constants/constants.dart';
 import '../../core/models/bundle_model.dart';
 import '../../core/models/cart_item_model.dart';
@@ -275,13 +276,7 @@ class _BundleProductDetailsPageState extends State<BundleProductDetailsPage> {
                           await cartProvider.addBundle(bundle!, quantity: selectedQuantity);
                           
                           // Show success message
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Added ${selectedQuantity}x ${bundle!.name} to cart'),
-                              duration: const Duration(seconds: 2),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
+                          context.showSuccessToast('Added ${selectedQuantity}x ${bundle!.name} to cart');
                         },
                         onCartButtonTap: () {
                           // Cart button opens cart page

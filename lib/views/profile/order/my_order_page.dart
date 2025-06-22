@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/components/app_back_button.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/providers/order_provider.dart';
+import '../../../core/providers/user_provider.dart';
 import 'components/custom_tab_label.dart';
 import 'components/tab_all.dart';
 import 'components/tab_completed.dart';
@@ -22,7 +23,15 @@ class _AllOrderPageState extends State<AllOrderPage> {
     super.initState();
     // Load orders when page is opened
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<OrderProvider>(context, listen: false).loadOrders();
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final orderProvider = Provider.of<OrderProvider>(context, listen: false);
+      
+      
+      if (userProvider.isLoggedIn && userProvider.currentUser?.id != null) {
+        orderProvider.loadOrdersByUserId(userProvider.currentUser!.id!);
+      } else {
+        orderProvider.loadOrders();
+      }
     });
   }
 

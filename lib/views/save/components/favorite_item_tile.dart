@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/components/network_image.dart';
+import '../../../core/components/custom_toast.dart';
 import '../../../core/constants/constants.dart';
 import '../../../core/models/favorite_item_model.dart';
 import '../../../core/providers/favorite_provider.dart';
@@ -181,15 +182,9 @@ class FavoriteItemTile extends StatelessWidget {
                                 await cartProvider.addBundle(favoriteItem.bundleDetails!, quantity: 1);
                               }
                               
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(isInCart 
-                                      ? 'Quantity increased' 
-                                      : 'Added to cart'),
-                                  duration: const Duration(milliseconds: 800),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
+                              context.showSuccessToast(isInCart 
+                                  ? 'Quantity increased' 
+                                  : 'Added to cart');
                             },
                             icon: const Icon(
                               Icons.shopping_cart_outlined,

@@ -6,6 +6,7 @@ import '../../core/components/buy_now_row_button.dart';
 import '../../core/components/quantity_selector.dart';
 import '../../core/components/product_images_slider.dart';
 import '../../core/components/review_row_button.dart';
+import '../../core/components/custom_toast.dart';
 import '../../core/constants/app_defaults.dart';
 import '../../core/constants/constants.dart';
 import '../../core/models/product_model.dart';
@@ -100,13 +101,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   await cartProvider.addProduct(product, quantity: selectedQuantity);
                   
                   // Show success message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Added ${selectedQuantity}x ${product.name} to cart'),
-                      duration: const Duration(seconds: 2),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
+                  context.showSuccessToast('Added ${selectedQuantity}x ${product.name} to cart');
                 },
                 onCartButtonTap: () {
                   // Cart button opens cart page

@@ -230,6 +230,8 @@ class NotificationTile extends StatelessWidget {
         return Colors.purple;
       case NotificationType.system:
         return Colors.blue;
+      case NotificationType.favorite:
+        return Colors.red;
     }
   }
 
@@ -243,6 +245,8 @@ class NotificationTile extends StatelessWidget {
         return Icons.card_giftcard;
       case NotificationType.system:
         return Icons.info;
+      case NotificationType.favorite:
+        return Icons.favorite;
     }
   }
 }

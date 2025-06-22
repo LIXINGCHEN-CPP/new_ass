@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/components/app_back_button.dart';
+import '../../core/components/custom_toast.dart';
 import '../../core/constants/app_defaults.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/providers/cart_provider.dart';
@@ -53,12 +54,7 @@ class CartPage extends StatelessWidget {
                           
                           if (shouldClear == true) {
                             await cartProvider.clearCart();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Cart cleared'),
-                                backgroundColor: Colors.orange,
-                              ),
-                            );
+                            context.showInfoToast('Cart cleared');
                           }
                         },
                         child: const Text('Clear'),
@@ -86,12 +82,7 @@ class CartPage extends StatelessWidget {
                               },
                               onRemove: () async {
                                 await cartProvider.removeItem(cartItem.id);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Removed ${cartItem.name}'),
-                                    backgroundColor: Colors.orange,
-                                  ),
-                                );
+                                context.showInfoToast('Removed ${cartItem.name}');
                               },
                             );
                           },

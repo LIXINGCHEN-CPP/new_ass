@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/components/app_back_button.dart';
+import '../../core/components/custom_toast.dart';
 import '../../core/constants/app_defaults.dart';
 import '../../core/constants/payment_constants.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/providers/cart_provider.dart';
 import '../../core/providers/order_provider.dart';
 import '../../core/providers/notification_provider.dart';
+import '../../core/providers/user_provider.dart';
 import 'components/checkout_address_selector.dart';
 import 'components/checkout_card_details.dart';
 import 'components/checkout_payment_systems.dart';
@@ -75,8 +77,8 @@ class PayNowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer3<CartProvider, OrderProvider, NotificationProvider>(
-      builder: (context, cartProvider, orderProvider, notificationProvider, child) {
+    return Consumer4<CartProvider, OrderProvider, NotificationProvider, UserProvider>(
+      builder: (context, cartProvider, orderProvider, notificationProvider, userProvider, child) {
         return SizedBox(
           width: double.infinity,
           child: Padding(
@@ -84,23 +86,32 @@ class PayNowButton extends StatelessWidget {
             child: ElevatedButton(
               onPressed: orderProvider.isLoading ? null : () async {
                 if (cartProvider.cartItems.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Cart is empty')),
-                  );
+                  context.showWarningToast('Cart is empty');
                   return;
                 }
 
-                // Create order
+                // Check if user is logged in
+                if (!userProvider.isLoggedIn) {
+                  context.showWarningToast('Please log in to place an order');
+                  Navigator.pushNamed(context, AppRoutes.login);
+                  return;
+                }
+
+                // Create order with user ID
                 final success = await orderProvider.createOrder(
                   items: cartProvider.cartItems,
                   totalAmount: cartProvider.totalPrice,
                   originalAmount: cartProvider.totalOriginalPrice,
                   savings: cartProvider.totalSavings,
                   paymentMethod: _getPaymentMethodName(selectedPaymentType),
-                  deliveryAddress: '123 Main Street, City, State', // Could be made dynamic
+                  deliveryAddress: userProvider.currentUser?.address ?? '123 Main Street, City, State',
+                  userId: userProvider.currentUser?.id,  // Pass user ID
                 );
 
                 if (success) {
+                  // Show immediate success feedback
+                  context.showSuccessToast('Order placed successfully!');
+                  
                   // Add order success notification
                   if (orderProvider.currentOrder != null) {
                     await notificationProvider.addOrderSuccessNotification(orderProvider.currentOrder!);
@@ -109,8 +120,12 @@ class PayNowButton extends StatelessWidget {
                   // Clear cart
                   await cartProvider.clearCart();
                   
-                  // Refresh orders list
-                  await orderProvider.loadOrders();
+                  // Refresh orders list - load user's orders if logged in
+                  if (userProvider.isLoggedIn && userProvider.currentUser?.id != null) {
+                    await orderProvider.loadOrdersByUserId(userProvider.currentUser!.id!);
+                  } else {
+                    await orderProvider.loadOrders();
+                  }
                   
                   // Navigate to success page
                   if (context.mounted) {
@@ -123,12 +138,7 @@ class PayNowButton extends StatelessWidget {
                 } else {
                   // Show error
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(orderProvider.error ?? 'Failed to create order'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    context.showErrorToast(orderProvider.error ?? 'Failed to create order');
                   }
                 }
               },

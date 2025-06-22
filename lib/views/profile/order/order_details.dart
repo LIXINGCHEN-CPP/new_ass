@@ -31,9 +31,11 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     if (args is String) {
       orderId = args;
       debugPrint('Loading order details for orderId: $orderId');
-      // Load order details
+      // Load order details after the current build is complete
       if (orderId != null) {
-        Provider.of<OrderProvider>(context, listen: false).loadOrderById(orderId!);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Provider.of<OrderProvider>(context, listen: false).loadOrderById(orderId!);
+        });
       }
     } else {
       debugPrint('Invalid arguments type: ${args.runtimeType}');
@@ -64,7 +66,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   ElevatedButton(
                     onPressed: () {
                       if (orderId != null) {
-                        orderProvider.loadOrderById(orderId!);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          orderProvider.loadOrderById(orderId!);
+                        });
                       }
                     },
                     child: const Text('Retry'),
