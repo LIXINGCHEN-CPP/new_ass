@@ -106,7 +106,7 @@ class _SignUpFormState extends State<SignUpForm> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             ),
             const SizedBox(height: AppDefaults.padding),
-            const Text("Email (Optional)"),
+            const Text("Email"),
             const SizedBox(height: 8),
             TextFormField(
               controller: _emailController,
