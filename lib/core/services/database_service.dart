@@ -960,6 +960,19 @@ class DatabaseService {
         stock: 55,
         tags: ['carrot', 'vegetables', 'orange'],
       ),
+      ProductModel(
+        id: 'prod_11',
+        name: 'Pencil',
+        description: 'High-quality pencils for writing and drawing',
+        weight: '1 Pack',
+        coverImage: 'https://img.picui.cn/free/2025/06/23/685838a250165.png',
+        images: ['https://img.picui.cn/free/2025/06/23/685838a250165.png'],
+        currentPrice: 8,
+        originalPrice: 10,
+        categoryId: '5', // Office Supplies category
+        stock: 200,
+        tags: ['pencil', 'stationery', 'writing'],
+      ),
     ];
   }
 
