@@ -1,13 +1,8 @@
 class ApiConstants {
-  // Always use Render backend for both development and production
-  static const String baseUrl = 'https://grocery-store-flutter-app.onrender.com/api';
-  static const String healthUrl = 'https://grocery-store-flutter-app.onrender.com/health';
-  
-  // Backup local URLs (commented out, can be restored if needed)
-  // static const String _localBaseUrl = 'http://10.0.2.2:3000/api';
-  // static const String _localHealthUrl = 'http://10.0.2.2:3000/health';
-  
-  // Request configuration
+  // Use local backend for development (Android Emulator)
+  static const String baseUrl = 'http://10.0.2.2:3000/api';
+  static const String healthUrl = 'http://10.0.2.2:3000/health';
+
   static const Duration timeoutDuration = Duration(seconds: 15);
   
   // API endpoints
