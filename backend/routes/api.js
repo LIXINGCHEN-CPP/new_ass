@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const database = require('../database');
+const emailService = require('../emailService');
 const { ObjectId } = require('mongodb');
 
 // Helper function to handle async routes
@@ -211,13 +212,14 @@ router.get('/bundles/:id', async (req, res) => {
 // Orders endpoints
 router.post('/orders', asyncHandler(async (req, res) => {
   try {
-    const { items, totalAmount, originalAmount, savings, paymentMethod, deliveryAddress } = req.body;
+    const { items, totalAmount, originalAmount, savings, paymentMethod, deliveryAddress, userId } = req.body;
     
     // Generate unique order ID
     const orderId = Math.floor(100000000 + Math.random() * 900000000).toString();
     
     const orderData = {
       orderId,
+      userId,  // Include user ID in order data
       status: 0, // confirmed
       items,
       totalAmount,
@@ -415,6 +417,414 @@ router.put('/orders/:id/status', asyncHandler(async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to update order status',
+      error: error.message
+    });
+  }
+}));
+
+// Get orders by user ID
+router.get('/users/:userId/orders', asyncHandler(async (req, res) => {
+  try {
+    const orders = await database.getOrdersByUserId(req.params.userId);
+    
+    // Convert ObjectId to string for all orders
+    const serializedOrders = orders.map(order => ({
+      ...order,
+      _id: order._id.toString(),
+      items: order.items ? order.items.map(item => ({
+        ...item,
+        productDetails: item.productDetails ? {
+          ...item.productDetails,
+          _id: item.productDetails._id ? item.productDetails._id.toString() : item.productDetails._id
+        } : item.productDetails,
+        bundleDetails: item.bundleDetails ? {
+          ...item.bundleDetails,
+          _id: item.bundleDetails._id ? item.bundleDetails._id.toString() : item.bundleDetails._id,
+          items: item.bundleDetails.items ? item.bundleDetails.items.map(bundleItem => ({
+            ...bundleItem,
+            productDetails: bundleItem.productDetails ? {
+              ...bundleItem.productDetails,
+              _id: bundleItem.productDetails._id ? bundleItem.productDetails._id.toString() : bundleItem.productDetails._id
+            } : bundleItem.productDetails
+          })) : item.bundleDetails.items
+        } : item.bundleDetails
+      })) : order.items
+    }));
+    
+    res.json({
+      success: true,
+      data: serializedOrders,
+      count: serializedOrders.length,
+      userId: req.params.userId
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch user orders',
+      error: error.message
+    });
+  }
+}));
+
+// Users endpoints
+router.post('/users/register', asyncHandler(async (req, res) => {
+  try {
+    const { name, phone, password, email } = req.body;
+    
+    // Validate required fields
+    if (!name || !phone || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, phone, and password are required'
+      });
+    }
+    
+    // Check if user already exists
+    const existingUser = await database.getUserByPhone(phone);
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: 'Phone number already registered'
+      });
+    }
+    
+    // Create user
+    const insertedId = await database.createUser({
+      name,
+      phone,
+      password,
+      email
+    });
+    
+    // Get created user (without password)
+    const user = await database.getUserById(insertedId);
+    
+    if (!user) {
+      return res.status(500).json({
+        success: false,
+        message: 'User created but could not retrieve user data'
+      });
+    }
+    
+    const { password: _, ...userWithoutPassword } = user;
+    
+    res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      data: {
+        ...userWithoutPassword,
+        _id: insertedId.toString()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Registration failed',
+      error: error.message
+    });
+  }
+}));
+
+router.post('/users/login', asyncHandler(async (req, res) => {
+  try {
+    const { phone, password } = req.body;
+    
+    // Validate required fields
+    if (!phone || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Phone and password are required'
+      });
+    }
+    
+    // Authenticate user
+    const user = await database.loginUser(phone, password);
+    
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid phone number or password'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Login successful',
+      data: {
+        ...user,
+        _id: user._id.toString()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Login failed',
+      error: error.message
+    });
+  }
+}));
+
+router.get('/users/:id', asyncHandler(async (req, res) => {
+  try {
+    const user = await database.getUserById(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = user;
+    
+    res.json({
+      success: true,
+      data: {
+        ...userWithoutPassword,
+        _id: user._id.toString()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch user',
+      error: error.message
+    });
+  }
+}));
+
+router.get('/users/phone/:phone', asyncHandler(async (req, res) => {
+  try {
+    const user = await database.getUserByPhone(req.params.phone);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = user;
+    
+    res.json({
+      success: true,
+      data: {
+        ...userWithoutPassword,
+        _id: user._id.toString()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch user',
+      error: error.message
+    });
+  }
+}));
+
+router.put('/users/:id', asyncHandler(async (req, res) => {
+  try {
+    const { name, email, address, profileImage } = req.body;
+    
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (email !== undefined) updateData.email = email;
+    if (address !== undefined) updateData.address = address;
+    if (profileImage !== undefined) updateData.profileImage = profileImage;
+    
+    const updatedUser = await database.updateUser(req.params.id, updateData);
+    
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = updatedUser;
+    
+    res.json({
+      success: true,
+      message: 'User updated successfully',
+      data: {
+        ...userWithoutPassword,
+        _id: updatedUser._id.toString()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update user',
+      error: error.message
+    });
+  }
+}));
+
+// Password Reset endpoints
+router.post('/auth/forgot-password', asyncHandler(async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    // Validate required fields
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required'
+      });
+    }
+    
+    // Check if user exists with this email
+    const user = await database.getUserByEmail(email);
+    
+    if (!user) {
+      // For security, don't reveal if email exists or not
+      return res.json({
+        success: true,
+        message: 'If an account with this email exists, you will receive a password reset code.'
+      });
+    }
+    
+    // Generate 4-digit verification code
+    const verificationCode = emailService.generateVerificationCode();
+    
+    // Store code in database
+    try {
+      await database.createPasswordResetCode(email, verificationCode);
+    } catch (error) {
+      if (error.message.includes('Please wait')) {
+        return res.status(429).json({
+          success: false,
+          message: error.message
+        });
+      }
+      throw error; // Re-throw if it's a different error
+    }
+    
+    // Send email with verification code
+    const emailResult = await emailService.sendPasswordResetCode(email, verificationCode);
+    
+    if (!emailResult.success) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send verification email'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Verification code sent to your email',
+      debug: {
+        code: verificationCode,
+        previewUrl: emailResult.previewUrl || false
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to process password reset request',
+      error: error.message
+    });
+  }
+}));
+
+router.post('/auth/verify-reset-code', asyncHandler(async (req, res) => {
+  try {
+    const { email, code } = req.body;
+    
+    // Validate required fields
+    if (!email || !code) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and verification code are required'
+      });
+    }
+    
+    // Verify the code
+    const isValid = await database.verifyPasswordResetCode(email, code);
+    
+    if (isValid) {
+      res.json({
+        success: true,
+        message: 'Verification code is valid'
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: 'Invalid or expired verification code'
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to verify code',
+      error: error.message
+    });
+  }
+}));
+
+router.post('/auth/reset-password', asyncHandler(async (req, res) => {
+  try {
+    const { email, code, newPassword } = req.body;
+    
+    // Validate required fields
+    if (!email || !code || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email, verification code, and new password are required'
+      });
+    }
+    
+    // Validate password strength
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 8 characters long'
+      });
+    }
+    
+    // Check for special characters
+    const specialCharPattern = /[#?!@$%^&*-]/;
+    if (!specialCharPattern.test(newPassword)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must contain at least one special character (#?!@$%^&*-)'
+      });
+    }
+    
+    // Verify the code again
+    const isValid = await database.verifyPasswordResetCode(email, code);
+    
+    if (!isValid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired verification code'
+      });
+    }
+    
+    // Update password
+    const passwordUpdated = await database.updateUserPassword(email, newPassword);
+    
+    if (!passwordUpdated) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to update password'
+      });
+    }
+    
+    // Mark code as used
+    await database.markPasswordResetCodeAsUsed(email, code);
+    
+    res.json({
+      success: true,
+      message: 'Password reset successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to reset password',
       error: error.message
     });
   }

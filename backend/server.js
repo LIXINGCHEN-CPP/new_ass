@@ -1,3 +1,6 @@
+// Load environment variables first
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -10,11 +13,10 @@ const apiRoutes = require('./routes/api');
 
 const app = express();
 
-// Trust proxy for cloud platforms (Render, Heroku, etc.)
-// This is required for rate limiting to work correctly behind reverse proxies
+
 app.set('trust proxy', 1);
 
-// Security middleware
+
 app.use(helmet());
 
 // Rate limiting
@@ -97,6 +99,16 @@ async function startServer() {
       console.error('Failed to connect to database, server startup failed');
       process.exit(1);
     }
+
+    // Setup periodic cleanup of expired password reset codes
+    setInterval(async () => {
+      try {
+        await database.cleanupExpiredPasswordResetCodes();
+        console.log('Cleaned up expired password reset codes');
+      } catch (error) {
+        console.error('Failed to cleanup expired codes:', error);
+      }
+    }, 15 * 60 * 1000); // Run every 15 minutes
 
     // Start HTTP server
     const server = app.listen(config.port, '0.0.0.0', () => {

@@ -1,7 +1,7 @@
 // Backend Configuration
 const config = {
   // MongoDB Atlas Connection
-  mongodbUri: process.env.MONGODB_URI || 'mongodb+srv://xli503441:lxc159357%40GOD@cluster0.isy9cqv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+  mongodbUri: process.env.MONGODB_URI,
   databaseName: 'grocery_store',
   
   // Server Configuration
