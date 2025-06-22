@@ -191,6 +191,25 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  // Update profile image
+  Future<bool> updateProfileImage(String imagePath) async {
+    if (_currentUser == null) return false;
+
+    try {
+      
+      final success = await updateProfile(profileImage: imagePath);
+      if (success) {
+        debugPrint('Profile image updated: $imagePath');
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Failed to update profile image: $e');
+      return false;
+    }
+  }
+
   // Save user session to local storage
   Future<void> _saveLocalSession(UserModel user) async {
     try {

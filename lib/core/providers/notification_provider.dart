@@ -36,6 +36,7 @@ class NotificationProvider with ChangeNotifier {
       subtitle: 'Thank you for joining us! Enjoy your shopping experience.',
       imageLink: 'https://i.imgur.com/MFO1R5K.png',
       createdAt: DateTime.now().subtract(const Duration(minutes: 1)),
+      isRead: true, 
     ),
     NotificationModel(
       id: '${userId}_default_2',
@@ -44,6 +45,7 @@ class NotificationProvider with ChangeNotifier {
       subtitle: 'Get 10% off on your first order! Use code: WELCOME10',
       imageLink: 'https://i.imgur.com/cl19m4w.png',
       createdAt: DateTime.now().subtract(const Duration(minutes: 2)),
+      isRead: true, 
     ),
     NotificationModel(
       id: '${userId}_default_3',
@@ -52,6 +54,7 @@ class NotificationProvider with ChangeNotifier {
       subtitle: 'Get fresh vegetables delivered to your doorstep every day!',
       imageLink: 'https://i.imgur.com/VSwGkZg.png',
       createdAt: DateTime.now().subtract(const Duration(minutes: 3)),
+      isRead: true, 
     ),
   ];
 
@@ -92,6 +95,8 @@ class NotificationProvider with ChangeNotifier {
         _userNotifications = notificationsList
             .map((item) => NotificationModel.fromJson(item))
             .toList();
+       
+        await _migrateDefaultNotifications();
       } else {
         // First time loading for this user - add default notifications
         await _initializeDefaultNotifications();
@@ -135,6 +140,41 @@ class NotificationProvider with ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Failed to initialize default notifications: $e');
+    }
+  }
+
+  // Migrate existing default notifications to mark them as read
+  Future<void> _migrateDefaultNotifications() async {
+    if (_currentUserId == null) return;
+    
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final migrationKey = 'default_notifications_migrated_$_currentUserId';
+      final hasMigrated = prefs.getBool(migrationKey) ?? false;
+      
+      if (!hasMigrated) {
+        bool hasChanges = false;
+        
+
+        for (int i = 0; i < _userNotifications.length; i++) {
+          final notification = _userNotifications[i];
+          
+          if (notification.id.contains('_default_') && !notification.isRead) {
+            _userNotifications[i] = notification.copyWith(isRead: true);
+            hasChanges = true;
+            debugPrint('Migrated default notification to read: ${notification.id}');
+          }
+        }
+        
+        if (hasChanges) {
+          await _saveNotificationsToStorage();
+          debugPrint('Migration completed for user: $_currentUserId');
+        }
+        
+        await prefs.setBool(migrationKey, true);
+      }
+    } catch (e) {
+      debugPrint('Failed to migrate default notifications: $e');
     }
   }
 
