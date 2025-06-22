@@ -123,6 +123,58 @@ class Database {
     return await db.collection('bundles').findOne({ _id: new ObjectId(id) });
   }
 
+  // Products CRUD operations
+  async createProduct(productData) {
+    const db = this.getDb();
+    const result = await db.collection('products').insertOne({
+      ...productData,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isActive: true
+    });
+    return result.insertedId;
+  }
+
+  async updateProduct(id, updateData) {
+    const db = this.getDb();
+    const result = await db.collection('products').updateOne(
+      { _id: new ObjectId(id) },
+      { 
+        $set: {
+          ...updateData,
+          updatedAt: new Date()
+        }
+      }
+    );
+    return result.matchedCount > 0;
+  }
+
+  // Bundles CRUD operations
+  async createBundle(bundleData) {
+    const db = this.getDb();
+    const result = await db.collection('bundles').insertOne({
+      ...bundleData,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isActive: true
+    });
+    return result.insertedId;
+  }
+
+  async updateBundle(id, updateData) {
+    const db = this.getDb();
+    const result = await db.collection('bundles').updateOne(
+      { _id: new ObjectId(id) },
+      { 
+        $set: {
+          ...updateData,
+          updatedAt: new Date()
+        }
+      }
+    );
+    return result.matchedCount > 0;
+  }
+
   // Orders
   async createOrder(orderData) {
     const db = this.getDb();

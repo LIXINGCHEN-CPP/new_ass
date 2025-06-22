@@ -123,6 +123,63 @@ router.get('/products/search/:term', asyncHandler(async (req, res) => {
   }
 }));
 
+// Create product
+router.post('/products', asyncHandler(async (req, res) => {
+  try {
+    const productData = req.body;
+    
+    // Validate required fields
+    if (!productData.name || !productData.coverImage || !productData.currentPrice) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, coverImage, and currentPrice are required'
+      });
+    }
+    
+    const insertedId = await database.createProduct(productData);
+    
+    res.status(201).json({
+      success: true,
+      message: 'Product created successfully',
+      data: { id: insertedId.toString() }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create product',
+      error: error.message
+    });
+  }
+}));
+
+// Update product
+router.put('/products/:id', asyncHandler(async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const updateData = req.body;
+    
+    const updated = await database.updateProduct(productId, updateData);
+    
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Product updated successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update product',
+      error: error.message
+    });
+  }
+}));
+
 // Bundles endpoints
 router.get('/bundles', asyncHandler(async (req, res) => {
   try {
@@ -208,6 +265,63 @@ router.get('/bundles/:id', async (req, res) => {
     });
   }
 });
+
+// Create bundle
+router.post('/bundles', asyncHandler(async (req, res) => {
+  try {
+    const bundleData = req.body;
+    
+    // Validate required fields
+    if (!bundleData.name || !bundleData.coverImage || !bundleData.currentPrice) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, coverImage, and currentPrice are required'
+      });
+    }
+    
+    const insertedId = await database.createBundle(bundleData);
+    
+    res.status(201).json({
+      success: true,
+      message: 'Bundle created successfully',
+      data: { id: insertedId.toString() }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create bundle',
+      error: error.message
+    });
+  }
+}));
+
+// Update bundle
+router.put('/bundles/:id', asyncHandler(async (req, res) => {
+  try {
+    const bundleId = req.params.id;
+    const updateData = req.body;
+    
+    const updated = await database.updateBundle(bundleId, updateData);
+    
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: 'Bundle not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Bundle updated successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update bundle',
+      error: error.message
+    });
+  }
+}));
 
 // Orders endpoints
 router.post('/orders', asyncHandler(async (req, res) => {
