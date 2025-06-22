@@ -8,12 +8,27 @@ class SearchHistoryService {
 
   static const String _searchHistoryKey = 'search_history';
   static const int _maxHistoryItems = 10;
+  
+  String? _currentUserId;
 
-  // Get search history from local storage
+ 
+  void setCurrentUser(String? userId) {
+    _currentUserId = userId;
+  }
+
+ 
+  void clearUserSession() {
+    _currentUserId = null;
+  }
+
+ 
   Future<List<String>> getSearchHistory() async {
+    if (_currentUserId == null) return [];
+    
     try {
       final prefs = await SharedPreferences.getInstance();
-      final historyJson = prefs.getString(_searchHistoryKey);
+      final historyKey = '${_searchHistoryKey}_$_currentUserId';
+      final historyJson = prefs.getString(historyKey);
       
       if (historyJson == null) {
         return [];
@@ -27,9 +42,9 @@ class SearchHistoryService {
     }
   }
 
-  // Add search term to history
+  // Add search term to history for current user
   Future<void> addSearchTerm(String searchTerm) async {
-    if (searchTerm.trim().isEmpty) return;
+    if (searchTerm.trim().isEmpty || _currentUserId == null) return;
     
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -47,33 +62,40 @@ class SearchHistoryService {
       }
       
       // Save to local storage
+      final historyKey = '${_searchHistoryKey}_$_currentUserId';
       final historyJson = json.encode(currentHistory);
-      await prefs.setString(_searchHistoryKey, historyJson);
+      await prefs.setString(historyKey, historyJson);
     } catch (e) {
       print('Error adding search term: $e');
     }
   }
 
-  // Remove specific search term from history
+  // Remove specific search term from history for current user
   Future<void> removeSearchTerm(String searchTerm) async {
+    if (_currentUserId == null) return;
+    
     try {
       final prefs = await SharedPreferences.getInstance();
       final currentHistory = await getSearchHistory();
       
       currentHistory.remove(searchTerm);
       
+      final historyKey = '${_searchHistoryKey}_$_currentUserId';
       final historyJson = json.encode(currentHistory);
-      await prefs.setString(_searchHistoryKey, historyJson);
+      await prefs.setString(historyKey, historyJson);
     } catch (e) {
       print('Error removing search term: $e');
     }
   }
 
-  // Clear all search history
+  // Clear all search history for current user
   Future<void> clearSearchHistory() async {
+    if (_currentUserId == null) return;
+    
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_searchHistoryKey);
+      final historyKey = '${_searchHistoryKey}_$_currentUserId';
+      await prefs.remove(historyKey);
     } catch (e) {
       print('Error clearing search history: $e');
     }

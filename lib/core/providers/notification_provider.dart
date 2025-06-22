@@ -4,13 +4,16 @@ import 'dart:convert';
 
 import '../models/notification_model.dart';
 import '../models/order_model.dart';
+import '../models/user_model.dart';
 
 class NotificationProvider with ChangeNotifier {
   static const String _notificationsKey = 'notifications_list';
+  static const String _defaultNotificationsKey = 'default_notifications_initialized';
 
-  // Notifications list (dynamic notifications will be added here)
-  List<NotificationModel> _dynamicNotifications = [];
+  // Current user notifications (specific to logged in user)
+  List<NotificationModel> _userNotifications = [];
   bool _isLoading = false;
+  String? _currentUserId;
 
   // Notification settings
   bool _appNotification = true;
@@ -18,78 +21,45 @@ class NotificationProvider with ChangeNotifier {
   bool _offerNotification = false;
 
   // Getters
-  List<NotificationModel> get dynamicNotifications => _dynamicNotifications;
+  List<NotificationModel> get userNotifications => _userNotifications;
   bool get isLoading => _isLoading;
   bool get appNotification => _appNotification;
   bool get phoneNumberNotification => _phoneNumberNotification;
   bool get offerNotification => _offerNotification;
 
-  // Hard-coded notifications (preserved as requested)
-  List<NotificationModel> get hardCodedNotifications => [
+  // Default promotional notifications 
+  List<NotificationModel> _getDefaultNotifications(String userId) => [
     NotificationModel(
-      id: 'hardcoded_1',
-      type: NotificationType.order,
-      title: 'E-Grocery Message',
-      subtitle: 'Your order #232425627 Beef is out of stock. You can request a refund.',
-      imageLink: 'https://i.imgur.com/XYbd8Tj.png',
-      createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
-      orderId: '232425627',
-    ),
-    NotificationModel(
-      id: 'hardcoded_2',
+      id: '${userId}_default_1',
       type: NotificationType.promotion,
-      title: 'Gifts Offer',
-      subtitle: 'Buy one gift and get one free! Limited time deal...',
+      title: 'Welcome to E-Grocery!',
+      subtitle: 'Thank you for joining us! Enjoy your shopping experience.',
       imageLink: 'https://i.imgur.com/MFO1R5K.png',
-      createdAt: DateTime.now().subtract(const Duration(minutes: 8)),
+      createdAt: DateTime.now().subtract(const Duration(minutes: 1)),
     ),
     NotificationModel(
-      id: 'hardcoded_3',
+      id: '${userId}_default_2',
       type: NotificationType.coupon,
-      title: 'Coupon Offer',
-      subtitle: 'Apply this coupon at checkout to save more...',
+      title: 'First Order Discount',
+      subtitle: 'Get 10% off on your first order! Use code: WELCOME10',
       imageLink: 'https://i.imgur.com/cl19m4w.png',
-      createdAt: DateTime.now().subtract(const Duration(minutes: 10)),
+      createdAt: DateTime.now().subtract(const Duration(minutes: 2)),
     ),
     NotificationModel(
-      id: 'hardcoded_4',
-      type: NotificationType.order,
-      title: 'Congratulations',
-      subtitle: 'Your order has been successfully placed！',
-      imageLink: 'https://i.imgur.com/KKWqqrP.png',
-      createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
-    ),
-    NotificationModel(
-      id: 'hardcoded_5',
-      type: NotificationType.order,
-      title: 'Your Order Cancelled',
-      subtitle: 'Your recent order has been cancelled. Need help?',
-      imageLink: 'https://i.imgur.com/jsDEdkz.png',
-      createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
-    ),
-    NotificationModel(
-      id: 'hardcoded_6',
+      id: '${userId}_default_3',
       type: NotificationType.promotion,
-      title: 'Great Winter Discounts',
-      subtitle: 'Enjoy special winter savings on selected items...',
-      imageLink: 'https://i.imgur.com/hmUnrRE.png',
-      createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
-    ),
-    NotificationModel(
-      id: 'hardcoded_7',
-      type: NotificationType.promotion,
-      title: '20% off Vegetables',
-      subtitle: 'Get fresh vegetables at 20% off today only!',
+      title: 'Fresh Vegetables Daily',
+      subtitle: 'Get fresh vegetables delivered to your doorstep every day!',
       imageLink: 'https://i.imgur.com/VSwGkZg.png',
-      createdAt: DateTime.now().subtract(const Duration(minutes: 15)),
+      createdAt: DateTime.now().subtract(const Duration(minutes: 3)),
     ),
   ];
 
-  // Combined notifications list (dynamic + hardcoded, sorted by time)
+  // All notifications for current user (sorted by time)
   List<NotificationModel> get allNotifications {
-    final combined = [..._dynamicNotifications, ...hardCodedNotifications];
-    combined.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    return combined;
+    final notifications = [..._userNotifications];
+    notifications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return notifications;
   }
 
   // Unread notifications count
@@ -108,34 +78,63 @@ class NotificationProvider with ChangeNotifier {
     ]);
   }
 
-  // Load notifications from storage
+  // Load notifications for current user from storage
   Future<void> _loadNotificationsFromStorage() async {
+    if (_currentUserId == null) return;
+    
     try {
       final prefs = await SharedPreferences.getInstance();
-      final notificationsString = prefs.getString(_notificationsKey);
+      final notificationsKey = '${_notificationsKey}_$_currentUserId';
+      final notificationsString = prefs.getString(notificationsKey);
       
       if (notificationsString != null) {
         final notificationsList = json.decode(notificationsString) as List;
-        _dynamicNotifications = notificationsList
+        _userNotifications = notificationsList
             .map((item) => NotificationModel.fromJson(item))
             .toList();
-        notifyListeners();
+      } else {
+        // First time loading for this user - add default notifications
+        await _initializeDefaultNotifications();
       }
+      notifyListeners();
     } catch (e) {
       debugPrint('Failed to load notifications: $e');
     }
   }
 
-  // Save notifications to storage
+  // Save notifications for current user to storage
   Future<void> _saveNotificationsToStorage() async {
+    if (_currentUserId == null) return;
+    
     try {
       final prefs = await SharedPreferences.getInstance();
+      final notificationsKey = '${_notificationsKey}_$_currentUserId';
       final notificationsString = json.encode(
-        _dynamicNotifications.map((item) => item.toJson()).toList()
+        _userNotifications.map((item) => item.toJson()).toList()
       );
-      await prefs.setString(_notificationsKey, notificationsString);
+      await prefs.setString(notificationsKey, notificationsString);
     } catch (e) {
       debugPrint('Failed to save notifications: $e');
+    }
+  }
+
+  // Initialize default notifications for new user
+  Future<void> _initializeDefaultNotifications() async {
+    if (_currentUserId == null) return;
+    
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final defaultKey = '${_defaultNotificationsKey}_$_currentUserId';
+      final hasInitialized = prefs.getBool(defaultKey) ?? false;
+      
+      if (!hasInitialized) {
+        _userNotifications.addAll(_getDefaultNotifications(_currentUserId!));
+        await prefs.setBool(defaultKey, true);
+        await _saveNotificationsToStorage();
+        debugPrint('Initialized default notifications for user: $_currentUserId');
+      }
+    } catch (e) {
+      debugPrint('Failed to initialize default notifications: $e');
     }
   }
 
@@ -164,12 +163,30 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
+  // Set current user (call when user logs in)
+  Future<void> setCurrentUser(UserModel? user) async {
+    _currentUserId = user?.id;
+    _userNotifications.clear();
+    
+    if (_currentUserId != null) {
+      await _loadNotificationsFromStorage();
+    }
+    notifyListeners();
+  }
+
+  // Clear user session (call when user logs out)
+  Future<void> clearUserSession() async {
+    _currentUserId = null;
+    _userNotifications.clear();
+    notifyListeners();
+  }
+
   // Add order success notification
   Future<void> addOrderSuccessNotification(OrderModel order) async {
-    if (!_appNotification) return; // Respect user settings
+    if (!_appNotification || _currentUserId == null) return; // Respect user settings
 
     final notification = NotificationModel.orderSuccess(order: order);
-    _dynamicNotifications.insert(0, notification);
+    _userNotifications.insert(0, notification);
     await _saveNotificationsToStorage();
     notifyListeners();
     
@@ -178,14 +195,58 @@ class NotificationProvider with ChangeNotifier {
 
   // Add order status update notification
   Future<void> addOrderStatusNotification(OrderModel order) async {
-    if (!_appNotification) return; // Respect user settings
+    if (!_appNotification || _currentUserId == null) return; // Respect user settings
 
     final notification = NotificationModel.orderStatusUpdate(order: order);
-    _dynamicNotifications.insert(0, notification);
+    _userNotifications.insert(0, notification);
     await _saveNotificationsToStorage();
     notifyListeners();
     
     debugPrint('Added order status notification for order: ${order.orderId}');
+  }
+
+  // Add favorite added notification
+  Future<void> addFavoriteAddedNotification({
+    required String itemName,
+    required String itemType,
+    String? itemImage,
+    required String itemId,
+  }) async {
+    if (!_appNotification || _currentUserId == null) return; // Respect user settings
+
+    final notification = NotificationModel.favoriteAdded(
+      itemName: itemName,
+      itemType: itemType,
+      itemImage: itemImage,
+      itemId: itemId,
+    );
+    _userNotifications.insert(0, notification);
+    await _saveNotificationsToStorage();
+    notifyListeners();
+    
+    debugPrint('Added favorite notification for $itemType: $itemName');
+  }
+
+  // Add favorite removed notification
+  Future<void> addFavoriteRemovedNotification({
+    required String itemName,
+    required String itemType,
+    String? itemImage,
+    required String itemId,
+  }) async {
+    if (!_appNotification || _currentUserId == null) return; // Respect user settings
+
+    final notification = NotificationModel.favoriteRemoved(
+      itemName: itemName,
+      itemType: itemType,
+      itemImage: itemImage,
+      itemId: itemId,
+    );
+    _userNotifications.insert(0, notification);
+    await _saveNotificationsToStorage();
+    notifyListeners();
+    
+    debugPrint('Added favorite removed notification for $itemType: $itemName');
   }
 
   // Add custom notification
@@ -197,6 +258,8 @@ class NotificationProvider with ChangeNotifier {
     String? orderId,
     Map<String, dynamic>? extraData,
   }) async {
+    if (_currentUserId == null) return;
+    
     final notification = NotificationModel(
       id: 'notification_${DateTime.now().millisecondsSinceEpoch}',
       type: type,
@@ -208,16 +271,16 @@ class NotificationProvider with ChangeNotifier {
       extraData: extraData,
     );
 
-    _dynamicNotifications.insert(0, notification);
+    _userNotifications.insert(0, notification);
     await _saveNotificationsToStorage();
     notifyListeners();
   }
 
   // Mark notification as read
   Future<void> markAsRead(String notificationId) async {
-    final index = _dynamicNotifications.indexWhere((n) => n.id == notificationId);
+    final index = _userNotifications.indexWhere((n) => n.id == notificationId);
     if (index >= 0) {
-      _dynamicNotifications[index] = _dynamicNotifications[index].copyWith(isRead: true);
+      _userNotifications[index] = _userNotifications[index].copyWith(isRead: true);
       await _saveNotificationsToStorage();
       notifyListeners();
     }
@@ -225,8 +288,8 @@ class NotificationProvider with ChangeNotifier {
 
   // Mark all notifications as read
   Future<void> markAllAsRead() async {
-    for (int i = 0; i < _dynamicNotifications.length; i++) {
-      _dynamicNotifications[i] = _dynamicNotifications[i].copyWith(isRead: true);
+    for (int i = 0; i < _userNotifications.length; i++) {
+      _userNotifications[i] = _userNotifications[i].copyWith(isRead: true);
     }
     await _saveNotificationsToStorage();
     notifyListeners();
@@ -234,14 +297,14 @@ class NotificationProvider with ChangeNotifier {
 
   // Delete notification
   Future<void> deleteNotification(String notificationId) async {
-    _dynamicNotifications.removeWhere((n) => n.id == notificationId);
+    _userNotifications.removeWhere((n) => n.id == notificationId);
     await _saveNotificationsToStorage();
     notifyListeners();
   }
 
-  // Clear all dynamic notifications
+  // Clear all user notifications
   Future<void> clearAllNotifications() async {
-    _dynamicNotifications.clear();
+    _userNotifications.clear();
     await _saveNotificationsToStorage();
     notifyListeners();
   }
@@ -277,4 +340,8 @@ class NotificationProvider with ChangeNotifier {
   // Get promotion notifications
   List<NotificationModel> get promotionNotifications => 
       getNotificationsByType(NotificationType.promotion);
+
+  // Get favorite notifications
+  List<NotificationModel> get favoriteNotifications => 
+      getNotificationsByType(NotificationType.favorite);
 } 

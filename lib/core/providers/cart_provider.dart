@@ -5,12 +5,14 @@ import 'dart:convert';
 import '../models/cart_item_model.dart';
 import '../models/product_model.dart';
 import '../models/bundle_model.dart';
+import '../models/user_model.dart';
 
 class CartProvider with ChangeNotifier {
   static const String _cartKey = 'shopping_cart';
   
   List<CartItemModel> _cartItems = [];
   bool _isLoading = false;
+  String? _currentUserId;
 
   // Getters
   List<CartItemModel> get cartItems => _cartItems;
@@ -36,34 +38,60 @@ class CartProvider with ChangeNotifier {
 
   // Constructor
   CartProvider() {
-    _loadCartFromStorage();
+    
   }
 
-  // Load cart data from local storage
+  
   Future<void> _loadCartFromStorage() async {
+    if (_currentUserId == null) return;
+    
     try {
       final prefs = await SharedPreferences.getInstance();
-      final cartString = prefs.getString(_cartKey);
+      final cartKey = '${_cartKey}_$_currentUserId';
+      final cartString = prefs.getString(cartKey);
       
       if (cartString != null) {
         final cartList = json.decode(cartString) as List;
         _cartItems = cartList.map((item) => CartItemModel.fromJson(item)).toList();
-        notifyListeners();
+      } else {
+        _cartItems = [];
       }
+      notifyListeners();
     } catch (e) {
       debugPrint('Failed to load cart data: $e');
     }
   }
 
-  // Save cart data to local storage
+ 
   Future<void> _saveCartToStorage() async {
+    if (_currentUserId == null) return;
+    
     try {
       final prefs = await SharedPreferences.getInstance();
+      final cartKey = '${_cartKey}_$_currentUserId';
       final cartString = json.encode(_cartItems.map((item) => item.toJson()).toList());
-      await prefs.setString(_cartKey, cartString);
+      await prefs.setString(cartKey, cartString);
     } catch (e) {
       debugPrint('Failed to save cart data: $e');
     }
+  }
+
+
+  Future<void> setCurrentUser(UserModel? user) async {
+    _currentUserId = user?.id;
+    _cartItems.clear();
+    
+    if (_currentUserId != null) {
+      await _loadCartFromStorage();
+    }
+    notifyListeners();
+  }
+
+  // Clear user session (call when user logs out)
+  Future<void> clearUserSession() async {
+    _currentUserId = null;
+    _cartItems.clear();
+    notifyListeners();
   }
 
   // Check if item is in cart

@@ -3,6 +3,7 @@ import '../models/order_model.dart';
 import '../models/cart_item_model.dart';
 import '../enums/dummy_order_status.dart';
 import '../services/database_service.dart';
+import 'user_provider.dart';
 
 class OrderProvider with ChangeNotifier {
   List<OrderModel> _orders = [];
@@ -34,6 +35,7 @@ class OrderProvider with ChangeNotifier {
     required double savings,
     required String paymentMethod,
     required String deliveryAddress,
+    String? userId,  // Add optional user ID parameter
   }) async {
     _isLoading = true;
     _error = null;
@@ -47,6 +49,7 @@ class OrderProvider with ChangeNotifier {
         savings: savings,
         paymentMethod: paymentMethod,
         deliveryAddress: deliveryAddress,
+        userId: userId,  // Pass user ID to database service
       );
 
       if (success != null) {
@@ -89,8 +92,33 @@ class OrderProvider with ChangeNotifier {
     }
   }
 
+  // Load orders by user ID
+  Future<void> loadOrdersByUserId(String userId) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final orders = await DatabaseService.instance.getOrdersByUserId(userId);
+      _orders = orders;
+      _error = null;
+      debugPrint('Loaded ${orders.length} orders for user $userId');
+    } catch (e) {
+      _error = e.toString();
+      debugPrint('Failed to load orders for user $userId: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   // Load order by orderId (not database ID)
   Future<void> loadOrderById(String orderId) async {
+    // If already loading this order, don't start another request
+    if (_isLoading && _currentOrder?.orderId == orderId) {
+      return;
+    }
+
     _isLoading = true;
     _error = null;
     notifyListeners();
