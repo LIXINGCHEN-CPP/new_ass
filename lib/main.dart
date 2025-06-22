@@ -9,6 +9,7 @@ import 'core/providers/cart_provider.dart';
 import 'core/providers/favorite_provider.dart';
 import 'core/providers/order_provider.dart';
 import 'core/providers/notification_provider.dart';
+import 'core/providers/user_provider.dart';
 import 'core/services/database_service.dart';
 
 void main() async {
@@ -34,6 +35,15 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) {
+            final provider = UserProvider();
+            Future.microtask(() async {
+              await provider.initializeUser();
+            });
+            return provider;
+          },
+        ),
+        ChangeNotifierProvider(
+          create: (context) {
             final provider = AppProvider();
             // Delay data initialization until UI is built
             Future.microtask(() async {
@@ -42,24 +52,62 @@ class MyApp extends StatelessWidget {
             return provider;
           },
         ),
-        ChangeNotifierProvider(
-          create: (context) => CartProvider(), // Constructor automatically loads cart data
+        ChangeNotifierProxyProvider<UserProvider, NotificationProvider>(
+          create: (context) => NotificationProvider(),
+          update: (context, userProvider, notificationProvider) {
+            if (notificationProvider != null) {
+              
+              Future.microtask(() async {
+                await notificationProvider.setCurrentUser(userProvider.currentUser);
+              });
+            }
+            return notificationProvider ?? NotificationProvider();
+          },
         ),
-        ChangeNotifierProvider(
-          create: (context) => FavoriteProvider(), // Constructor automatically loads favorite data
+        ChangeNotifierProxyProvider<UserProvider, CartProvider>(
+          create: (context) => CartProvider(),
+          update: (context, userProvider, cartProvider) {
+            if (cartProvider != null) {
+              
+              Future.microtask(() async {
+                await cartProvider.setCurrentUser(userProvider.currentUser);
+              });
+            }
+            return cartProvider ?? CartProvider();
+          },
+        ),
+        ChangeNotifierProxyProvider2<UserProvider, NotificationProvider, FavoriteProvider>(
+          create: (context) => FavoriteProvider(),
+          update: (context, userProvider, notificationProvider, favoriteProvider) {
+            if (favoriteProvider != null) {
+              
+              Future.microtask(() async {
+                await favoriteProvider.setCurrentUser(userProvider.currentUser);
+                favoriteProvider.setNotificationProvider(notificationProvider);
+              });
+            }
+            return favoriteProvider ?? FavoriteProvider();
+          },
         ),
         ChangeNotifierProvider(
           create: (context) => OrderProvider(),
         ),
-        ChangeNotifierProvider(
-          create: (context) => NotificationProvider(),
-        ),
       ],
-      child: MaterialApp(
-        title: 'eGrocery',
-        theme: AppTheme.defaultTheme,
-        onGenerateRoute: RouteGenerator.onGenerate,
-        initialRoute: AppRoutes.onboarding,
+      child: Consumer<UserProvider>(
+        builder: (context, userProvider, child) {
+          
+          String initialRoute = AppRoutes.onboarding;
+          if (userProvider.isLoggedIn) {
+            initialRoute = AppRoutes.entryPoint;
+          }
+          
+          return MaterialApp(
+            title: 'eGrocery',
+            theme: AppTheme.defaultTheme,
+            onGenerateRoute: RouteGenerator.onGenerate,
+            initialRoute: initialRoute,
+          );
+        },
       ),
     );
   }
