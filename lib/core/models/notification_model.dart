@@ -5,6 +5,7 @@ enum NotificationType {
   promotion,
   system,
   coupon,
+  favorite, // Added for favorite notifications
 }
 
 class NotificationModel {
@@ -96,6 +97,52 @@ class NotificationModel {
       extraData: {
         'status': order.status.index,
         'statusName': order.statusDisplayName,
+      },
+    );
+  }
+
+  // Factory constructor for favorite action notification
+  factory NotificationModel.favoriteAdded({
+    required String itemName,
+    required String itemType, 
+    String? itemImage,
+    required String itemId,
+  }) {
+    return NotificationModel(
+      id: 'notification_${DateTime.now().millisecondsSinceEpoch}',
+      type: NotificationType.favorite,
+      title: '❤️ Added to Favorites',
+      subtitle: '$itemName has been added to your favorites!',
+      imageLink: itemImage ?? 'https://i.imgur.com/heart-icon.png',
+      createdAt: DateTime.now(),
+      extraData: {
+        'itemId': itemId,
+        'itemName': itemName,
+        'itemType': itemType,
+        'action': 'added',
+      },
+    );
+  }
+
+  // Factory constructor for favorite removed notification
+  factory NotificationModel.favoriteRemoved({
+    required String itemName,
+    required String itemType, // 'product' or 'bundle'
+    String? itemImage,
+    required String itemId,
+  }) {
+    return NotificationModel(
+      id: 'notification_${DateTime.now().millisecondsSinceEpoch}',
+      type: NotificationType.favorite,
+      title: '💔 Removed from Favorites',
+      subtitle: '$itemName has been removed from your favorites.',
+      imageLink: itemImage ?? 'https://i.imgur.com/heart-broken-icon.png',
+      createdAt: DateTime.now(),
+      extraData: {
+        'itemId': itemId,
+        'itemName': itemName,
+        'itemType': itemType,
+        'action': 'removed',
       },
     );
   }

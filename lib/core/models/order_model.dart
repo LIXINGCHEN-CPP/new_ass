@@ -4,6 +4,7 @@ import '../enums/dummy_order_status.dart';
 class OrderModel {
   final String? id;
   final String orderId;
+  final String? userId;  
   final OrderStatus status;
   final List<CartItemModel> items;
   final double totalAmount;
@@ -21,6 +22,7 @@ class OrderModel {
   OrderModel({
     this.id,
     required this.orderId,
+    this.userId, 
     required this.status,
     required this.items,
     required this.totalAmount,
@@ -55,17 +57,20 @@ class OrderModel {
 
     return OrderModel(
       id: modelId,
-      orderId: json['orderId'] as String,
+      orderId: json['orderId']?.toString() ?? '',
+      userId: json['userId']?.toString(),  
       status: OrderStatus.values[statusIndex],
-      items: (json['items'] as List)
+      items: (json['items'] as List? ?? [])
           .map((item) => CartItemModel.fromJson(item))
           .toList(),
-      totalAmount: (json['totalAmount'] as num).toDouble(),
-      originalAmount: (json['originalAmount'] as num).toDouble(),
-      savings: (json['savings'] as num).toDouble(),
-      paymentMethod: json['paymentMethod'] as String,
-      deliveryAddress: json['deliveryAddress'] as String,
-      createdAt: DateTime.parse(json['createdAt']),
+      totalAmount: (json['totalAmount'] as num? ?? 0).toDouble(),
+      originalAmount: (json['originalAmount'] as num? ?? 0).toDouble(),
+      savings: (json['savings'] as num? ?? 0).toDouble(),
+      paymentMethod: json['paymentMethod']?.toString() ?? '',
+      deliveryAddress: json['deliveryAddress']?.toString() ?? '',
+      createdAt: json['createdAt'] != null 
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
       confirmedAt: json['confirmedAt'] != null 
           ? DateTime.parse(json['confirmedAt']) 
           : null,
@@ -88,6 +93,7 @@ class OrderModel {
     return {
       if (id != null) '_id': id,
       'orderId': orderId,
+      if (userId != null) 'userId': userId,  // Add user ID to JSON
       'status': status.index,
       'items': items.map((item) => item.toJson()).toList(),
       'totalAmount': totalAmount,
@@ -127,6 +133,7 @@ class OrderModel {
   OrderModel copyWith({
     String? id,
     String? orderId,
+    String? userId,  // Add user ID parameter
     OrderStatus? status,
     List<CartItemModel>? items,
     double? totalAmount,
@@ -144,6 +151,7 @@ class OrderModel {
     return OrderModel(
       id: id ?? this.id,
       orderId: orderId ?? this.orderId,
+      userId: userId ?? this.userId,  // Add user ID to copyWith
       status: status ?? this.status,
       items: items ?? this.items,
       totalAmount: totalAmount ?? this.totalAmount,
