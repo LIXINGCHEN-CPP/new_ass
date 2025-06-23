@@ -683,7 +683,7 @@ router.post('/users/login', asyncHandler(async (req, res) => {
 router.get('/users/:id', asyncHandler(async (req, res) => {
   try {
     const user = await database.getUserById(req.params.id);
-    console.log("abc:-->"， use);
+    console.log("abc:-->");
     
     if (!user) {
       return res.status(404).json({
