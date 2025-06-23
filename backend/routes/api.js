@@ -4,6 +4,9 @@ const database = require('../database');
 const emailService = require('../emailService');
 const { ObjectId } = require('mongodb');
 
+// Import Stripe routes
+const stripeRoutes = require('./stripe_routes');
+
 // Helper function to handle async routes
 const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -948,6 +951,9 @@ router.post('/auth/reset-password', asyncHandler(async (req, res) => {
     });
   }
 }));
+
+// Mount Stripe payment routes
+router.use('/payment/stripe', stripeRoutes);
 
 // Error handling middleware
 router.use((error, req, res, next) => {

@@ -10,9 +10,12 @@ import '../../core/providers/cart_provider.dart';
 import '../../core/providers/order_provider.dart';
 import '../../core/providers/notification_provider.dart';
 import '../../core/providers/user_provider.dart';
+import '../../core/services/stripe_service.dart';
 import 'components/checkout_address_selector.dart';
 import 'components/checkout_card_details.dart';
 import 'components/checkout_payment_systems.dart';
+
+
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
@@ -52,6 +55,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       ),
     );
   }
+
 }
 
 class PayNowButton extends StatelessWidget {
@@ -66,12 +70,10 @@ class PayNowButton extends StatelessWidget {
     switch (paymentType) {
       case PaymentType.masterCard:
         return 'Master Card';
-      case PaymentType.paypal:
-        return 'Paypal';
+      case PaymentType.stripe:
+        return 'Stripe';
       case PaymentType.cashOnDelivery:
         return 'Cash on Delivery';
-      case PaymentType.applePay:
-        return 'Apple Pay';
     }
   }
 
@@ -97,7 +99,93 @@ class PayNowButton extends StatelessWidget {
                   return;
                 }
 
-                // Create order with user ID
+                // Handle Stripe payment
+                if (selectedPaymentType == PaymentType.stripe) {
+                  // Show confirmation dialog first
+                  final shouldProceed = await StripeService.instance.showPaymentDialog(
+                    context, 
+                    cartProvider.totalPrice
+                  );
+                  
+                  if (!shouldProceed) return;
+                  
+                  context.showInfoToast('Creating payment link...');
+                  
+                  // Create payment link
+                  final stripeResponse = await StripeService.instance.createPaymentLink(
+                    items: cartProvider.cartItems.map((item) => {
+                      'name': item.name,
+                      'quantity': item.quantity,
+                      'price': (item.currentPrice * 100).round(),
+                    }).toList(),
+                    totalAmount: cartProvider.totalPrice,
+                    userId: userProvider.currentUser?.id,
+                  );
+                  
+                  if (stripeResponse != null && stripeResponse.paymentUrl.isNotEmpty) {
+                    // Successfully got payment URL from backend
+                    context.showInfoToast('Redirecting to Stripe...');
+                    
+                    // Launch payment URL - user must complete payment in browser
+                    final launched = await StripeService.instance.launchPaymentUrl(stripeResponse.paymentUrl);
+                    
+                    if (launched) {
+                      
+                      context.showInfoToast('Please complete payment in browser...');
+                      
+                      // Wait 5 seconds to ensure user has time to complete payment
+                      await Future.delayed(const Duration(seconds: 5));
+                      
+                     
+                      final success = await orderProvider.createOrder(
+                        items: cartProvider.cartItems,
+                        totalAmount: cartProvider.totalPrice,
+                        originalAmount: cartProvider.totalOriginalPrice,
+                        savings: cartProvider.totalSavings,
+                        paymentMethod: _getPaymentMethodName(selectedPaymentType),
+                        deliveryAddress: userProvider.currentUser?.address ?? '123 Main Street, City, State',
+                        userId: userProvider.currentUser?.id,
+                      );
+
+                      if (success && context.mounted) {
+                        context.showSuccessToast('Order placed successfully!');
+                        
+                        // Add order success notification
+                        if (orderProvider.currentOrder != null) {
+                          await notificationProvider.addOrderSuccessNotification(orderProvider.currentOrder!);
+                        }
+                        
+                        // Clear cart
+                        await cartProvider.clearCart();
+                        
+                        // Refresh orders list
+                        if (userProvider.isLoggedIn && userProvider.currentUser?.id != null) {
+                          await orderProvider.loadOrdersByUserId(userProvider.currentUser!.id!);
+                        } else {
+                          await orderProvider.loadOrders();
+                        }
+                        
+                        // Navigate to success page after delay
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.orderSuccessfull,
+                          arguments: orderProvider.currentOrder?.orderId ?? orderProvider.currentOrder?.id,
+                        );
+                      }
+                    } else {
+                      if (context.mounted) {
+                        context.showErrorToast('Failed to open payment page');
+                      }
+                    }
+                  } else {
+                    if (context.mounted) {
+                      context.showErrorToast('Failed to create payment link from backend');
+                    }
+                  }
+                  return;
+                }
+
+                // Handle other payment methods (MasterCard, Cash on Delivery)
                 final success = await orderProvider.createOrder(
                   items: cartProvider.cartItems,
                   totalAmount: cartProvider.totalPrice,
@@ -105,7 +193,7 @@ class PayNowButton extends StatelessWidget {
                   savings: cartProvider.totalSavings,
                   paymentMethod: _getPaymentMethodName(selectedPaymentType),
                   deliveryAddress: userProvider.currentUser?.address ?? '123 Main Street, City, State',
-                  userId: userProvider.currentUser?.id,  // Pass user ID
+                  userId: userProvider.currentUser?.id,
                 );
 
                 if (success) {

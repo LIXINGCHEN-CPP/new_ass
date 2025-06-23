@@ -23,7 +23,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   @override
   void initState() {
     super.initState();
-    // 在下一帧中获取用户数据，避免在initState中调用Provider
+    // Get user data in next frame to avoid calling Provider in initState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
