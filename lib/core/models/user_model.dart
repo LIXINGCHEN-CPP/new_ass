@@ -3,6 +3,8 @@ class UserModel {
   final String name;
   final String phone;
   final String? email;
+  final String? gender;
+  final String? birthday;
   final String? profileImage;
   final String? address;
   final DateTime createdAt;
@@ -14,6 +16,8 @@ class UserModel {
     required this.name,
     required this.phone,
     this.email,
+    this.gender,
+    this.birthday,
     this.profileImage,
     this.address,
     required this.createdAt,
@@ -35,12 +39,13 @@ class UserModel {
       name: json['name'] as String,
       phone: json['phone'] as String,
       email: json['email'] as String?,
+      gender: json['gender'] as String?,
+      birthday: json['birthday'] as String?,
       profileImage: json['profileImage'] as String?,
       address: json['address'] as String?,
       createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: json['updatedAt'] != null 
-          ? DateTime.parse(json['updatedAt']) 
-          : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       isActive: json['isActive'] as bool? ?? true,
     );
   }
@@ -51,6 +56,8 @@ class UserModel {
       'name': name,
       'phone': phone,
       'email': email,
+      'gender': gender,
+      'birthday': birthday,
       'profileImage': profileImage,
       'address': address,
       'createdAt': createdAt.toIso8601String(),
@@ -64,6 +71,8 @@ class UserModel {
     String? name,
     String? phone,
     String? email,
+    String? gender,
+    String? birthday,
     String? profileImage,
     String? address,
     DateTime? createdAt,
@@ -75,6 +84,8 @@ class UserModel {
       name: name ?? this.name,
       phone: phone ?? this.phone,
       email: email ?? this.email,
+      gender: gender ?? this.gender,
+      birthday: birthday ?? this.birthday,
       profileImage: profileImage ?? this.profileImage,
       address: address ?? this.address,
       createdAt: createdAt ?? this.createdAt,
@@ -97,4 +108,4 @@ class UserModel {
       return phone.substring(0, 1);
     }
   }
-} 
+}

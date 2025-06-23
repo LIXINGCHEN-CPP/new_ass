@@ -583,7 +583,7 @@ router.get('/users/:userId/orders', asyncHandler(async (req, res) => {
 // Users endpoints
 router.post('/users/register', asyncHandler(async (req, res) => {
   try {
-    const { name, phone, password, email } = req.body;
+    const { name, phone, password, email, gender, birthday } = req.body;
     
     // Validate required fields
     if (!name || !phone || !password) {
@@ -607,7 +607,9 @@ router.post('/users/register', asyncHandler(async (req, res) => {
       name,
       phone,
       password,
-      email
+      email,
+      gender,
+      birthday
     });
     
     // Get created user (without password)
@@ -681,6 +683,7 @@ router.post('/users/login', asyncHandler(async (req, res) => {
 router.get('/users/:id', asyncHandler(async (req, res) => {
   try {
     const user = await database.getUserById(req.params.id);
+    console.log("abc:-->");
     
     if (!user) {
       return res.status(404).json({
@@ -740,13 +743,15 @@ router.get('/users/phone/:phone', asyncHandler(async (req, res) => {
 
 router.put('/users/:id', asyncHandler(async (req, res) => {
   try {
-    const { name, email, address, profileImage } = req.body;
+    const { name, email, address, profileImage, gender, birthday } = req.body;
     
     const updateData = {};
     if (name !== undefined) updateData.name = name;
     if (email !== undefined) updateData.email = email;
     if (address !== undefined) updateData.address = address;
     if (profileImage !== undefined) updateData.profileImage = profileImage;
+    if (gender !== undefined) updateData.gender = gender;
+    if (birthday !== undefined) updateData.birthday = birthday;
     
     const updatedUser = await database.updateUser(req.params.id, updateData);
     

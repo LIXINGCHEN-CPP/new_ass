@@ -258,6 +258,8 @@ class Database {
       name: userData.name,
       phone: userData.phone,
       email: userData.email,
+      gender: userData.gender,
+      birthday: userData.birthday,
       password: hashedPassword,
       createdAt: new Date(),
       updatedAt: new Date(),

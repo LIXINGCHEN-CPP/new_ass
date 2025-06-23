@@ -19,12 +19,12 @@ class UserProvider with ChangeNotifier {
   // Initialize user session on app start
   Future<void> initializeUser() async {
     _setLoading(true);
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getString('user_id');
       final userPhone = prefs.getString('user_phone');
-      
+
       if (userId != null && userPhone != null) {
         // Try to get user from database
         try {
@@ -196,7 +196,6 @@ class UserProvider with ChangeNotifier {
     if (_currentUser == null) return false;
 
     try {
-      
       final success = await updateProfile(profileImage: imagePath);
       if (success) {
         debugPrint('Profile image updated: $imagePath');
@@ -207,6 +206,42 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('Failed to update profile image: $e');
       return false;
+    }
+  }
+
+  // Update user with a UserModel object
+  Future<bool> updateUser(UserModel user) async {
+    if (_currentUser == null) return false;
+
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final updatedUser = await DatabaseService.instance.updateUser(
+        userId: _currentUser!.id!,
+        name: user.name,
+        email: user.email,
+        address: user.address,
+        profileImage: user.profileImage,
+        gender: user.gender,
+        birthday: user.birthday,
+      );
+
+      if (updatedUser != null) {
+        _currentUser = updatedUser;
+        await _saveLocalSession(updatedUser);
+        debugPrint('User profile updated successfully');
+        return true;
+      } else {
+        _setError('Failed to update profile');
+        return false;
+      }
+    } catch (e) {
+      _setError('Update failed: $e');
+      debugPrint('Update profile error: $e');
+      return false;
+    } finally {
+      _setLoading(false);
     }
   }
 
@@ -248,8 +283,8 @@ class UserProvider with ChangeNotifier {
   // Check if user needs to complete profile
   bool get needsProfileCompletion {
     if (_currentUser == null) return false;
-    return _currentUser!.email == null || 
-           _currentUser!.address == null ||
-           _currentUser!.address!.isEmpty;
+    return _currentUser!.email == null ||
+        _currentUser!.address == null ||
+        _currentUser!.address!.isEmpty;
   }
-} 
+}
