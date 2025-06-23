@@ -743,13 +743,15 @@ router.get('/users/phone/:phone', asyncHandler(async (req, res) => {
 
 router.put('/users/:id', asyncHandler(async (req, res) => {
   try {
-    const { name, email, address, profileImage } = req.body;
+    const { name, email, address, profileImage, gender, birthday } = req.body;
     
     const updateData = {};
     if (name !== undefined) updateData.name = name;
     if (email !== undefined) updateData.email = email;
     if (address !== undefined) updateData.address = address;
     if (profileImage !== undefined) updateData.profileImage = profileImage;
+    if (gender !== undefined) updateData.gender = gender;
+    if (birthday !== undefined) updateData.birthday = birthday;
     
     const updatedUser = await database.updateUser(req.params.id, updateData);
     
