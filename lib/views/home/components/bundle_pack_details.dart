@@ -15,7 +15,7 @@ class PackDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.25),
+      // margin: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.25),
       child: Column(
         children: [
           Align(

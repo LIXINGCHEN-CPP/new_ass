@@ -96,8 +96,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppDefaults.padding),
               child: BuyNowRow(
-                onBuyButtonTap: () async {
-                  // Buy Now always adds the selected quantity to cart
+                quantity: selectedQuantity,
+                onAddToCart: () async {
                   await cartProvider.addProduct(product, quantity: selectedQuantity);
                   
                   // Show success message
@@ -277,19 +277,19 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ),
 
                 /// Review Row
-                const Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppDefaults.padding,
-                    // vertical: AppDefaults.padding,
-                  ),
-                  child: Column(
-                    children: [
-                      Divider(thickness: 0.1),
-                      ReviewRowButton(totalStars: 5),
-                      Divider(thickness: 0.1),
-                    ],
-                  ),
-                ),
+                // const Padding(
+                //   padding: EdgeInsets.symmetric(
+                //     horizontal: AppDefaults.padding,
+                //     // vertical: AppDefaults.padding,
+                //   ),
+                //   child: Column(
+                //     children: [
+                //       Divider(thickness: 0.1),
+                //       ReviewRowButton(totalStars: 5),
+                //       Divider(thickness: 0.1),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ),

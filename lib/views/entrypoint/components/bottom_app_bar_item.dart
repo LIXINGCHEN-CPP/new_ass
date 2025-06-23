@@ -22,7 +22,7 @@ class BottomAppBarItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Column(
-        // mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min,
         children: [
           SvgPicture.asset(
             iconLocation,
@@ -31,11 +31,18 @@ class BottomAppBarItem extends StatelessWidget {
               BlendMode.srcIn,
             ),
           ),
-          Text(
-            name,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: isActive ? AppColors.primary : AppColors.placeholder,
-                ),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: isActive
+                ? Text(
+              name,
+              key: const ValueKey('label'),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color:
+                isActive ? AppColors.primary : AppColors.placeholder,
+              ),
+            )
+                : const SizedBox.shrink(key: ValueKey('empty')),
           ),
         ],
       ),
