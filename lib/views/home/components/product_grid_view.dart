@@ -47,7 +47,7 @@ class ProductGridView extends StatelessWidget {
               return SelectableProductTile(
                 product: product,
                 selected: selected,
-                onTap: () => onProductToggle(product),
+                onToggle: () => onProductToggle(product),
               );
             },
           );

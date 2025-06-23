@@ -8,9 +8,7 @@ import 'components/product_grid_view.dart';
 import '../../core/models/product_model.dart';
 import '../../core/models/bundle_model.dart';
 import '../../core/providers/cart_provider.dart';
-import '../../core/providers/order_provider.dart';
-import '../../core/providers/user_provider.dart';
-import '../../core/models/cart_item_model.dart';
+import '../../core/components/custom_toast.dart';
 import 'package:provider/provider.dart';
 import '../../core/routes/app_routes.dart';
 
@@ -30,7 +28,7 @@ class _BundleCreatePageState extends State<BundleCreatePage> {
   double get _originalPrice =>
       selectedProducts.fold(0, (sum, p) => sum + p.originalPrice);
 
-  Future<void> _checkout(BuildContext context) async {
+  Future<void> _addToCart(BuildContext context) async {
     if (selectedProducts.isEmpty) return;
 
     final bundle = BundleModel(
@@ -54,29 +52,12 @@ class _BundleCreatePageState extends State<BundleCreatePage> {
     );
 
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
-    final orderProvider = Provider.of<OrderProvider>(context, listen: false);
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     await cartProvider.addBundle(bundle);
 
-    final success = await orderProvider.createOrder(
-      items: [CartItemModel.fromBundle(bundle)],
-      totalAmount: _currentPrice,
-      originalAmount: _originalPrice,
-      savings: _originalPrice - _currentPrice,
-      paymentMethod: 'Custom Pack',
-      deliveryAddress:
-      userProvider.currentUser?.address ?? '123 Main Street, City, State',
-      userId: userProvider.currentUser?.id,
-    );
-
-    if (success && context.mounted) {
-      Navigator.pushNamed(
-        context,
-        AppRoutes.orderSuccessfull,
-        arguments: orderProvider.currentOrder?.orderId ??
-            orderProvider.currentOrder?.id,
-      );
+    if (context.mounted) {
+      context.showSuccessToast('Added ${bundle.name} to cart');
+      Navigator.pushNamed(context, AppRoutes.cartPage);
     }
   }
 
@@ -122,7 +103,7 @@ class _BundleCreatePageState extends State<BundleCreatePage> {
             BottomActionBar(
               products: selectedProducts,
               totalPrice: _currentPrice,
-              onCheckout: () => _checkout(context),
+              onCheckout: () => _addToCart(context),
             ),
         ],
       ),

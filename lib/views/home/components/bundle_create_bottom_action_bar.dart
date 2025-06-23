@@ -27,12 +27,13 @@ class BottomActionBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          ...products.take(4).map(
-                (e) => ProductAvatarWithQuanitty(
+          ...products.take(4).map((e) => Padding(
+            padding: const EdgeInsets.only(right: 2.0),  // 8 像素间隔
+            child: ProductAvatarWithQuanitty(
               productImage: e.coverImage,
               quantity: 1,
             ),
-          ),
+          )),
           const Spacer(),
           Text(
             '\$${totalPrice.toStringAsFixed(2)}',
@@ -41,16 +42,25 @@ class BottomActionBar extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
           GestureDetector(
             onTap: onCheckout,
             child: Container(
+              // ① 指定固定宽高
+              width: 40,
+              height: 40,
+              // ② 调整内边距（图标会在 padding 区域居中）
+              padding: const EdgeInsets.all(8),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              padding: const EdgeInsets.all(AppDefaults.padding),
-              child: SvgPicture.asset(AppIcons.arrowForward),
+              // ③ 也可以给 SvgPicture 本身指定宽高
+              child: SvgPicture.asset(
+                AppIcons.arrowForward,
+                width: 30,
+                height: 30,
+              ),
             ),
           ),
         ],
