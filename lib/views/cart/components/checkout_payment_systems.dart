@@ -69,7 +69,7 @@ class _PaymentSystemState extends State<PaymentSystem> {
           ],
         );
 
-      case PaymentType.paypal:
+      case PaymentType.stripe:
         return Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: AppDefaults.padding,
@@ -94,7 +94,7 @@ class _PaymentSystemState extends State<PaymentSystem> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: NetworkImageWithLoader(
-                      'https://i.imgur.com/7pI5714.png',
+                      'https://img.picui.cn/free/2025/06/24/6859892f74afc.png',
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -106,7 +106,7 @@ class _PaymentSystemState extends State<PaymentSystem> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Paypal',
+                        'Stripe',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
@@ -114,7 +114,7 @@ class _PaymentSystemState extends State<PaymentSystem> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'mypaypal@gmail.com',
+                        'Secure online payment with Stripe',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Colors.grey[600],
                             ),
@@ -210,77 +210,6 @@ class _PaymentSystemState extends State<PaymentSystem> {
             ),
           ),
         );
-
-      case PaymentType.applePay:
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppDefaults.padding,
-            vertical: AppDefaults.padding / 2,
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(AppDefaults.padding),
-            decoration: BoxDecoration(
-              color: AppColors.coloredBackground,
-              borderRadius: AppDefaults.borderRadius,
-              border: Border.all(color: AppColors.primary),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.black,
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: NetworkImageWithLoader(
-                      'https://i.imgur.com/lLUcMC1.png',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Apple Pay',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'applepay.com',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
     }
   }
 
@@ -319,30 +248,22 @@ class _PaymentSystemState extends State<PaymentSystem> {
                 },
                 isActive: widget.selectedPaymentType == PaymentType.masterCard,
               ),
-                             PaymentCardTile(
-                 label: 'Paypal',
-                 icon: 'https://i.imgur.com/7pI5714.png',
-                 onTap: () {
-                   widget.onPaymentTypeChanged(PaymentType.paypal);
-                 },
-                 isActive: widget.selectedPaymentType == PaymentType.paypal,
-               ),
-               PaymentCardTile(
-                 label: 'Cash On Delivery',
-                 icon: 'https://i.imgur.com/aRJj3iU.png',
-                 onTap: () {
-                   widget.onPaymentTypeChanged(PaymentType.cashOnDelivery);
-                 },
-                 isActive: widget.selectedPaymentType == PaymentType.cashOnDelivery,
-               ),
-               PaymentCardTile(
-                 label: 'Apple Pay',
-                  icon: 'https://i.imgur.com/lLUcMC1.png',
-                 onTap: () {
-                   widget.onPaymentTypeChanged(PaymentType.applePay);
-                 },
-                 isActive: widget.selectedPaymentType == PaymentType.applePay,
-               ),
+              PaymentCardTile(
+                label: 'Stripe',
+                icon: 'https://img.picui.cn/free/2025/06/24/6859892f74afc.png',
+                onTap: () {
+                  widget.onPaymentTypeChanged(PaymentType.stripe);
+                },
+                isActive: widget.selectedPaymentType == PaymentType.stripe,
+              ),
+              PaymentCardTile(
+                label: 'Cash On Delivery',
+                icon: 'https://i.imgur.com/aRJj3iU.png',
+                onTap: () {
+                  widget.onPaymentTypeChanged(PaymentType.cashOnDelivery);
+                },
+                isActive: widget.selectedPaymentType == PaymentType.cashOnDelivery,
+              ),
             ],
           ),
         ),
