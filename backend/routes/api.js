@@ -583,7 +583,7 @@ router.get('/users/:userId/orders', asyncHandler(async (req, res) => {
 // Users endpoints
 router.post('/users/register', asyncHandler(async (req, res) => {
   try {
-    const { name, phone, password, email } = req.body;
+    const { name, phone, password, email, gender, birthday } = req.body;
     
     // Validate required fields
     if (!name || !phone || !password) {
@@ -607,7 +607,9 @@ router.post('/users/register', asyncHandler(async (req, res) => {
       name,
       phone,
       password,
-      email
+      email,
+      gender,
+      birthday
     });
     
     // Get created user (without password)
@@ -681,6 +683,7 @@ router.post('/users/login', asyncHandler(async (req, res) => {
 router.get('/users/:id', asyncHandler(async (req, res) => {
   try {
     const user = await database.getUserById(req.params.id);
+    console.log("abc:-->"， use);
     
     if (!user) {
       return res.status(404).json({

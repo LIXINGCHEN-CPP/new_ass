@@ -43,19 +43,19 @@ class DatabaseService {
 
   bool _isConnected = false;
   bool _useLocalData = false;
-  
 
   Future<bool> connect() async {
     try {
-      debugPrint('Testing backend API connection to: ${ApiConstants.healthUrl}');
+      debugPrint(
+          'Testing backend API connection to: ${ApiConstants.healthUrl}');
       final response = await http.get(
         Uri.parse(ApiConstants.healthUrl),
         headers: {'Content-Type': 'application/json'},
       ).timeout(ApiConstants.timeoutDuration);
-      
+
       debugPrint('Health check response: ${response.statusCode}');
       debugPrint('Health check body: ${response.body}');
-      
+
       if (response.statusCode == 200) {
         _isConnected = true;
         _useLocalData = false;
@@ -82,7 +82,6 @@ class DatabaseService {
 
   bool get isConnected => _isConnected;
   bool get isUsingLocalData => _useLocalData;
-  
 
   void resetToOnlineMode() {
     _useLocalData = false;
@@ -109,13 +108,16 @@ class DatabaseService {
   }
 
   // Helper method for making POST requests
-  Future<Map<String, dynamic>> _makePostRequest(String endpoint, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> _makePostRequest(
+      String endpoint, Map<String, dynamic> data) async {
     try {
-      final response = await http.post(
-        Uri.parse('${ApiConstants.baseUrl}$endpoint'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(data),
-      ).timeout(ApiConstants.timeoutDuration);
+      final response = await http
+          .post(
+            Uri.parse('${ApiConstants.baseUrl}$endpoint'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode(data),
+          )
+          .timeout(ApiConstants.timeoutDuration);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return json.decode(response.body);
@@ -128,14 +130,16 @@ class DatabaseService {
     }
   }
 
- 
-  Future<Map<String, dynamic>> _makePutRequest(String endpoint, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> _makePutRequest(
+      String endpoint, Map<String, dynamic> data) async {
     try {
-      final response = await http.put(
-        Uri.parse('${ApiConstants.baseUrl}$endpoint'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(data),
-      ).timeout(ApiConstants.timeoutDuration);
+      final response = await http
+          .put(
+            Uri.parse('${ApiConstants.baseUrl}$endpoint'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode(data),
+          )
+          .timeout(ApiConstants.timeoutDuration);
 
       if (response.statusCode == 200) {
         return json.decode(response.body);
@@ -154,16 +158,17 @@ class DatabaseService {
       debugPrint('Using local category data');
       return _getMockCategories();
     }
-    
+
     try {
       final responseData = await _makeRequest('/categories');
-      
+
       if (responseData['success'] == true) {
         final List<dynamic> data = responseData['data'];
         debugPrint('Successfully fetched ${data.length} categories from API');
         return data.map((json) => CategoryModel.fromJson(json)).toList();
       } else {
-        throw Exception(responseData['message'] ?? 'Failed to fetch categories');
+        throw Exception(
+            responseData['message'] ?? 'Failed to fetch categories');
       }
     } catch (e) {
       debugPrint('Failed to fetch category data: $e, using local data');
@@ -180,10 +185,10 @@ class DatabaseService {
         return null;
       }
     }
-    
+
     try {
       final responseData = await _makeRequest('/categories/$id');
-      
+
       if (responseData['success'] == true) {
         return CategoryModel.fromJson(responseData['data']);
       }
@@ -206,10 +211,12 @@ class DatabaseService {
     String? email,
   }) async {
     if (_useLocalData) {
-      debugPrint('Backend not available - registration requires valid database connection');
-      throw Exception('Registration service unavailable. Please check your internet connection.');
+      debugPrint(
+          'Backend not available - registration requires valid database connection');
+      throw Exception(
+          'Registration service unavailable. Please check your internet connection.');
     }
-    
+
     try {
       final requestBody = {
         'name': name,
@@ -218,8 +225,9 @@ class DatabaseService {
         'email': email,
       };
 
-      final responseData = await _makePostRequest('/users/register', requestBody);
-      
+      final responseData =
+          await _makePostRequest('/users/register', requestBody);
+
       if (responseData['success'] == true) {
         debugPrint('User created successfully via API');
         return UserModel.fromJson(responseData['data']);
@@ -228,8 +236,9 @@ class DatabaseService {
       }
     } catch (e) {
       debugPrint('Failed to create user via API: $e');
-     
-      throw Exception('Registration service unavailable. Please check your internet connection.');
+
+      throw Exception(
+          'Registration service unavailable. Please check your internet connection.');
     }
   }
 
@@ -237,24 +246,27 @@ class DatabaseService {
     required String phone,
     required String password,
   }) async {
-    
     if (_useLocalData) {
-      debugPrint('Backend not available - login requires valid database connection');
-      throw Exception('Login service unavailable. Please check your internet connection.');
+      debugPrint(
+          'Backend not available - login requires valid database connection');
+      throw Exception(
+          'Login service unavailable. Please check your internet connection.');
     }
-    
+
     try {
-      final response = await http.post(
-        Uri.parse('${ApiConstants.baseUrl}/users/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'phone': phone,
-          'password': password,
-        }),
-      ).timeout(ApiConstants.timeoutDuration);
+      final response = await http
+          .post(
+            Uri.parse('${ApiConstants.baseUrl}/users/login'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              'phone': phone,
+              'password': password,
+            }),
+          )
+          .timeout(ApiConstants.timeoutDuration);
 
       final responseData = json.decode(response.body);
-      
+
       if (response.statusCode == 200 && responseData['success'] == true) {
         debugPrint('User logged in successfully via API');
         return UserModel.fromJson(responseData['data']);
@@ -264,55 +276,57 @@ class DatabaseService {
         return null;
       } else {
         // Other errors - treat as service unavailable
-        throw Exception('Login service unavailable. Please check your internet connection.');
+        throw Exception(
+            'Login service unavailable. Please check your internet connection.');
       }
     } catch (e) {
       if (e.toString().contains('Invalid credentials')) {
         return null;
       }
       debugPrint('Failed to login via API: $e');
-      throw Exception('Login service unavailable. Please check your internet connection.');
+      throw Exception(
+          'Login service unavailable. Please check your internet connection.');
     }
   }
 
   Future<UserModel?> getUserById(String id) async {
-    
     if (_useLocalData) {
-      debugPrint('Backend not available - user lookup requires valid database connection');
+      debugPrint(
+          'Backend not available - user lookup requires valid database connection');
       return null;
     }
-    
+
     try {
       final responseData = await _makeRequest('/users/$id');
-      
+
       if (responseData['success'] == true) {
         return UserModel.fromJson(responseData['data']);
       }
       return null;
     } catch (e) {
       debugPrint('Failed to fetch user: $e');
-     
+
       return null;
     }
   }
 
   Future<UserModel?> getUserByPhone(String phone) async {
-   
     if (_useLocalData) {
-      debugPrint('Backend not available - user lookup requires valid database connection');
+      debugPrint(
+          'Backend not available - user lookup requires valid database connection');
       return null;
     }
-    
+
     try {
       final responseData = await _makeRequest('/users/phone/$phone');
-      
+
       if (responseData['success'] == true) {
         return UserModel.fromJson(responseData['data']);
       }
       return null;
     } catch (e) {
       debugPrint('Failed to fetch user by phone: $e');
-    
+
       return null;
     }
   }
@@ -323,21 +337,25 @@ class DatabaseService {
     String? email,
     String? address,
     String? profileImage,
+    String? gender,
+    String? birthday,
   }) async {
     if (_useLocalData) {
       debugPrint('Mock user update for: $userId');
       return _getMockUserById(userId);
     }
-    
+
     try {
       final requestBody = <String, dynamic>{};
       if (name != null) requestBody['name'] = name;
       if (email != null) requestBody['email'] = email;
       if (address != null) requestBody['address'] = address;
       if (profileImage != null) requestBody['profileImage'] = profileImage;
+      if (gender != null) requestBody['gender'] = gender;
+      if (birthday != null) requestBody['birthday'] = birthday;
 
       final responseData = await _makePutRequest('/users/$userId', requestBody);
-      
+
       if (responseData['success'] == true) {
         debugPrint('User updated successfully via API');
         return UserModel.fromJson(responseData['data']);
@@ -346,36 +364,39 @@ class DatabaseService {
       }
     } catch (e) {
       debugPrint('Failed to update user via API: $e');
-    
+
       throw e;
     }
   }
 
   // Products CRUD operations
-  Future<List<ProductModel>> getProducts({String? categoryId, bool? isNew, bool? isPopular}) async {
+  Future<List<ProductModel>> getProducts(
+      {String? categoryId, bool? isNew, bool? isPopular}) async {
     if (_useLocalData) {
       debugPrint('Using local product data');
       return _getMockProducts().where((product) {
-        if (categoryId != null && product.categoryId != categoryId) return false;
+        if (categoryId != null && product.categoryId != categoryId)
+          return false;
         if (isNew != null && product.isNew != isNew) return false;
         if (isPopular != null && product.isPopular != isPopular) return false;
         return true;
       }).toList();
     }
-    
+
     try {
       // Build query parameters
       final queryParams = <String, String>{};
       if (categoryId != null) queryParams['categoryId'] = categoryId;
       if (isNew != null) queryParams['isNew'] = isNew.toString();
       if (isPopular != null) queryParams['isPopular'] = isPopular.toString();
-      
-      final queryString = queryParams.isNotEmpty 
-          ? '?' + queryParams.entries.map((e) => '${e.key}=${e.value}').join('&')
+
+      final queryString = queryParams.isNotEmpty
+          ? '?' +
+              queryParams.entries.map((e) => '${e.key}=${e.value}').join('&')
           : '';
-      
+
       final responseData = await _makeRequest('/products$queryString');
-      
+
       if (responseData['success'] == true) {
         final List<dynamic> data = responseData['data'];
         debugPrint('Successfully fetched ${data.length} products from API');
@@ -387,7 +408,8 @@ class DatabaseService {
       debugPrint('Failed to fetch product data: $e, using local data');
       _useLocalData = true;
       return _getMockProducts().where((product) {
-        if (categoryId != null && product.categoryId != categoryId) return false;
+        if (categoryId != null && product.categoryId != categoryId)
+          return false;
         if (isNew != null && product.isNew != isNew) return false;
         if (isPopular != null && product.isPopular != isPopular) return false;
         return true;
@@ -403,10 +425,10 @@ class DatabaseService {
         return null;
       }
     }
-    
+
     try {
       final responseData = await _makeRequest('/products/$id');
-      
+
       if (responseData['success'] == true) {
         return ProductModel.fromJson(responseData['data']);
       }
@@ -422,7 +444,8 @@ class DatabaseService {
   }
 
   // Bundles CRUD operations
-  Future<List<BundleModel>> getBundles({String? categoryId, bool? isPopular}) async {
+  Future<List<BundleModel>> getBundles(
+      {String? categoryId, bool? isPopular}) async {
     if (_useLocalData) {
       debugPrint('Using local bundle data');
       return _getMockBundles().where((bundle) {
@@ -431,19 +454,20 @@ class DatabaseService {
         return true;
       }).toList();
     }
-    
+
     try {
       // Build query parameters
       final queryParams = <String, String>{};
       if (categoryId != null) queryParams['categoryId'] = categoryId;
       if (isPopular != null) queryParams['isPopular'] = isPopular.toString();
-      
-      final queryString = queryParams.isNotEmpty 
-          ? '?' + queryParams.entries.map((e) => '${e.key}=${e.value}').join('&')
+
+      final queryString = queryParams.isNotEmpty
+          ? '?' +
+              queryParams.entries.map((e) => '${e.key}=${e.value}').join('&')
           : '';
-      
+
       final responseData = await _makeRequest('/bundles$queryString');
-      
+
       if (responseData['success'] == true) {
         final List<dynamic> data = responseData['data'];
         debugPrint('Successfully fetched ${data.length} bundles from API');
@@ -470,10 +494,10 @@ class DatabaseService {
         return null;
       }
     }
-    
+
     try {
       final responseData = await _makeRequest('/bundles/$id');
-      
+
       if (responseData['success'] == true) {
         return BundleModel.fromJson(responseData['data']);
       }
@@ -488,7 +512,7 @@ class DatabaseService {
     throw UnimplementedError('Create operations not implemented');
   }
 
-    // Get bundle details with product information
+  // Get bundle details with product information
   Future<BundleModel?> getBundleDetails(String bundleId) async {
     if (_useLocalData) {
       try {
@@ -500,7 +524,7 @@ class DatabaseService {
 
     try {
       debugPrint('Fetching bundle details: $bundleId');
-      
+
       final responseData = await _makeRequest('/bundles/$bundleId');
 
       if (responseData['success'] == true && responseData['data'] != null) {
@@ -511,7 +535,7 @@ class DatabaseService {
         debugPrint('Bundle not found: $bundleId');
         return null;
       }
-      
+
       return null;
     } catch (e) {
       debugPrint('Failed to fetch bundle details: $e');
@@ -530,14 +554,16 @@ class DatabaseService {
       final products = _getMockProducts();
       return _searchProductsWithScoring(products, query);
     }
-    
+
     try {
-      final responseData = await _makeRequest('/products/search/${Uri.encodeComponent(query)}');
-      
+      final responseData =
+          await _makeRequest('/products/search/${Uri.encodeComponent(query)}');
+
       if (responseData['success'] == true) {
         final List<dynamic> data = responseData['data'];
-        final products = data.map((json) => ProductModel.fromJson(json)).toList();
-       
+        final products =
+            data.map((json) => ProductModel.fromJson(json)).toList();
+
         return _searchProductsWithScoring(products, query);
       } else {
         throw Exception(responseData['message'] ?? 'Search failed');
@@ -550,72 +576,78 @@ class DatabaseService {
   }
 
   /// Smart multi-keyword search algorithm: supports space-separated keywords, searches product name only
-  List<ProductModel> _searchProductsWithScoring(List<ProductModel> products, String query) {
+  List<ProductModel> _searchProductsWithScoring(
+      List<ProductModel> products, String query) {
     if (query.isEmpty) return [];
-    
+
     final originalQuery = query.trim();
     final keywords = _splitQuery(originalQuery);
     final List<MapEntry<ProductModel, double>> scoredResults = [];
-    
+
     debugPrint('Search query: "$originalQuery"');
     debugPrint('Split keywords: ${keywords.join(", ")}');
-    
+
     for (final product in products) {
       final ProductSearchData searchData = ProductSearchData(
         name: product.name.toLowerCase(),
       );
-      
+
       double totalScore = 0;
       List<String> matchDetails = [];
       int matchedKeywords = 0;
-      
+
       // Calculate score for each keyword
       for (final keyword in keywords) {
         final keywordScore = _calculateKeywordScore(searchData, keyword);
         if (keywordScore.score > 0) {
           totalScore += keywordScore.score;
           matchedKeywords++;
-          matchDetails.add('${keyword}(${keywordScore.score.toStringAsFixed(0)}${keywordScore.matchType})');
+          matchDetails.add(
+              '${keyword}(${keywordScore.score.toStringAsFixed(0)}${keywordScore.matchType})');
         }
       }
-      
+
       // Only products matching all keywords are included in results
       if (matchedKeywords == keywords.length) {
         // Multi-keyword bonus: more keywords matched, higher reward
-        double multiKeywordBonus = keywords.length > 1 ? (keywords.length - 1) * 100 : 0;
+        double multiKeywordBonus =
+            keywords.length > 1 ? (keywords.length - 1) * 100 : 0;
         totalScore += multiKeywordBonus;
-        
+
         // Length weight: shorter product names get higher scores
         double lengthBonus = math.max(0, (30 - searchData.name.length) * 3);
         totalScore += lengthBonus;
-        
+
         // Completeness bonus: more complete matches get higher scores
         double completenessBonus = (matchedKeywords / keywords.length) * 200;
         totalScore += completenessBonus;
-        
-        debugPrint('   ${product.name} -> Score: ${totalScore.toStringAsFixed(1)} (${matchDetails.join(", ")})');
+
+        debugPrint(
+            '   ${product.name} -> Score: ${totalScore.toStringAsFixed(1)} (${matchDetails.join(", ")})');
         scoredResults.add(MapEntry(product, totalScore));
-      } 
-      else {
-        debugPrint('   ${product.name} -> Partial match ($matchedKeywords/${keywords.length} keywords)');
+      } else {
+        debugPrint(
+            '   ${product.name} -> Partial match ($matchedKeywords/${keywords.length} keywords)');
       }
     }
-    
+
     // Sort by score in descending order
     scoredResults.sort((a, b) => b.value.compareTo(a.value));
-    
+
     debugPrint('🏆 Search results sorted (total ${scoredResults.length}):');
     for (int i = 0; i < math.min(5, scoredResults.length); i++) {
       final entry = scoredResults[i];
-      debugPrint('  ${i + 1}. ${entry.key.name} (${entry.value.toStringAsFixed(1)})');
+      debugPrint(
+          '  ${i + 1}. ${entry.key.name} (${entry.value.toStringAsFixed(1)})');
     }
-    
+
     return scoredResults.map((entry) => entry.key).toList();
   }
-  
+
   /// Split query into multiple keywords
   List<String> _splitQuery(String query) {
-    return query.toLowerCase()
+    return query
+        .toLowerCase()
         .trim()
         .split(RegExp(r'\s+'))
         .where((keyword) => keyword.isNotEmpty)
@@ -623,24 +655,26 @@ class DatabaseService {
   }
 
   /// Calculate score of a single keyword in product name
-  _KeywordScoreResult _calculateKeywordScore(ProductSearchData searchData, String keyword) {
+  _KeywordScoreResult _calculateKeywordScore(
+      ProductSearchData searchData, String keyword) {
     // Search only in product name
     final nameScore = _calculateFieldScore(searchData.name, keyword, 1.0);
     return _KeywordScoreResult(
-      score: nameScore.score, 
+      score: nameScore.score,
       matchType: nameScore.matchType,
     );
   }
 
   /// Calculate field matching score
-  _FieldScoreResult _calculateFieldScore(String field, String keyword, double fieldWeight) {
+  _FieldScoreResult _calculateFieldScore(
+      String field, String keyword, double fieldWeight) {
     if (field.isEmpty || keyword.isEmpty) {
       return _FieldScoreResult(score: 0, matchType: '');
     }
-    
+
     double baseScore = 0;
     String matchType = '';
-    
+
     // 1. Exact match (highest score)
     if (field == keyword) {
       baseScore = 1000;
@@ -667,10 +701,10 @@ class DatabaseService {
       // Ensure the score never drops below zero to avoid negative keyword impact
       baseScore = math.max(0, baseScore);
     }
-    
+
     // Apply field weight
     double finalScore = baseScore * fieldWeight;
-    
+
     return _FieldScoreResult(score: finalScore, matchType: matchType);
   }
 
@@ -688,7 +722,7 @@ class DatabaseService {
   }) {
     final now = DateTime.now();
     final userId = 'user_${now.millisecondsSinceEpoch}';
-    
+
     return UserModel(
       id: userId,
       name: name,
@@ -1261,7 +1295,7 @@ class DatabaseService {
     required double savings,
     required String paymentMethod,
     required String deliveryAddress,
-    String? userId,  // Add user ID parameter
+    String? userId, // Add user ID parameter
   }) async {
     // Try to reconnect if we're using local data
     if (_useLocalData) {
@@ -1288,17 +1322,19 @@ class DatabaseService {
         'savings': savings,
         'paymentMethod': paymentMethod,
         'deliveryAddress': deliveryAddress,
-        if (userId != null) 'userId': userId,  // Include user ID if provided
+        if (userId != null) 'userId': userId, // Include user ID if provided
       };
 
       debugPrint('Sending order request to: ${ApiConstants.baseUrl}/orders');
       debugPrint('Request body: ${json.encode(requestBody)}');
 
-      final response = await http.post(
-        Uri.parse('${ApiConstants.baseUrl}/orders'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(requestBody),
-      ).timeout(ApiConstants.timeoutDuration);
+      final response = await http
+          .post(
+            Uri.parse('${ApiConstants.baseUrl}/orders'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode(requestBody),
+          )
+          .timeout(ApiConstants.timeoutDuration);
 
       debugPrint('Order response status: ${response.statusCode}');
       debugPrint('Order response body: ${response.body}');
@@ -1311,7 +1347,7 @@ class DatabaseService {
           return OrderModel.fromJson(responseData['data']);
         }
       }
-      
+
       throw Exception('HTTP ${response.statusCode}: ${response.body}');
     } catch (e) {
       debugPrint('Failed to create order via API: $e, using local data');
@@ -1340,23 +1376,27 @@ class DatabaseService {
     try {
       final queryParams = <String, String>{};
       if (status != null) queryParams['status'] = status.index.toString();
-      
-      final queryString = queryParams.isNotEmpty 
-          ? '?' + queryParams.entries.map((e) => '${e.key}=${e.value}').join('&')
+
+      final queryString = queryParams.isNotEmpty
+          ? '?' +
+              queryParams.entries.map((e) => '${e.key}=${e.value}').join('&')
           : '';
 
       final responseData = await _makeRequest('/orders$queryString');
-      
+
       if (responseData['success'] == true) {
         final List<dynamic> data = responseData['data'];
         debugPrint('Successfully fetched ${data.length} orders from API');
-        
+
         // For now, only show the last 3 most recent orders to simulate user filtering
-        final allOrders = data.map((json) => OrderModel.fromJson(json)).toList();
-        allOrders.sort((a, b) => b.createdAt.compareTo(a.createdAt)); // Sort by newest first
-        final recentOrders = allOrders.take(3).toList(); // Take only the 3 most recent
+        final allOrders =
+            data.map((json) => OrderModel.fromJson(json)).toList();
+        allOrders.sort((a, b) =>
+            b.createdAt.compareTo(a.createdAt)); // Sort by newest first
+        final recentOrders =
+            allOrders.take(3).toList(); // Take only the 3 most recent
         debugPrint('Showing ${recentOrders.length} recent orders');
-        
+
         return recentOrders;
       } else {
         throw Exception(responseData['message'] ?? 'Failed to fetch orders');
@@ -1379,18 +1419,20 @@ class DatabaseService {
 
     try {
       final responseData = await _makeRequest('/users/$userId/orders');
-      
+
       if (responseData['success'] == true) {
         final List<dynamic> data = responseData['data'];
-        debugPrint('Successfully fetched ${data.length} orders for user $userId from API');
-        
+        debugPrint(
+            'Successfully fetched ${data.length} orders for user $userId from API');
+
         final orders = data.map((json) => OrderModel.fromJson(json)).toList();
         // Sort by newest first
         orders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-        
+
         return orders;
       } else {
-        throw Exception(responseData['message'] ?? 'Failed to fetch user orders');
+        throw Exception(
+            responseData['message'] ?? 'Failed to fetch user orders');
       }
     } catch (e) {
       debugPrint('Failed to fetch orders for user $userId: $e');
@@ -1409,7 +1451,7 @@ class DatabaseService {
 
     try {
       final responseData = await _makeRequest('/orders/$id');
-      
+
       if (responseData['success'] == true) {
         return OrderModel.fromJson(responseData['data']);
       }
@@ -1431,7 +1473,7 @@ class DatabaseService {
 
     try {
       final responseData = await _makeRequest('/orders/by-order-id/$orderId');
-      
+
       if (responseData['success'] == true) {
         return OrderModel.fromJson(responseData['data']);
       }
@@ -1444,22 +1486,25 @@ class DatabaseService {
 
   Future<bool> updateOrderStatus(String orderId, OrderStatus newStatus) async {
     if (_useLocalData) {
-      debugPrint('Mock order status update for order: $orderId to ${newStatus.name}');
+      debugPrint(
+          'Mock order status update for order: $orderId to ${newStatus.name}');
       return true; // Mock success
     }
 
     try {
-      final response = await http.put(
-        Uri.parse('${ApiConstants.baseUrl}/orders/$orderId/status'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'status': newStatus.index}),
-      ).timeout(ApiConstants.timeoutDuration);
+      final response = await http
+          .put(
+            Uri.parse('${ApiConstants.baseUrl}/orders/$orderId/status'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({'status': newStatus.index}),
+          )
+          .timeout(ApiConstants.timeoutDuration);
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         return responseData['success'] == true;
       }
-      
+
       return false;
     } catch (e) {
       debugPrint('Failed to update order status: $e');
@@ -1479,11 +1524,11 @@ class DatabaseService {
   }) {
     final orderId = (math.Random().nextInt(900000000) + 100000000).toString();
     final now = DateTime.now();
-    
+
     return OrderModel(
       id: 'order_${DateTime.now().millisecondsSinceEpoch}',
       orderId: orderId,
-      userId: userId,  // Include user ID in mock order
+      userId: userId, // Include user ID in mock order
       status: OrderStatus.confirmed,
       items: items,
       totalAmount: totalAmount,
@@ -1501,7 +1546,7 @@ class DatabaseService {
     final now = DateTime.now();
     final yesterday = now.subtract(const Duration(days: 1));
     final twoDaysAgo = now.subtract(const Duration(days: 2));
-    
+
     return [
       OrderModel(
         id: 'order_1',
@@ -1617,11 +1662,13 @@ class DatabaseService {
   // Password Reset Methods
   Future<Map<String, dynamic>> requestPasswordReset(String email) async {
     try {
-      final response = await http.post(
-        Uri.parse('${ApiConstants.baseUrl}/auth/forgot-password'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'email': email}),
-      ).timeout(ApiConstants.timeoutDuration);
+      final response = await http
+          .post(
+            Uri.parse('${ApiConstants.baseUrl}/auth/forgot-password'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({'email': email}),
+          )
+          .timeout(ApiConstants.timeoutDuration);
 
       final responseData = json.decode(response.body);
 
@@ -1629,12 +1676,14 @@ class DatabaseService {
         return {
           'success': true,
           'message': responseData['message'],
-          'debug': responseData['debug'], // Contains preview URL and code for development
+          'debug': responseData[
+              'debug'], // Contains preview URL and code for development
         };
       } else {
         return {
           'success': false,
-          'message': responseData['message'] ?? 'Failed to send password reset code',
+          'message':
+              responseData['message'] ?? 'Failed to send password reset code',
         };
       }
     } catch (e) {
@@ -1646,16 +1695,19 @@ class DatabaseService {
     }
   }
 
-  Future<Map<String, dynamic>> verifyResetCode(String email, String code) async {
+  Future<Map<String, dynamic>> verifyResetCode(
+      String email, String code) async {
     try {
-      final response = await http.post(
-        Uri.parse('${ApiConstants.baseUrl}/auth/verify-reset-code'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'email': email,
-          'code': code,
-        }),
-      ).timeout(ApiConstants.timeoutDuration);
+      final response = await http
+          .post(
+            Uri.parse('${ApiConstants.baseUrl}/auth/verify-reset-code'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              'email': email,
+              'code': code,
+            }),
+          )
+          .timeout(ApiConstants.timeoutDuration);
 
       final responseData = json.decode(response.body);
 
@@ -1685,15 +1737,17 @@ class DatabaseService {
     required String newPassword,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse('${ApiConstants.baseUrl}/auth/reset-password'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'email': email,
-          'code': code,
-          'newPassword': newPassword,
-        }),
-      ).timeout(ApiConstants.timeoutDuration);
+      final response = await http
+          .post(
+            Uri.parse('${ApiConstants.baseUrl}/auth/reset-password'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              'email': email,
+              'code': code,
+              'newPassword': newPassword,
+            }),
+          )
+          .timeout(ApiConstants.timeoutDuration);
 
       final responseData = json.decode(response.body);
 
@@ -1716,4 +1770,4 @@ class DatabaseService {
       };
     }
   }
-} 
+}
