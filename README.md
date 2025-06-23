@@ -7,8 +7,7 @@
 
 This is a complete **Flutter grocery store application** with a cloud-deployed **Node.js backend** and **MongoDB Atlas database**. The app features a modern Material Design interface, shopping cart functionality, order management, user authentication, and real-time backend integration.
 
-### 🚀 **Live Backend**: https://grocery-store-flutter-app.onrender.com
-### 📱 **Platform**: Android APK ready for distribution
+### 🚀 **Live Backend**:.....
 
 ## Architecture
 
@@ -113,46 +112,9 @@ The backend provides RESTful APIs for all app functionality:
 - **Bundles**: `GET /api/bundles` 
 - **Orders**: `POST /api/orders`, `GET /api/orders`
 - **Search**: `GET /api/products/search/{query}`
-
-### Database Schema
-
-- **Categories**: 12 product categories with images and descriptions
-- **Products**: 18 products across all categories with pricing, images, and inventory
-- **Bundles**: Product bundles with combined pricing
-- **Orders**: Order management with status tracking
-
-## Features
-
-✅ **Complete E-commerce Flow**
-- Product browsing by categories
-- Search functionality with smart filtering
-- Shopping cart with quantity management
-- Order placement and tracking
-- Favorites/wishlist management
-
-✅ **User Management**
-- User authentication and registration
-- Profile management
-- Address management
-- Payment method storage
-
-✅ **Modern UI/UX**
-- Material Design 3 components
-- Smooth animations and transitions
-- Responsive layout
-- Dark/light theme support
-
-✅ **Backend Integration**
-- Real-time data from cloud database
-- Automatic fallback to local mock data
-- Error handling and offline support
+- .....
 
 ## Quick Start
-
-### Prerequisites
-- Flutter SDK (3.5.0+)
-- Android Studio/VS Code
-- Git
 
 ### Installation
 
@@ -197,7 +159,7 @@ adb install build/app/outputs/flutter-apk/app-release.apk
 
 ## Backend Development
 
-The backend is located in the `/backend` directory:
+The backend is located in the `/backend` directory: Create .env before starting
 
 ```bash
 cd backend
@@ -205,5 +167,3 @@ npm install
 npm run dev  # Development mode with auto-restart
 npm start    # Production mode
 ```
-
-**Note**: The backend is already deployed on Render and doesn't need local setup for app usage.
