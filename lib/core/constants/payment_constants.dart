@@ -1,6 +1,5 @@
 enum PaymentType {
   masterCard,
-  paypal,
+  stripe,
   cashOnDelivery,
-  applePay,
 } 
