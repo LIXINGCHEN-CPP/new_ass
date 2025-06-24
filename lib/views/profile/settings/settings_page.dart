@@ -31,12 +31,12 @@ class SettingsPage extends StatelessWidget {
         ),
         child: Column(
           children: [
-            AppSettingsListTile(
-              label: 'Language',
-              trailing: SvgPicture.asset(AppIcons.right),
-              onTap: () =>
-                  Navigator.pushNamed(context, AppRoutes.settingsLanguage),
-            ),
+            // AppSettingsListTile(
+            //   label: 'Language',
+            //   trailing: SvgPicture.asset(AppIcons.right),
+            //   onTap: () =>
+            //       Navigator.pushNamed(context, AppRoutes.settingsLanguage),
+            // ),
             AppSettingsListTile(
               label: 'Notification',
               trailing: SvgPicture.asset(AppIcons.right),
@@ -49,12 +49,12 @@ class SettingsPage extends StatelessWidget {
               onTap: () =>
                   Navigator.pushNamed(context, AppRoutes.changePassword),
             ),
-            AppSettingsListTile(
-              label: 'Change Phone Number',
-              trailing: SvgPicture.asset(AppIcons.right),
-              onTap: () =>
-                  Navigator.pushNamed(context, AppRoutes.changePhoneNumber),
-            ),
+            // AppSettingsListTile(
+            //   label: 'Change Phone Number',
+            //   trailing: SvgPicture.asset(AppIcons.right),
+            //   onTap: () =>
+            //       Navigator.pushNamed(context, AppRoutes.changePhoneNumber),
+            // ),
             // AppSettingsListTile(
             //   label: 'Edit Address',
             //   trailing: SvgPicture.asset(AppIcons.right),

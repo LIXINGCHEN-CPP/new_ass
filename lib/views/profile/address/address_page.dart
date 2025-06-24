@@ -6,25 +6,63 @@ import '../../../core/components/app_radio.dart';
 import '../../../core/constants/constants.dart';
 import '../../../core/routes/app_routes.dart';
 
-class AddressPage extends StatelessWidget {
+class AddressPage extends StatefulWidget {
   const AddressPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Updated to match checkout page addresses
-    final addresses = [
-      {
-        'label': 'Bell Suites',
-        'phoneNumber': '(60) 123-627-496',
-        'address': '10-02, Bell Suites, Kota Warisan',
-      },
-      {
-        'label': 'Xiamen University Malaysia',
-        'phoneNumber': '(60) 11-2423-4875',
-        'address': 'Jalan Sunsuria, Bandar Sunsuria',
-      },
-    ];
+  State<AddressPage> createState() => _AddressPageState();
+}
 
+class _AddressPageState extends State<AddressPage> {
+  int selectedAddressIndex = 1; // Default selected address index
+
+  // Updated to match checkout page addresses
+  List<Map<String, String>> addresses = [
+    {
+      'label': 'Bell Suites',
+      'phoneNumber': '(60) 123-627-496',
+      'address': '10-02, Bell Suites, Kota Warisan',
+    },
+    {
+      'label': 'Xiamen University Malaysia',
+      'phoneNumber': '(60) 11-2423-4875',
+      'address': 'Jalan Sunsuria, Bandar Sunsuria',
+    },
+  ];
+
+  void _selectAddress(int index) {
+    setState(() {
+      selectedAddressIndex = index;
+    });
+  }
+
+  void _deleteAddress(int index) {
+    setState(() {
+      addresses.removeAt(index);
+      // Adjust selected index if necessary
+      if (selectedAddressIndex >= addresses.length && addresses.isNotEmpty) {
+        selectedAddressIndex = addresses.length - 1;
+      } else if (addresses.isEmpty) {
+        selectedAddressIndex = -1;
+      } else if (selectedAddressIndex == index && index > 0) {
+        selectedAddressIndex = index - 1;
+      }
+    });
+  }
+
+  void _addNewAddress() async {
+    final result = await Navigator.pushNamed(context, AppRoutes.newAddress);
+    if (result != null && result is Map<String, String>) {
+      setState(() {
+        addresses.add(result);
+        // Optionally select the newly added address
+        selectedAddressIndex = addresses.length - 1;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cardColor,
       appBar: AppBar(
@@ -38,33 +76,58 @@ class AddressPage extends StatelessWidget {
         child: Column(
           children: [
             // Address list
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: addresses.length,
-              itemBuilder: (context, index) {
-                final address = addresses[index];
-                return AddressTile(
-                  label: address['label']!,
-                  phoneNumber: address['phoneNumber']!,
-                  address: address['address']!,
-                  isActive: index == 1, // Xiamen University Malaysia is active by default
-                  onTap: () {
-                    // Handle address selection
-                  },
-                );
-              },
-            ),
-            
+            if (addresses.isNotEmpty)
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: addresses.length,
+                itemBuilder: (context, index) {
+                  final address = addresses[index];
+                  return AddressTile(
+                    label: address['label']!,
+                    phoneNumber: address['phoneNumber']!,
+                    address: address['address']!,
+                    isActive: index == selectedAddressIndex,
+                    onTap: () => _selectAddress(index),
+                    onDelete: () => _deleteAddress(index),
+                  );
+                },
+              )
+            else
+              Container(
+                padding: const EdgeInsets.all(AppDefaults.padding * 2),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.location_off,
+                      size: 64,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No addresses found',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Add your first delivery address',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
             const SizedBox(height: AppDefaults.padding * 2),
-            
+
             // Add new address button
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.newAddress);
-                },
+                onPressed: _addNewAddress,
                 icon: const Icon(Icons.add),
                 label: const Text('Add New Address'),
                 style: OutlinedButton.styleFrom(
@@ -89,6 +152,7 @@ class AddressTile extends StatelessWidget {
     required this.address,
     required this.isActive,
     required this.onTap,
+    required this.onDelete,
   });
 
   final String label;
@@ -96,6 +160,7 @@ class AddressTile extends StatelessWidget {
   final String address;
   final bool isActive;
   final VoidCallback onTap;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -133,23 +198,23 @@ class AddressTile extends StatelessWidget {
                       Text(
                         label,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         phoneNumber,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
-                            ),
+                          color: Colors.grey[600],
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         address,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
-                            ),
+                          color: Colors.grey[600],
+                        ),
                       ),
                     ],
                   ),
@@ -159,7 +224,7 @@ class AddressTile extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () {
-                        // Handle edit
+                        // Handle edit - you can implement edit functionality here
                         Navigator.pushNamed(context, AppRoutes.newAddress);
                       },
                       icon: SvgPicture.asset(AppIcons.edit),
@@ -184,6 +249,7 @@ class AddressTile extends StatelessWidget {
                               TextButton(
                                 onPressed: () {
                                   Navigator.pop(context);
+                                  onDelete();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(content: Text('$label address deleted')),
                                   );
