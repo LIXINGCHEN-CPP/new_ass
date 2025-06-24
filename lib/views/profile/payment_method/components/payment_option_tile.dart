@@ -40,29 +40,33 @@ class PaymentOptionTile extends StatelessWidget {
                 height: 60,
                 child: AspectRatio(
                   aspectRatio: 1 / 1,
-                  child: NetworkImageWithLoader(icon),
+                  child: NetworkImageWithLoader(icon, fit: BoxFit.contain),
                 ),
               ),
               const SizedBox(width: AppDefaults.padding),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(color: Colors.black),
-                  ),
-                  const SizedBox(height: AppDefaults.padding / 3),
-                  Text(
-                    accountName,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(color: Colors.black),
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(color: Colors.black),
+                    ),
+                    const SizedBox(height: AppDefaults.padding / 3),
+                    Text(
+                      accountName,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: Colors.grey[700]),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               )
             ],
           ),
