@@ -8,18 +8,18 @@ class CouponCard extends StatelessWidget {
     super.key,
     this.couponBackground,
     required this.discounts,
-    required this.title,
-    required this.expire,
     this.color,
     required this.onTap,
+    this.isSelectMode = false,
+    this.isSelected = false,
   });
 
   final String? couponBackground;
   final String discounts;
-  final String title;
-  final String expire;
   final Color? color;
   final void Function() onTap;
+  final bool isSelectMode;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,6 @@ class CouponCard extends StatelessWidget {
                 image: AssetImage(
                   couponBackground ?? AppImages.couponBackgrounds[1],
                 ),
-                // opacity: 0.25,
                 fit: BoxFit.cover,
               ),
             ),
@@ -84,67 +83,10 @@ class CouponCard extends StatelessWidget {
                       child:
                           DottedDivider(isVertical: true, color: Colors.white),
                     ),
-                    Expanded(
-                      flex: 5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppDefaults.padding),
-                        child: Text(
-                          title,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                          maxLines: 2,
-                        ),
-                      ),
+                    const Expanded(
+                      flex: 11, // Keep the layout ratio
+                      child: SizedBox(),
                     ),
-                    Expanded(
-                      flex: 6,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                        ),
-                        child: Column(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: AppColors.primary,
-                                backgroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 0,
-                                  horizontal: AppDefaults.padding * 2,
-                                ),
-                                shape: const StadiumBorder(),
-                              ),
-                              child: Text(
-                                'Collect',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: AppColors.primary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                            ),
-                            const Spacer(),
-                            Text(
-                              expire,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(
-                                    color: Colors.white,
-                                  ),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
                   ],
                 ),
               ),

@@ -11,12 +11,18 @@ class CartTotalsAndPrice extends StatelessWidget {
     required this.totalOriginalPrice,
     required this.totalSavings,
     required this.totalPrice,
+    this.subtotalPrice,
+    this.productSavings,
+    this.couponDiscount,
   });
 
   final int totalItems;
   final double totalOriginalPrice;
   final double totalSavings;
   final double totalPrice;
+  final double? subtotalPrice;
+  final double? productSavings;
+  final double? couponDiscount;
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +38,23 @@ class CartTotalsAndPrice extends StatelessWidget {
             title: 'Original Price',
             value: '\$${totalOriginalPrice.toStringAsFixed(2)}',
           ),
-          if (totalSavings > 0) ...[
+          if (productSavings != null && productSavings! > 0) ...[
             ItemRow(
-              title: 'Savings',
-              value: '-\$${totalSavings.toStringAsFixed(2)}',
+              title: 'Product Savings',
+              value: '-\$${productSavings!.toStringAsFixed(2)}',
+              valueColor: Colors.green,
+            ),
+          ],
+          if (subtotalPrice != null) ...[
+            ItemRow(
+              title: 'Subtotal',
+              value: '\$${subtotalPrice!.toStringAsFixed(2)}',
+            ),
+          ],
+          if (couponDiscount != null && couponDiscount! > 0) ...[
+            ItemRow(
+              title: 'Coupon Discount',
+              value: '-\$${couponDiscount!.toStringAsFixed(2)}',
               valueColor: Colors.green,
             ),
           ],

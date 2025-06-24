@@ -20,10 +20,8 @@ class CouponDetailsPage extends StatelessWidget {
         children: [
           const SizedBox(height: AppDefaults.padding),
           CouponCard(
-            title: 'Black\nCoffee',
             discounts: '40%',
             couponBackground: AppImages.couponBackgrounds[2],
-            expire: 'Exp-28/12/2020',
             color: const Color(0xFFA3D6CA),
             onTap: () {},
           ),

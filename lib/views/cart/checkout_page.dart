@@ -14,6 +14,8 @@ import '../../core/services/stripe_service.dart';
 import 'components/checkout_address_selector.dart';
 import 'components/checkout_card_details.dart';
 import 'components/checkout_payment_systems.dart';
+import 'components/coupon_selector.dart';
+import 'components/checkout_summary.dart';
 
 
 
@@ -38,6 +40,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
         child: Column(
           children: [
             const AddressSelector(),
+            const CouponSelector(),
+            const CheckoutSummary(),
             PaymentSystem(
               selectedPaymentType: selectedPaymentType,
               onPaymentTypeChanged: (PaymentType type) {
@@ -155,6 +159,11 @@ class PayNowButton extends StatelessWidget {
                           await notificationProvider.addOrderSuccessNotification(orderProvider.currentOrder!);
                         }
                         
+                        // Mark coupon as used if one was applied
+                        if (cartProvider.selectedCoupon != null) {
+                          await cartProvider.markCouponAsUsed();
+                        }
+                        
                         // Clear cart
                         await cartProvider.clearCart();
                         
@@ -203,6 +212,11 @@ class PayNowButton extends StatelessWidget {
                   // Add order success notification
                   if (orderProvider.currentOrder != null) {
                     await notificationProvider.addOrderSuccessNotification(orderProvider.currentOrder!);
+                  }
+                  
+                  // Mark coupon as used if one was applied
+                  if (cartProvider.selectedCoupon != null) {
+                    await cartProvider.markCouponAsUsed();
                   }
                   
                   // Clear cart

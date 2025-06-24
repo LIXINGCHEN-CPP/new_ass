@@ -6,17 +6,23 @@ import '../models/cart_item_model.dart';
 import '../models/product_model.dart';
 import '../models/bundle_model.dart';
 import '../models/user_model.dart';
+import '../models/coupon_model.dart';
 
 class CartProvider with ChangeNotifier {
   static const String _cartKey = 'shopping_cart';
+  static const String _usedCouponsKey = 'used_coupons';
+  static List<String> _usedCouponIds = [];
+  static bool _usedCouponsLoaded = false;
   
   List<CartItemModel> _cartItems = [];
   bool _isLoading = false;
   String? _currentUserId;
+  CouponModel? _selectedCoupon;
 
   // Getters
   List<CartItemModel> get cartItems => _cartItems;
   bool get isLoading => _isLoading;
+  CouponModel? get selectedCoupon => _selectedCoupon;
   
   // Check if cart is empty
   bool get isEmpty => _cartItems.isEmpty;
@@ -24,8 +30,8 @@ class CartProvider with ChangeNotifier {
   // Total items count in cart
   int get totalItemsCount => _cartItems.fold(0, (sum, item) => sum + item.quantity);
   
-  // Total cart price
-  double get totalPrice => _cartItems.fold(0.0, (sum, item) => sum + item.totalPrice);
+  // Total cart price before coupon discount
+  double get subtotalPrice => _cartItems.fold(0.0, (sum, item) => sum + item.totalPrice);
   
   // Total original price
   double get totalOriginalPrice => _cartItems.fold(
@@ -33,15 +39,56 @@ class CartProvider with ChangeNotifier {
     (sum, item) => sum + (item.originalPrice * item.quantity)
   );
   
-  // Total savings amount
-  double get totalSavings => totalOriginalPrice - totalPrice;
+  // Total savings amount from products
+  double get productSavings => totalOriginalPrice - subtotalPrice;
+  
+  // Coupon discount amount
+  double get couponDiscount => _selectedCoupon?.discountAmount ?? 0.0;
+  
+  // Total savings including coupon
+  double get totalSavings => productSavings + couponDiscount;
+  
+  // Final total price after all discounts
+  double get totalPrice {
+    final subtotal = subtotalPrice;
+    final discount = couponDiscount;
+    final finalPrice = subtotal - discount;
+    return finalPrice < 0 ? 0 : finalPrice; // Ensure price doesn't go negative
+  }
 
   // Constructor
   CartProvider() {
-    
+    _loadUsedCoupons();
   }
 
-  
+  // Load used coupons from storage
+  Future<void> _loadUsedCoupons() async {
+    if (_usedCouponsLoaded) return;
+    
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final usedCouponsJson = prefs.getStringList(_usedCouponsKey);
+      
+      if (usedCouponsJson != null) {
+        _usedCouponIds = usedCouponsJson;
+      }
+      
+      _usedCouponsLoaded = true;
+    } catch (e) {
+      debugPrint('Failed to load used coupons: $e');
+    }
+  }
+
+  // Save used coupons to storage
+  Future<void> _saveUsedCoupons() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(_usedCouponsKey, _usedCouponIds);
+    } catch (e) {
+      debugPrint('Failed to save used coupons: $e');
+    }
+  }
+
   Future<void> _loadCartFromStorage() async {
     if (_currentUserId == null) return;
     
@@ -242,12 +289,85 @@ class CartProvider with ChangeNotifier {
 
     try {
       _cartItems.clear();
+      _selectedCoupon = null; // Clear selected coupon when clearing cart
       await _saveCartToStorage();
     } catch (e) {
       debugPrint('Failed to clear cart: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  // Apply coupon
+  void applyCoupon(CouponModel coupon) {
+    _selectedCoupon = coupon;
+    notifyListeners();
+  }
+
+  // Remove coupon
+  void removeCoupon() {
+    _selectedCoupon = null;
+    notifyListeners();
+  }
+
+  // Get all available coupons (static data for now)
+  List<CouponModel> getAvailableCoupons() {
+    final List<CouponModel> allCoupons = [
+      CouponModel(
+        id: '1',
+        title: 'Black Coffee',
+        subtitle: 'Save on your coffee order',
+        discountAmount: 5.0,
+        expireDate: 'Exp-28/12/2025',
+        color: '0xFFA3D6CA',
+      ),
+      CouponModel(
+        id: '2',
+        title: 'Ice Cream',
+        subtitle: 'Cool summer discount',
+        discountAmount: 8.0,
+        expireDate: 'Exp-25/10/2025',
+        color: '0xFF96C2E2',
+      ),
+      CouponModel(
+        id: '3',
+        title: 'Oreo Biscuit',
+        subtitle: 'Sweet savings deal',
+        discountAmount: 12.0,
+        expireDate: 'Exp-13/11/2025',
+        color: '0xFFF4B3C5',
+      ),
+      CouponModel(
+        id: '4',
+        title: 'Tuna Fish',
+        subtitle: 'Fresh seafood discount',
+        discountAmount: 3.5,
+        expireDate: 'Exp-28/12/2025',
+        color: '0xFFF4AA8D',
+      ),
+    ];
+
+    // Filter out used coupons
+    return allCoupons.where((coupon) => !_usedCouponIds.contains(coupon.id)).toList();
+  }
+
+  // Mark a coupon as used
+  Future<void> markCouponAsUsed() async {
+    if (_selectedCoupon == null) return;
+    
+    try {
+      // Add current coupon ID if not already in the list
+      if (!_usedCouponIds.contains(_selectedCoupon!.id)) {
+        _usedCouponIds.add(_selectedCoupon!.id);
+        await _saveUsedCoupons();
+      }
+      
+      // Clear selected coupon
+      _selectedCoupon = null;
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Failed to mark coupon as used: $e');
     }
   }
 } 

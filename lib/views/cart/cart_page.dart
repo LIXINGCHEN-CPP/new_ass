@@ -6,7 +6,7 @@ import '../../core/components/custom_toast.dart';
 import '../../core/constants/app_defaults.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/providers/cart_provider.dart';
-import 'components/coupon_code_field.dart';
+import 'components/coupon_selector.dart';
 import 'components/cart_item_tile.dart';
 import 'components/cart_totals_price.dart';
 import 'empty_cart_page.dart';
@@ -88,8 +88,8 @@ class CartPage extends StatelessWidget {
                           },
                         ),
                         
-                        // Coupon input
-                        const CouponCodeField(),
+                        // Coupon selector
+                        const CouponSelector(),
                         
                         // Price totals
                         CartTotalsAndPrice(
@@ -97,6 +97,9 @@ class CartPage extends StatelessWidget {
                           totalOriginalPrice: cartProvider.totalOriginalPrice,
                           totalSavings: cartProvider.totalSavings,
                           totalPrice: cartProvider.totalPrice,
+                          subtotalPrice: cartProvider.subtotalPrice,
+                          productSavings: cartProvider.productSavings,
+                          couponDiscount: cartProvider.couponDiscount,
                         ),
                         
                         // Checkout button
