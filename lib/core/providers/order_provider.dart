@@ -27,6 +27,14 @@ class OrderProvider with ChangeNotifier {
       order.status == OrderStatus.delivery ||
       order.status == OrderStatus.cancelled).toList();
 
+  // Orders older than 24 hours regardless of status
+  List<OrderModel> get previousOrders => _orders.where((order) {
+        final difference = DateTime.now().difference(order.createdAt);
+        return difference.inHours >= 24;
+      }).toList();
+
+  int get previousOrdersCount => previousOrders.length;
+
   // Create new order
   Future<bool> createOrder({
     required List<CartItemModel> items,

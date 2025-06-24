@@ -6,8 +6,8 @@ import '../../../../core/routes/app_routes.dart';
 import '../../../../core/providers/order_provider.dart';
 import 'order_preview_tile.dart';
 
-class CompletedTab extends StatelessWidget {
-  const CompletedTab({
+class PreviousTab extends StatelessWidget {
+  const PreviousTab({
     super.key,
   });
 
@@ -35,17 +35,17 @@ class CompletedTab extends StatelessWidget {
           );
         }
 
-        final completedOrders = orderProvider.completedOrders;
+        final previousOrders = orderProvider.previousOrders;
         
-        if (completedOrders.isEmpty) {
-          return const Center(child: Text('No completed orders'));
+        if (previousOrders.isEmpty) {
+          return const Center(child: Text('No previous orders'));
         }
 
         return ListView.builder(
           padding: const EdgeInsets.only(top: 8),
-          itemCount: completedOrders.length,
+          itemCount: previousOrders.length,
           itemBuilder: (context, index) {
-            final order = completedOrders[index];
+            final order = previousOrders[index];
             return OrderPreviewTile(
               orderID: order.orderId,
               date: _formatDate(order.createdAt),

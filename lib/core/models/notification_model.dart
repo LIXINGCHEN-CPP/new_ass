@@ -38,7 +38,7 @@ class NotificationModel {
     return NotificationModel(
       id: 'notification_${DateTime.now().millisecondsSinceEpoch}',
       type: NotificationType.order,
-      title: 'Order Confirmed!',
+      title: 'Order Placed!',
       subtitle: 'Your order #${order.orderId} has been successfully placed. Total: \$${order.totalAmount.toStringAsFixed(2)}',
       imageLink: 'https://i.imgur.com/KKWqqrP.png',
       createdAt: DateTime.now(),
@@ -81,8 +81,8 @@ class NotificationModel {
         imageLink = 'https://i.imgur.com/jsDEdkz.png';
         break;
       default: // confirmed
-        title = 'Order Confirmed';
-        subtitle = 'Your order #${order.orderId} has been confirmed.';
+        title = 'Order Placed';
+        subtitle = 'Your order #${order.orderId} has been placed.';
         imageLink = 'https://i.imgur.com/KKWqqrP.png';
     }
 

@@ -61,6 +61,8 @@ class OrderPreviewTile extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
+                    const SizedBox(width: 4),
+                    const _BouncingArrow(),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -74,103 +76,40 @@ class OrderPreviewTile extends StatelessWidget {
                       children: _buildProductPreview(),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                 ],
+                // Simplified status display without progress bar
                 Row(
                   children: [
-                    const Text('Status'),
-                    Expanded(
-                      child: RangeSlider(
-                        values: RangeValues(0, _orderSliderValue()),
-                        max: 3,
-                        divisions: 3,
-                        onChanged: (v) {},
-                        activeColor: _orderColor(),
-                        inactiveColor: AppColors.placeholder.withOpacity(0.2),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: _orderColor().withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: _orderColor(),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        _getStatusDisplayText(),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(
+                              color: _orderColor(),
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ),
                   ],
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Opacity(
-                            opacity: status == OrderStatus.confirmed ? 1 : 0,
-                            child: Text(
-                              'Confirmed',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(color: _orderColor()),
-                            ),
-                          ),
-                          Opacity(
-                            opacity: status == OrderStatus.processing ? 1 : 0,
-                            child: Text(
-                              'Processing',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(color: _orderColor()),
-                            ),
-                          ),
-                          Opacity(
-                            opacity: status == OrderStatus.shipped ? 1 : 0,
-                            child: Text(
-                              'Shipped',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(color: _orderColor()),
-                            ),
-                          ),
-                          Opacity(
-                            opacity: status == OrderStatus.delivery ||
-                                    status == OrderStatus.cancelled
-                                ? 1
-                                : 0,
-                            child: Text(
-                              status == OrderStatus.delivery
-                                  ? 'Delivery'
-                                  : 'Cancelled',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(color: _orderColor()),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                )
               ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  double _orderSliderValue() {
-    switch (status) {
-      case OrderStatus.confirmed:
-        return 0;
-      case OrderStatus.processing:
-        return 1;
-      case OrderStatus.shipped:
-        return 2;
-      case OrderStatus.delivery:
-        return 3;
-      case OrderStatus.cancelled:
-        return 3;
-
-      default:
-        return 0;
-    }
   }
 
   Color _orderColor() {
@@ -188,6 +127,24 @@ class OrderPreviewTile extends StatelessWidget {
 
       default:
         return Colors.red;
+    }
+  }
+
+  String _getStatusDisplayText() {
+    switch (status) {
+      case OrderStatus.confirmed:
+        return 'Order Placed';
+      case OrderStatus.processing:
+        return 'Processing';
+      case OrderStatus.shipped:
+        return 'Shipped';
+      case OrderStatus.delivery:
+        return 'Delivered';
+      case OrderStatus.cancelled:
+        return 'Cancelled';
+
+      default:
+        return 'Unknown';
     }
   }
 
@@ -248,5 +205,56 @@ class OrderPreviewTile extends StatelessWidget {
     }
     
     return widgets;
+  }
+}
+
+// Animated bouncing arrow indicator
+class _BouncingArrow extends StatefulWidget {
+  const _BouncingArrow({Key? key}) : super(key: key);
+
+  @override
+  State<_BouncingArrow> createState() => _BouncingArrowState();
+}
+
+class _BouncingArrowState extends State<_BouncingArrow>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _offsetAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    )..repeat(reverse: true);
+
+    _offsetAnim = Tween<double>(begin: 0, end: -3)
+        .chain(CurveTween(curve: Curves.easeInOut))
+        .animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _offsetAnim,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, _offsetAnim.value),
+          child: child,
+        );
+      },
+      child: const Icon(
+        Icons.chevron_right_rounded,
+        size: 24,
+        color: Colors.grey,
+      ),
+    );
   }
 }

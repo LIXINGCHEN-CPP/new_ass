@@ -35,36 +35,57 @@ class OrderStatusColumn extends StatelessWidget {
         bool isShippedActive = order.shippedAt != null;
         bool isDeliveredActive = order.deliveredAt != null;
 
-        return Column(
-          children: [
+        final List<Widget> rows = [];
+
+        if (isConfirmedActive) {
+          rows.add(
             OrderStatusRow(
               status: OrderStatus.confirmed,
               date: formatDateTime(order.confirmedAt),
               time: formatTime(order.confirmedAt),
-              isStart: true,
-              isActive: isConfirmedActive,
+              isActive: true,
             ),
+          );
+        }
+
+        if (isProcessingActive) {
+          rows.add(
             OrderStatusRow(
               status: OrderStatus.processing,
               date: formatDateTime(order.processingAt),
               time: formatTime(order.processingAt),
-              isActive: isProcessingActive,
+              isActive: true,
             ),
+          );
+        }
+
+        if (isShippedActive) {
+          rows.add(
             OrderStatusRow(
               status: OrderStatus.shipped,
               date: formatDateTime(order.shippedAt),
               time: formatTime(order.shippedAt),
-              isActive: isShippedActive,
+              isActive: true,
             ),
+          );
+        }
+
+        if (isDeliveredActive) {
+          rows.add(
             OrderStatusRow(
               status: OrderStatus.delivery,
               date: formatDateTime(order.deliveredAt),
               time: formatTime(order.deliveredAt),
-              isEnd: true,
-              isActive: isDeliveredActive,
+              isActive: true,
             ),
-          ],
-        );
+          );
+        }
+
+        if (rows.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Column(children: rows);
       },
     );
   }

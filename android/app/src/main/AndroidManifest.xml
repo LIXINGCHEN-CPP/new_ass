@@ -9,6 +9,7 @@
         android:label="flutter_upgrde_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
+        android:largeHeap="true"
         android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"

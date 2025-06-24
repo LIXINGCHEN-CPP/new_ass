@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:math' show min;
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/providers/order_provider.dart';
@@ -43,85 +44,12 @@ class TotalOrderProductDetails extends StatelessWidget {
               ListView.separated(
                 itemBuilder: (context, index) {
                   final cartItem = order.items[index];
-                  return InkWell(
+                  return _OrderItemCard(
+                    cartItem: cartItem,
                     onTap: () => _navigateToItemDetails(context, cartItem),
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: ListTile(
-                        leading: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey[200],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: cartItem.coverImage.isNotEmpty
-                                ? Image.network(
-                                    cartItem.coverImage,
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        width: 50,
-                                        height: 50,
-                                        color: Colors.grey[300],
-                                        child: const Icon(
-                                          Icons.image_not_supported,
-                                          color: Colors.grey,
-                                          size: 24,
-                                        ),
-                                      );
-                                    },
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Container(
-                                        width: 50,
-                                        height: 50,
-                                        color: Colors.grey[200],
-                                        child: const Center(
-                                          child: SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : const Icon(
-                                    Icons.shopping_basket,
-                                    color: Colors.grey,
-                                    size: 24,
-                                  ),
-                          ),
-                        ),
-                        title: Text(cartItem.name),
-                        subtitle: Text('${cartItem.weight} • ${cartItem.quantity}x'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('\$${cartItem.totalPrice.toStringAsFixed(2)}'),
-                            const SizedBox(width: 8),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
-                              color: Colors.grey,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   );
                 },
-                separatorBuilder: (context, index) => const Divider(
-                  thickness: 0.2,
-                ),
+                separatorBuilder: (context, index) => const SizedBox(height: 8),
                 itemCount: order.items.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -164,5 +92,78 @@ class TotalOrderProductDetails extends StatelessWidget {
         );
       }
     }
+  }
+}
+
+// New widget for fancy list item card
+class _OrderItemCard extends StatefulWidget {
+  const _OrderItemCard({required this.cartItem, required this.onTap});
+
+  final dynamic cartItem;
+  final VoidCallback onTap;
+
+  @override
+  State<_OrderItemCard> createState() => _OrderItemCardState();
+}
+
+class _OrderItemCardState extends State<_OrderItemCard> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) => setState(() => _pressed = false),
+      onTapCancel: () => setState(() => _pressed = false),
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 120),
+        scale: _pressed ? 1.03 : 1.0,
+        child: Material(
+          elevation: 2,
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+              leading: _buildImage(),
+              title: Text(widget.cartItem.name),
+              subtitle: Text('${widget.cartItem.weight} • ${widget.cartItem.quantity}x'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('\$${widget.cartItem.totalPrice.toStringAsFixed(2)}'),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.grey[100],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: widget.cartItem.coverImage.isNotEmpty
+          ? Image.network(
+              widget.cartItem.coverImage,
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => const Icon(Icons.image, color: Colors.grey),
+            )
+          : const Icon(Icons.shopping_basket, color: Colors.grey),
+    );
   }
 }

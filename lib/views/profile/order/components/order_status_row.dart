@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/enums/dummy_order_status.dart';
-import 'order_details_vertical_step_indicator.dart';
 
 class OrderStatusRow extends StatelessWidget {
   const OrderStatusRow({
@@ -25,51 +24,67 @@ class OrderStatusRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment:
-          isStart ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            color: isActive ? _orderColor() : Colors.grey,
-            borderRadius: BorderRadius.circular(8.0),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isActive ? _orderColor().withOpacity(0.05) : Colors.grey.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isActive ? _orderColor().withOpacity(0.3) : Colors.grey.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12.0),
+            decoration: BoxDecoration(
+              color: isActive ? _orderColor() : Colors.grey,
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: SvgPicture.asset(
+              _orderIcon(),
+              width: 24,
+              height: 24,
+              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            ),
           ),
-          child: SvgPicture.asset(_orderIcon()),
-        ),
-        VerticalStepIndicator(
-          isStart: isStart,
-          isActive: isActive,
-          isEnd: isEnd,
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _orderStatus(),
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.black,
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _orderStatus(),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      date,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[600],
+                          ),
                     ),
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    date,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  Text(
-                    time,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        )
-      ],
+                    Text(
+                      time,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -94,7 +109,7 @@ class OrderStatusRow extends StatelessWidget {
   String _orderStatus() {
     switch (status) {
       case OrderStatus.confirmed:
-        return 'Order Confirmed';
+        return 'Order Placed';
       case OrderStatus.processing:
         return 'Order Processing';
       case OrderStatus.shipped:

@@ -8,7 +8,6 @@ import '../../../core/providers/user_provider.dart';
 import 'components/custom_tab_label.dart';
 import 'components/tab_all.dart';
 import 'components/tab_completed.dart';
-import 'components/tab_running.dart';
 
 class AllOrderPage extends StatefulWidget {
   const AllOrderPage({super.key});
@@ -38,7 +37,7 @@ class _AllOrderPageState extends State<AllOrderPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           leading: const AppBackButton(),
@@ -55,12 +54,8 @@ class _AllOrderPageState extends State<AllOrderPage> {
                       value: '(${orderProvider.orders.length})',
                     ),
                     CustomTabLabel(
-                      label: 'Running', 
-                      value: '(${orderProvider.runningOrdersCount})',
-                    ),
-                    CustomTabLabel(
                       label: 'Previous', 
-                      value: '(${orderProvider.completedOrdersCount})',
+                      value: '(${orderProvider.previousOrdersCount})',
                     ),
                   ],
                 );
@@ -73,8 +68,7 @@ class _AllOrderPageState extends State<AllOrderPage> {
           child: const TabBarView(
             children: [
               AllTab(),
-              RunningTab(),
-              CompletedTab(),
+              PreviousTab(),
             ],
           ),
         ),

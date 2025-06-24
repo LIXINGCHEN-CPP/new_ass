@@ -116,7 +116,7 @@ class OrderModel {
   String get statusDisplayName {
     switch (status) {
       case OrderStatus.confirmed:
-        return 'Confirmed';
+        return 'Order Placed';
       case OrderStatus.processing:
         return 'Processing';
       case OrderStatus.shipped:
