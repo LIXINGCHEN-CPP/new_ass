@@ -52,7 +52,7 @@ class Database {
   async getProducts(filters = {}) {
     const db = this.getDb();
     const query = {};
-    
+
     if (filters.categoryId) {
       query.categoryId = filters.categoryId;
     }
@@ -104,7 +104,7 @@ class Database {
   async getBundles(filters = {}) {
     const db = this.getDb();
     const query = {};
-    
+
     if (filters.categoryId) {
       query.categoryId = filters.categoryId;
     }
@@ -139,7 +139,7 @@ class Database {
     const db = this.getDb();
     const result = await db.collection('products').updateOne(
       { _id: new ObjectId(id) },
-      { 
+      {
         $set: {
           ...updateData,
           updatedAt: new Date()
@@ -165,7 +165,7 @@ class Database {
     const db = this.getDb();
     const result = await db.collection('bundles').updateOne(
       { _id: new ObjectId(id) },
-      { 
+      {
         $set: {
           ...updateData,
           updatedAt: new Date()
@@ -189,14 +189,14 @@ class Database {
   async getOrders(filters = {}) {
     const db = this.getDb();
     const query = {};
-    
+
     if (filters.status !== undefined) {
       query.status = filters.status;
     }
     if (filters.userId) {
       query.userId = filters.userId;
     }
-    
+
     return await db.collection('orders').find(query).sort({ createdAt: -1 }).toArray();
   }
 
@@ -218,7 +218,7 @@ class Database {
   async updateOrderStatus(id, status, timestamp = null) {
     const db = this.getDb();
     const updateData = { status };
-    
+
     // Add timestamp based on status
     const now = timestamp || new Date();
     switch (status) {
@@ -249,11 +249,11 @@ class Database {
   async createUser(userData) {
     const db = this.getDb();
     const bcrypt = require('bcrypt');
-    
+
     // Hash password
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
-    
+
     const result = await db.collection('users').insertOne({
       name: userData.name,
       phone: userData.phone,
@@ -265,44 +265,44 @@ class Database {
       updatedAt: new Date(),
       isActive: true
     });
-    
+
     return result.insertedId;
   }
 
   async getUserById(id) {
     const db = this.getDb();
-    return await db.collection('users').findOne({ 
+    return await db.collection('users').findOne({
       _id: new ObjectId(id),
-      isActive: true 
+      isActive: true
     });
   }
 
   async getUserByPhone(phone) {
     const db = this.getDb();
-    return await db.collection('users').findOne({ 
+    return await db.collection('users').findOne({
       phone: phone,
-      isActive: true 
+      isActive: true
     });
   }
 
   async loginUser(phone, password) {
     const db = this.getDb();
     const bcrypt = require('bcrypt');
-    
-    const user = await db.collection('users').findOne({ 
+
+    const user = await db.collection('users').findOne({
       phone: phone,
-      isActive: true 
+      isActive: true
     });
-    
+
     if (!user) {
       return null;
     }
-    
+
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return null;
     }
-    
+
     // Remove password from returned user object
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
@@ -310,67 +310,67 @@ class Database {
 
   async updateUser(id, updateData) {
     const db = this.getDb();
-    
+
     const result = await db.collection('users').updateOne(
       { _id: new ObjectId(id) },
-      { 
+      {
         $set: {
           ...updateData,
           updatedAt: new Date()
         }
       }
     );
-    
+
     if (result.matchedCount === 0) {
       return null;
     }
-    
+
     return await this.getUserById(id);
   }
 
   // Password Reset Methods
   async getUserByEmail(email) {
     const db = this.getDb();
-    return await db.collection('users').findOne({ 
+    return await db.collection('users').findOne({
       email: email,
-      isActive: true 
+      isActive: true
     });
   }
 
   async getUsersByEmail(email) {
     const db = this.getDb();
-    return await db.collection('users').find({ 
+    return await db.collection('users').find({
       email: email,
-      isActive: true 
+      isActive: true
     }).toArray();
   }
 
   async getUserByEmailAndPhone(email, phone) {
     const db = this.getDb();
-    return await db.collection('users').findOne({ 
+    return await db.collection('users').findOne({
       email: email,
       phone: phone,
-      isActive: true 
+      isActive: true
     });
   }
 
   async createPasswordResetCode(email, code) {
     const db = this.getDb();
     const expiryTime = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
-    
+
     // Check if there's a recent request (within 1 minute) to prevent spam
     const recentRequest = await db.collection('password_reset_codes').findOne({
       email: email,
       createdAt: { $gt: new Date(Date.now() - 60 * 1000) } // Within last minute
     });
-    
+
     if (recentRequest) {
       throw new Error('Please wait before requesting another verification code');
     }
-    
+
     // Remove any existing codes for this email
     await db.collection('password_reset_codes').deleteMany({ email: email });
-    
+
     const result = await db.collection('password_reset_codes').insertOne({
       email: email,
       code: code,
@@ -379,24 +379,24 @@ class Database {
       isUsed: false,
       attemptCount: 0 // Track verification attempts
     });
-    
+
     return result.insertedId;
   }
 
   async verifyPasswordResetCode(email, code) {
     const db = this.getDb();
-    
+
     // Find the reset record first
     const resetRecord = await db.collection('password_reset_codes').findOne({
       email: email,
       isUsed: false,
       expiresAt: { $gt: new Date() }
     });
-    
+
     if (!resetRecord) {
       return false;
     }
-    
+
     // Check if too many attempts have been made
     if (resetRecord.attemptCount >= 5) {
       // Mark as used to prevent further attempts
@@ -406,19 +406,19 @@ class Database {
       );
       return false;
     }
-    
-   
+
+
     const codeMatches = String(resetRecord.code) === String(code);
-    
+
     if (codeMatches) {
-      
+
       await db.collection('password_reset_codes').updateOne(
         { _id: resetRecord._id },
         { $inc: { attemptCount: 1 } }
       );
       return true;
     } else {
-      
+
       await db.collection('password_reset_codes').updateOne(
         { _id: resetRecord._id },
         { $inc: { attemptCount: 1 } }
@@ -438,26 +438,26 @@ class Database {
   async updateUserPassword(email, newPassword, phone = null) {
     const db = this.getDb();
     const bcrypt = require('bcrypt');
-    
+
     // Hash new password
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-    
+
     // If phone is provided, use both email and phone to identify user
-    const query = phone ? 
-      { email: email, phone: phone, isActive: true } : 
+    const query = phone ?
+      { email: email, phone: phone, isActive: true } :
       { email: email, isActive: true };
-    
+
     const result = await db.collection('users').updateOne(
       query,
-      { 
+      {
         $set: {
           password: hashedPassword,
           updatedAt: new Date()
         }
       }
     );
-    
+
     return result.matchedCount > 0;
   }
 
@@ -467,6 +467,45 @@ class Database {
     await db.collection('password_reset_codes').deleteMany({
       expiresAt: { $lt: new Date() }
     });
+  }
+
+  // Change user password with current password verification
+  async changeUserPassword(userId, currentPassword, newPassword) {
+    const db = this.getDb();
+    const bcrypt = require('bcrypt');
+
+    // Get user
+    const user = await db.collection('users').findOne({
+      _id: new ObjectId(userId),
+      isActive: true
+    });
+
+    if (!user) {
+      return false;
+    }
+
+    // Verify current password
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordMatch) {
+      return false;
+    }
+
+    // Hash new password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // Update password
+    const result = await db.collection('users').updateOne(
+      { _id: new ObjectId(userId) },
+      {
+        $set: {
+          password: hashedPassword,
+          updatedAt: new Date()
+        }
+      }
+    );
+
+    return result.matchedCount > 0;
   }
 }
 
