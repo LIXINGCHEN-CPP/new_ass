@@ -7,11 +7,11 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_defaults.dart';
 import '../../core/constants/app_icons.dart';
 import '../../core/routes/app_routes.dart';
-import '../../core/utils/ui_util.dart';
 import '../../core/providers/app_provider.dart';
 import '../../core/models/product_model.dart';
 import '../../core/services/search_history_service.dart';
 import 'dialogs/product_filters_dialog.dart';
+import 'dialogs/filter_options.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -24,9 +24,19 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController _controller = TextEditingController();
   final SearchHistoryService _searchHistoryService = SearchHistoryService.instance;
   String _query = '';
+  List<ProductModel> _allResults = [];
   List<ProductModel> _searchResults = [];
+  FilterOptions _filterOptions = FilterOptions();
   List<String> _searchHistory = [];
   bool _isSearching = false;
+
+  Future<void> _ensureAllProductsLoaded() async {
+    final appProvider = Provider.of<AppProvider>(context, listen: false);
+    if (appProvider.products.isEmpty) {
+      await appProvider.loadProducts();
+    }
+    _allResults = appProvider.products;
+  }
 
   @override
   void initState() {
@@ -49,10 +59,8 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> _performSearch(String query) async {
     if (query.isEmpty) {
-      setState(() {
-        _searchResults = [];
-        _isSearching = false;
-      });
+      await _ensureAllProductsLoaded();
+      await _applyFilters();
       return;
     }
 
@@ -63,11 +71,12 @@ class _SearchPageState extends State<SearchPage> {
     try {
       final appProvider = Provider.of<AppProvider>(context, listen: false);
       final results = await appProvider.searchProducts(query);
+      _allResults = results;
+      await _applyFilters();
       setState(() {
-        _searchResults = results;
         _isSearching = false;
       });
-      
+
       // Add search term to history only if we get results
       if (results.isNotEmpty) {
         await _searchHistoryService.addSearchTerm(query);
@@ -110,6 +119,60 @@ class _SearchPageState extends State<SearchPage> {
     await _loadSearchHistory();
   }
 
+  Future<void> _applyFilters() async {
+    if (_allResults.isEmpty) {
+      await _ensureAllProductsLoaded();
+    }
+    List<ProductModel> filtered = List.from(_allResults);
+
+    if (_filterOptions.categories.isNotEmpty) {
+      filtered = filtered
+          .where((p) => p.categoryId != null &&
+          _filterOptions.categories.contains(p.categoryId))
+          .toList();
+    }
+
+    filtered = filtered
+        .where((p) => p.currentPrice >= _filterOptions.priceRange.start &&
+        p.currentPrice <= _filterOptions.priceRange.end)
+        .toList();
+
+    if (_filterOptions.sortBy == 'Price') {
+      filtered.sort((a, b) => a.currentPrice.compareTo(b.currentPrice));
+    } else {
+      filtered.sort((a, b) {
+        if (a.isPopular == b.isPopular) return 0;
+        return a.isPopular ? -1 : 1;
+      });
+    }
+
+    setState(() {
+      _searchResults = filtered;
+    });
+  }
+
+  Future<void> _openFilterDialog() async {
+    if (_query.isEmpty && _allResults.isEmpty) {
+      await _ensureAllProductsLoaded();
+    }
+    final result = await showModalBottomSheet<FilterOptions>(
+      context: context,
+      builder: (ctx) => ProductFiltersDialog(options: _filterOptions),
+      isScrollControlled: true,
+      constraints:
+      BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppDefaults.bottomSheetRadius,
+      ),
+    );
+
+    if (result != null) {
+      _filterOptions = result;
+      await _applyFilters();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,53 +206,48 @@ class _SearchPageState extends State<SearchPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
-            onPressed: () {
-              UiUtil.openBottomSheet(
-                context: context,
-                widget: const ProductFiltersDialog(),
-              );
-            },
+            onPressed: _openFilterDialog,
           )
         ],
       ),
       backgroundColor: AppColors.scaffoldBackground,
-      body: _query.isEmpty
+      body: _isSearching
+          ? const Center(child: CircularProgressIndicator())
+          : _searchResults.isNotEmpty
+          ? ListView.separated(
+        padding: const EdgeInsets.all(AppDefaults.padding),
+        itemCount: _searchResults.length,
+        separatorBuilder: (_, __) => const Divider(),
+        itemBuilder: (context, idx) {
+          final product = _searchResults[idx];
+          return ListTile(
+            leading: Image.network(
+              product.coverImage,
+              width: 48,
+              height: 48,
+              errorBuilder: (context, error, stackTrace) =>
+              const Icon(Icons.image_not_supported),
+            ),
+            title: Text(product.name),
+            subtitle: Text(product.weight),
+            trailing: Text('\$${product.currentPrice}'),
+            onTap: () => _onTapProduct(product),
+          );
+        },
+      )
+          : _query.isEmpty
           ? _RecentSearchList(
-              searchHistory: _searchHistory,
-              onTapHistoryItem: _onTapHistoryItem,
-              onRemoveHistoryItem: _removeHistoryItem,
-              onClearAllHistory: _clearAllHistory,
-            )
-          : _isSearching
-              ? const Center(child: CircularProgressIndicator())
-              : _searchResults.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No products found',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                    )
-                  : ListView.separated(
-                      padding: const EdgeInsets.all(AppDefaults.padding),
-                      itemCount: _searchResults.length,
-                      separatorBuilder: (_, __) => const Divider(),
-                      itemBuilder: (context, idx) {
-                        final product = _searchResults[idx];
-                        return ListTile(
-                          leading: Image.network(
-                            product.coverImage,
-                            width: 48,
-                            height: 48,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(Icons.image_not_supported),
-                          ),
-                          title: Text(product.name),
-                          subtitle: Text(product.weight),
-                          trailing: Text('\$${product.currentPrice}'),
-                          onTap: () => _onTapProduct(product),
-                        );
-                      },
-                    ),
+        searchHistory: _searchHistory,
+        onTapHistoryItem: _onTapHistoryItem,
+        onRemoveHistoryItem: _removeHistoryItem,
+        onClearAllHistory: _clearAllHistory,
+      )
+          : const Center(
+        child: Text(
+          'No products found',
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      ),
     );
   }
 }

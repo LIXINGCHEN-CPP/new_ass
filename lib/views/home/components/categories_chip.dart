@@ -39,7 +39,7 @@ class CategoriesChip extends StatelessWidget {
     //   ),
     // );
     return OutlinedButton(
-      onPressed: () {},
+      onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         foregroundColor: isActive ? Colors.white : AppColors.placeholder,
         padding:
