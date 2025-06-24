@@ -61,13 +61,13 @@ router.get('/categories/:id', asyncHandler(async (req, res) => {
 router.get('/products', asyncHandler(async (req, res) => {
   try {
     const filters = {};
-    
+
     // Parse query parameters
     if (req.query.categoryId) filters.categoryId = req.query.categoryId;
     if (req.query.isNew) filters.isNew = req.query.isNew === 'true';
     if (req.query.isPopular) filters.isPopular = req.query.isPopular === 'true';
     if (req.query.isActive) filters.isActive = req.query.isActive === 'true';
-    
+
     const products = await database.getProducts(filters);
     res.json({
       success: true,
@@ -130,7 +130,7 @@ router.get('/products/search/:term', asyncHandler(async (req, res) => {
 router.post('/products', asyncHandler(async (req, res) => {
   try {
     const productData = req.body;
-    
+
     // Validate required fields
     if (!productData.name || !productData.coverImage || !productData.currentPrice) {
       return res.status(400).json({
@@ -138,9 +138,9 @@ router.post('/products', asyncHandler(async (req, res) => {
         message: 'Name, coverImage, and currentPrice are required'
       });
     }
-    
+
     const insertedId = await database.createProduct(productData);
-    
+
     res.status(201).json({
       success: true,
       message: 'Product created successfully',
@@ -160,16 +160,16 @@ router.put('/products/:id', asyncHandler(async (req, res) => {
   try {
     const productId = req.params.id;
     const updateData = req.body;
-    
+
     const updated = await database.updateProduct(productId, updateData);
-    
+
     if (!updated) {
       return res.status(404).json({
         success: false,
         message: 'Product not found'
       });
     }
-    
+
     res.json({
       success: true,
       message: 'Product updated successfully'
@@ -187,12 +187,12 @@ router.put('/products/:id', asyncHandler(async (req, res) => {
 router.get('/bundles', asyncHandler(async (req, res) => {
   try {
     const filters = {};
-    
+
     // Parse query parameters
     if (req.query.categoryId) filters.categoryId = req.query.categoryId;
     if (req.query.isPopular) filters.isPopular = req.query.isPopular === 'true';
     if (req.query.isActive) filters.isActive = req.query.isActive === 'true';
-    
+
     const bundles = await database.getBundles(filters);
     res.json({
       success: true,
@@ -214,7 +214,7 @@ router.get('/bundles/:id', async (req, res) => {
   try {
     const bundleId = req.params.id;
     const db = database.getDb();
-    
+
     let query;
     // Check if it's a valid ObjectId format
     if (ObjectId.isValid(bundleId) && bundleId.length === 24) {
@@ -223,20 +223,20 @@ router.get('/bundles/:id', async (req, res) => {
       // Treat as string ID (for mock data compatibility)
       query = { $or: [{ id: bundleId }, { name: bundleId }] };
     }
-    
+
     // Add isActive filter
     query.isActive = true;
-    
+
     // Get bundle by ID
     const bundle = await db.collection('bundles').findOne(query);
-    
+
     if (!bundle) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Bundle not found' 
+      return res.status(404).json({
+        success: false,
+        message: 'Bundle not found'
       });
     }
-    
+
     // Populate products in bundle items
     if (bundle.items && bundle.items.length > 0) {
       const productIds = bundle.items.map(item => item.productId);
@@ -244,27 +244,27 @@ router.get('/bundles/:id', async (req, res) => {
         _id: { $in: productIds },
         isActive: true
       }).toArray();
-      
+
       // Create a map for quick lookup
       const productMap = {};
       products.forEach(product => {
         productMap[product._id.toString()] = product;
       });
-      
+
       // Add product details to bundle items
       bundle.items = bundle.items.map(item => ({
         ...item,
         productDetails: productMap[item.productId.toString()] || null
       }));
     }
-    
+
     res.json({ success: true, data: bundle });
   } catch (error) {
     console.error('Error fetching bundle details:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Failed to fetch bundle details',
-      error: error.message 
+      error: error.message
     });
   }
 });
@@ -273,7 +273,7 @@ router.get('/bundles/:id', async (req, res) => {
 router.post('/bundles', asyncHandler(async (req, res) => {
   try {
     const bundleData = req.body;
-    
+
     // Validate required fields
     if (!bundleData.name || !bundleData.coverImage || !bundleData.currentPrice) {
       return res.status(400).json({
@@ -281,9 +281,9 @@ router.post('/bundles', asyncHandler(async (req, res) => {
         message: 'Name, coverImage, and currentPrice are required'
       });
     }
-    
+
     const insertedId = await database.createBundle(bundleData);
-    
+
     res.status(201).json({
       success: true,
       message: 'Bundle created successfully',
@@ -303,16 +303,16 @@ router.put('/bundles/:id', asyncHandler(async (req, res) => {
   try {
     const bundleId = req.params.id;
     const updateData = req.body;
-    
+
     const updated = await database.updateBundle(bundleId, updateData);
-    
+
     if (!updated) {
       return res.status(404).json({
         success: false,
         message: 'Bundle not found'
       });
     }
-    
+
     res.json({
       success: true,
       message: 'Bundle updated successfully'
@@ -330,10 +330,10 @@ router.put('/bundles/:id', asyncHandler(async (req, res) => {
 router.post('/orders', asyncHandler(async (req, res) => {
   try {
     const { items, totalAmount, originalAmount, savings, paymentMethod, deliveryAddress, userId } = req.body;
-    
+
     // Generate unique order ID
     const orderId = Math.floor(100000000 + Math.random() * 900000000).toString();
-    
+
     const orderData = {
       orderId,
       userId,  // Include user ID in order data
@@ -347,9 +347,9 @@ router.post('/orders', asyncHandler(async (req, res) => {
       createdAt: new Date(),
       confirmedAt: new Date()
     };
-    
+
     const insertedId = await database.createOrder(orderData);
-    
+
     res.status(201).json({
       success: true,
       message: 'Order created successfully',
@@ -371,12 +371,12 @@ router.post('/orders', asyncHandler(async (req, res) => {
 router.get('/orders', asyncHandler(async (req, res) => {
   try {
     const filters = {};
-    
+
     // Parse query parameters
     if (req.query.status) filters.status = parseInt(req.query.status);
-    
+
     const orders = await database.getOrders(filters);
-    
+
     // Convert ObjectId to string for all orders
     const serializedOrders = orders.map(order => ({
       ...order,
@@ -404,7 +404,7 @@ router.get('/orders', asyncHandler(async (req, res) => {
         } : item.bundleDetails
       })) : order.items
     }));
-    
+
     res.json({
       success: true,
       data: serializedOrders,
@@ -429,7 +429,7 @@ router.get('/orders/:id', asyncHandler(async (req, res) => {
         message: 'Order not found'
       });
     }
-    
+
     // Convert ObjectId to string
     const serializedOrder = {
       ...order,
@@ -453,7 +453,7 @@ router.get('/orders/:id', asyncHandler(async (req, res) => {
         } : item.bundleDetails
       })) : order.items
     };
-    
+
     res.json({
       success: true,
       data: serializedOrder
@@ -476,7 +476,7 @@ router.get('/orders/by-order-id/:orderId', asyncHandler(async (req, res) => {
         message: 'Order not found'
       });
     }
-    
+
     // Convert ObjectId to string
     const serializedOrder = {
       ...order,
@@ -500,7 +500,7 @@ router.get('/orders/by-order-id/:orderId', asyncHandler(async (req, res) => {
         } : item.bundleDetails
       })) : order.items
     };
-    
+
     res.json({
       success: true,
       data: serializedOrder
@@ -518,14 +518,14 @@ router.put('/orders/:id/status', asyncHandler(async (req, res) => {
   try {
     const { status } = req.body;
     const result = await database.updateOrderStatus(req.params.id, status);
-    
+
     if (result.matchedCount === 0) {
       return res.status(404).json({
         success: false,
         message: 'Order not found'
       });
     }
-    
+
     res.json({
       success: true,
       message: 'Order status updated successfully'
@@ -543,7 +543,7 @@ router.put('/orders/:id/status', asyncHandler(async (req, res) => {
 router.get('/users/:userId/orders', asyncHandler(async (req, res) => {
   try {
     const orders = await database.getOrdersByUserId(req.params.userId);
-    
+
     // Convert ObjectId to string for all orders
     const serializedOrders = orders.map(order => ({
       ...order,
@@ -567,7 +567,7 @@ router.get('/users/:userId/orders', asyncHandler(async (req, res) => {
         } : item.bundleDetails
       })) : order.items
     }));
-    
+
     res.json({
       success: true,
       data: serializedOrders,
@@ -587,7 +587,7 @@ router.get('/users/:userId/orders', asyncHandler(async (req, res) => {
 router.post('/users/register', asyncHandler(async (req, res) => {
   try {
     const { name, phone, password, email, gender, birthday } = req.body;
-    
+
     // Validate required fields
     if (!name || !phone || !password) {
       return res.status(400).json({
@@ -595,7 +595,7 @@ router.post('/users/register', asyncHandler(async (req, res) => {
         message: 'Name, phone, and password are required'
       });
     }
-    
+
     // Check if user already exists
     const existingUser = await database.getUserByPhone(phone);
     if (existingUser) {
@@ -604,7 +604,7 @@ router.post('/users/register', asyncHandler(async (req, res) => {
         message: 'Phone number already registered'
       });
     }
-    
+
     // Create user
     const insertedId = await database.createUser({
       name,
@@ -614,19 +614,19 @@ router.post('/users/register', asyncHandler(async (req, res) => {
       gender,
       birthday
     });
-    
+
     // Get created user (without password)
     const user = await database.getUserById(insertedId);
-    
+
     if (!user) {
       return res.status(500).json({
         success: false,
         message: 'User created but could not retrieve user data'
       });
     }
-    
+
     const { password: _, ...userWithoutPassword } = user;
-    
+
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
@@ -647,7 +647,7 @@ router.post('/users/register', asyncHandler(async (req, res) => {
 router.post('/users/login', asyncHandler(async (req, res) => {
   try {
     const { phone, password } = req.body;
-    
+
     // Validate required fields
     if (!phone || !password) {
       return res.status(400).json({
@@ -655,17 +655,17 @@ router.post('/users/login', asyncHandler(async (req, res) => {
         message: 'Phone and password are required'
       });
     }
-    
+
     // Authenticate user
     const user = await database.loginUser(phone, password);
-    
+
     if (!user) {
       return res.status(401).json({
         success: false,
         message: 'Invalid phone number or password'
       });
     }
-    
+
     res.json({
       success: true,
       message: 'Login successful',
@@ -687,17 +687,17 @@ router.get('/users/:id', asyncHandler(async (req, res) => {
   try {
     const user = await database.getUserById(req.params.id);
     console.log("abc:-->");
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
-    
+
     // Remove password from response
     const { password: _, ...userWithoutPassword } = user;
-    
+
     res.json({
       success: true,
       data: {
@@ -717,17 +717,17 @@ router.get('/users/:id', asyncHandler(async (req, res) => {
 router.get('/users/phone/:phone', asyncHandler(async (req, res) => {
   try {
     const user = await database.getUserByPhone(req.params.phone);
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
-    
+
     // Remove password from response
     const { password: _, ...userWithoutPassword } = user;
-    
+
     res.json({
       success: true,
       data: {
@@ -747,7 +747,7 @@ router.get('/users/phone/:phone', asyncHandler(async (req, res) => {
 router.put('/users/:id', asyncHandler(async (req, res) => {
   try {
     const { name, email, address, profileImage, gender, birthday } = req.body;
-    
+
     const updateData = {};
     if (name !== undefined) updateData.name = name;
     if (email !== undefined) updateData.email = email;
@@ -755,19 +755,19 @@ router.put('/users/:id', asyncHandler(async (req, res) => {
     if (profileImage !== undefined) updateData.profileImage = profileImage;
     if (gender !== undefined) updateData.gender = gender;
     if (birthday !== undefined) updateData.birthday = birthday;
-    
+
     const updatedUser = await database.updateUser(req.params.id, updateData);
-    
+
     if (!updatedUser) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
-    
+
     // Remove password from response
     const { password: _, ...userWithoutPassword } = updatedUser;
-    
+
     res.json({
       success: true,
       message: 'User updated successfully',
@@ -789,7 +789,7 @@ router.put('/users/:id', asyncHandler(async (req, res) => {
 router.post('/auth/forgot-password', asyncHandler(async (req, res) => {
   try {
     const { email } = req.body;
-    
+
     // Validate required fields
     if (!email) {
       return res.status(400).json({
@@ -797,10 +797,10 @@ router.post('/auth/forgot-password', asyncHandler(async (req, res) => {
         message: 'Email is required'
       });
     }
-    
+
     // Check if user exists with this email
     const user = await database.getUserByEmail(email);
-    
+
     if (!user) {
       // For security, don't reveal if email exists or not
       return res.json({
@@ -808,10 +808,10 @@ router.post('/auth/forgot-password', asyncHandler(async (req, res) => {
         message: 'If an account with this email exists, you will receive a password reset code.'
       });
     }
-    
+
     // Generate 4-digit verification code
     const verificationCode = emailService.generateVerificationCode();
-    
+
     // Store code in database
     try {
       await database.createPasswordResetCode(email, verificationCode);
@@ -824,17 +824,17 @@ router.post('/auth/forgot-password', asyncHandler(async (req, res) => {
       }
       throw error; // Re-throw if it's a different error
     }
-    
+
     // Send email with verification code
     const emailResult = await emailService.sendPasswordResetCode(email, verificationCode);
-    
+
     if (!emailResult.success) {
       return res.status(500).json({
         success: false,
         message: 'Failed to send verification email'
       });
     }
-    
+
     res.json({
       success: true,
       message: 'Verification code sent to your email',
@@ -855,7 +855,7 @@ router.post('/auth/forgot-password', asyncHandler(async (req, res) => {
 router.post('/auth/verify-reset-code', asyncHandler(async (req, res) => {
   try {
     const { email, code } = req.body;
-    
+
     // Validate required fields
     if (!email || !code) {
       return res.status(400).json({
@@ -863,10 +863,10 @@ router.post('/auth/verify-reset-code', asyncHandler(async (req, res) => {
         message: 'Email and verification code are required'
       });
     }
-    
+
     // Verify the code
     const isValid = await database.verifyPasswordResetCode(email, code);
-    
+
     if (isValid) {
       res.json({
         success: true,
@@ -890,7 +890,7 @@ router.post('/auth/verify-reset-code', asyncHandler(async (req, res) => {
 router.post('/auth/reset-password', asyncHandler(async (req, res) => {
   try {
     const { email, code, newPassword } = req.body;
-    
+
     // Validate required fields
     if (!email || !code || !newPassword) {
       return res.status(400).json({
@@ -898,7 +898,7 @@ router.post('/auth/reset-password', asyncHandler(async (req, res) => {
         message: 'Email, verification code, and new password are required'
       });
     }
-    
+
     // Validate password strength
     if (newPassword.length < 8) {
       return res.status(400).json({
@@ -906,7 +906,7 @@ router.post('/auth/reset-password', asyncHandler(async (req, res) => {
         message: 'Password must be at least 8 characters long'
       });
     }
-    
+
     // Check for special characters
     const specialCharPattern = /[#?!@$%^&*-]/;
     if (!specialCharPattern.test(newPassword)) {
@@ -915,30 +915,30 @@ router.post('/auth/reset-password', asyncHandler(async (req, res) => {
         message: 'Password must contain at least one special character (#?!@$%^&*-)'
       });
     }
-    
+
     // Verify the code again
     const isValid = await database.verifyPasswordResetCode(email, code);
-    
+
     if (!isValid) {
       return res.status(400).json({
         success: false,
         message: 'Invalid or expired verification code'
       });
     }
-    
+
     // Update password
     const passwordUpdated = await database.updateUserPassword(email, newPassword);
-    
+
     if (!passwordUpdated) {
       return res.status(500).json({
         success: false,
         message: 'Failed to update password'
       });
     }
-    
+
     // Mark code as used
     await database.markPasswordResetCodeAsUsed(email, code);
-    
+
     res.json({
       success: true,
       message: 'Password reset successfully'
@@ -947,6 +947,60 @@ router.post('/auth/reset-password', asyncHandler(async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to reset password',
+      error: error.message
+    });
+  }
+}));
+
+// Change password endpoint
+router.post('/users/:userId/change-password', asyncHandler(async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.params.userId;
+
+    // Validate required fields
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Current password and new password are required'
+      });
+    }
+
+    // Validate password strength
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 8 characters long'
+      });
+    }
+
+    // Check for special characters
+    const specialCharPattern = /[#?!@$%^&*-]/;
+    if (!specialCharPattern.test(newPassword)) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must contain at least one special character (#?!@$%^&*-)'
+      });
+    }
+
+    // Verify current password and update to new password
+    const updated = await database.changeUserPassword(userId, currentPassword, newPassword);
+
+    if (!updated) {
+      return res.status(401).json({
+        success: false,
+        message: 'Current password is incorrect'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Password changed successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to change password',
       error: error.message
     });
   }

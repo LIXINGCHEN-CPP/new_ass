@@ -1731,6 +1731,52 @@ class DatabaseService {
     }
   }
 
+  // Change Password Method
+  Future<Map<String, dynamic>> changePassword({
+    required String userId,
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    if (_useLocalData) {
+      debugPrint(
+          'Backend not available - password change requires valid database connection');
+      throw Exception(
+          'Password change service unavailable. Please check your internet connection.');
+    }
+
+    try {
+      final response = await http
+          .post(
+            Uri.parse('${ApiConstants.baseUrl}/users/$userId/change-password'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              'currentPassword': currentPassword,
+              'newPassword': newPassword,
+            }),
+          )
+          .timeout(ApiConstants.timeoutDuration);
+
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200 && responseData['success'] == true) {
+        return {
+          'success': true,
+          'message': 'Password changed successfully',
+        };
+      } else if (response.statusCode == 401) {
+        return {
+          'success': false,
+          'message': 'Current password is incorrect',
+        };
+      } else {
+        throw Exception(responseData['message'] ?? 'Failed to change password');
+      }
+    } catch (e) {
+      debugPrint('Failed to change password: $e');
+      throw Exception('Password change failed. Please try again later.');
+    }
+  }
+
   Future<Map<String, dynamic>> resetPassword({
     required String email,
     required String code,

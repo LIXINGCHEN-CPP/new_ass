@@ -191,6 +191,39 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  // Change password
+  Future<bool> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    if (_currentUser == null) return false;
+
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final result = await DatabaseService.instance.changePassword(
+        userId: _currentUser!.id!,
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+      );
+
+      if (result['success'] == true) {
+        debugPrint('Password changed successfully');
+        return true;
+      } else {
+        _setError(result['message'] ?? 'Failed to change password');
+        return false;
+      }
+    } catch (e) {
+      _setError('Password change failed: $e');
+      debugPrint('Change password error: $e');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   // Update profile image
   Future<bool> updateProfileImage(String imagePath) async {
     if (_currentUser == null) return false;
