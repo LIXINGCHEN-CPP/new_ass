@@ -26,6 +26,7 @@ class PopularPacks extends StatelessWidget {
           children: [
             TitleAndActionButton(
               title: 'Popular Packs',
+              actionLabel: 'View All or Create Your Pack',
               onTap: () => Navigator.pushNamed(context, AppRoutes.popularItems),
             ),
             SingleChildScrollView(
