@@ -15,11 +15,15 @@ class SelectableProductTile extends StatelessWidget {
     required this.product,
     required this.selected,
     required this.onToggle,
+    this.quantity = 0,
+    this.onRemove,
   });
 
   final ProductModel product;
   final bool selected;
   final VoidCallback onToggle;
+  final int quantity;
+  final VoidCallback? onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -65,21 +69,23 @@ class SelectableProductTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                        if (selected)
+                        if (quantity > 0)
                           Positioned(
                             top: 8,
                             right: 8,
                             child: Container(
-                              width: 20,
-                              height: 20,
-                              decoration: const BoxDecoration(
-                                color: Colors.green,
-                                shape: BoxShape.circle,
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: 14,
+                              child: Text(
+                                'x$quantity',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -163,6 +169,25 @@ class SelectableProductTile extends StatelessWidget {
                             ],
                           ),
                         ),
+                        if (quantity > 0 && onRemove != null) ...[
+                          GestureDetector(
+                            onTap: onRemove,
+                            child: Container(
+                              width: 28,
+                              height: 28,
+                              margin: const EdgeInsets.only(right: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[400],
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.remove,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                        ],
                         GestureDetector(
                           onTap: onToggle,
                           child: Container(
@@ -172,8 +197,8 @@ class SelectableProductTile extends StatelessWidget {
                               color: AppColors.primary,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
-                              selected ? Icons.remove : Icons.add,
+                            child: const Icon(
+                              Icons.add,
                               color: Colors.white,
                               size: 16,
                             ),

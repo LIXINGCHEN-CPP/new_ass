@@ -12,11 +12,15 @@ class ProductGridView extends StatelessWidget {
     required this.categoryId,
     required this.selectedProducts,
     required this.onProductToggle,
+    this.selectedProductsWithQuantity,
+    this.onProductRemove,
   });
 
   final String? categoryId;
   final List<ProductModel> selectedProducts;
   final ValueChanged<ProductModel> onProductToggle;
+  final Map<ProductModel, int>? selectedProductsWithQuantity;
+  final ValueChanged<ProductModel>? onProductRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +48,14 @@ class ProductGridView extends StatelessWidget {
             itemBuilder: (context, index) {
               final product = products[index];
               final selected = selectedProducts.contains(product);
+              final quantity = selectedProductsWithQuantity?[product] ?? 0;
+              
               return SelectableProductTile(
                 product: product,
                 selected: selected,
+                quantity: quantity,
                 onToggle: () => onProductToggle(product),
+                onRemove: onProductRemove != null ? () => onProductRemove!(product) : null,
               );
             },
           );

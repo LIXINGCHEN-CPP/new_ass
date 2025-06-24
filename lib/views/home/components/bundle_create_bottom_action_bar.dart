@@ -11,14 +11,29 @@ class BottomActionBar extends StatelessWidget {
     required this.products,
     required this.totalPrice,
     required this.onCheckout,
+    this.selectedProductsWithQuantity,
   });
 
   final List<ProductModel> products;
   final double totalPrice;
   final VoidCallback onCheckout;
+  final Map<ProductModel, int>? selectedProductsWithQuantity;
 
   @override
   Widget build(BuildContext context) {
+    // Get unique products with their quantities
+    List<MapEntry<ProductModel, int>> uniqueProductsWithQuantity = [];
+    if (selectedProductsWithQuantity != null) {
+      uniqueProductsWithQuantity = selectedProductsWithQuantity!.entries.toList();
+    } else {
+      // Fallback: group products by counting occurrences
+      Map<ProductModel, int> productCounts = {};
+      for (ProductModel product in products) {
+        productCounts[product] = (productCounts[product] ?? 0) + 1;
+      }
+      uniqueProductsWithQuantity = productCounts.entries.toList();
+    }
+
     return Container(
       padding: const EdgeInsets.all(AppDefaults.padding),
       decoration: BoxDecoration(
@@ -27,11 +42,12 @@ class BottomActionBar extends StatelessWidget {
       ),
       child: Row(
         children: [
-          ...products.take(4).map((e) => Padding(
-            padding: const EdgeInsets.only(right: 2.0),  // 8 像素间隔
+          // Show up to 4 unique products with their quantities
+          ...uniqueProductsWithQuantity.take(4).map((entry) => Padding(
+            padding: const EdgeInsets.only(right: 2.0),
             child: ProductAvatarWithQuanitty(
-              productImage: e.coverImage,
-              quantity: 1,
+              productImage: entry.key.coverImage,
+              quantity: entry.value,
             ),
           )),
           const Spacer(),
@@ -46,16 +62,13 @@ class BottomActionBar extends StatelessWidget {
           GestureDetector(
             onTap: onCheckout,
             child: Container(
-              // ① 指定固定宽高
               width: 40,
               height: 40,
-              // ② 调整内边距（图标会在 padding 区域居中）
               padding: const EdgeInsets.all(8),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              // ③ 也可以给 SvgPicture 本身指定宽高
               child: SvgPicture.asset(
                 AppIcons.arrowForward,
                 width: 30,
