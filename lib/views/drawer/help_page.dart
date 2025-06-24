@@ -90,7 +90,7 @@ class _HelpPageState extends State<HelpPage> {
         leading: const AppBackButton(),
         backgroundColor: AppColors.scaffoldBackground,
         elevation: 0,
-        title: const Text('Help & FAQs'),
+        title: const Text('Help Center'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(AppDefaults.padding),

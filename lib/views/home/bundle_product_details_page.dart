@@ -27,7 +27,7 @@ class _BundleProductDetailsPageState extends State<BundleProductDetailsPage> {
   BundleModel? bundle;
   bool isLoading = true;
   int selectedQuantity = 1;
-  
+
   @override
   void initState() {
     super.initState();
@@ -138,7 +138,7 @@ class _BundleProductDetailsPageState extends State<BundleProductDetailsPage> {
             child: Column(
               children: [
                 ProductImagesSlider(
-                  images: bundle!.items.isNotEmpty 
+                  images: bundle!.items.isNotEmpty
                     ? bundle!.items.map((item) => item.productDetails?.coverImage ?? bundle!.coverImage).toList()
                     : [bundle!.coverImage],
                   bundle: bundle,
@@ -158,7 +158,7 @@ class _BundleProductDetailsPageState extends State<BundleProductDetailsPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       if (isInCart) ...[
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -180,7 +180,7 @@ class _BundleProductDetailsPageState extends State<BundleProductDetailsPage> {
                         ),
                         const SizedBox(height: 16),
                       ],
-                      
+
                       // Price and quantity selector
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -206,14 +206,14 @@ class _BundleProductDetailsPageState extends State<BundleProductDetailsPage> {
                                     .textTheme
                                     .headlineSmall
                                     ?.copyWith(
-                                      color: AppColors.primary, 
+                                      color: AppColors.primary,
                                       fontWeight: FontWeight.bold
                                     ),
                               ),
                             ],
                           ),
                           const Spacer(),
-                          
+
                           // Quantity selector
                           QuantitySelector(
                             quantity: selectedQuantity,
@@ -225,9 +225,9 @@ class _BundleProductDetailsPageState extends State<BundleProductDetailsPage> {
                           ),
                         ],
                       ),
-                      
+
                       const SizedBox(height: AppDefaults.padding / 2),
-                      
+
                       // Display bundle description
                       if (bundle!.description.isNotEmpty) ...[
                         Align(
@@ -241,7 +241,7 @@ class _BundleProductDetailsPageState extends State<BundleProductDetailsPage> {
                         ),
                         const SizedBox(height: AppDefaults.padding),
                       ],
-                      
+
                       // Display items included in bundle
                       Align(
                         alignment: Alignment.centerLeft,
@@ -265,16 +265,16 @@ class _BundleProductDetailsPageState extends State<BundleProductDetailsPage> {
                         ),
                       )).toList(),
                       const SizedBox(height: AppDefaults.padding),
-                      
-                      const BundleMetaData(),
+
+                      // const BundleMetaData(),
                       PackDetails(bundle: bundle!),
-                      const ReviewRowButton(totalStars: 5),
+                      // const ReviewRowButton(totalStars: 5),
                       const Divider(thickness: 0.1),
                       BuyNowRow(
-                        onBuyButtonTap: () async {
-                          // Buy Now always adds the selected quantity to cart
+                        quantity: selectedQuantity,
+                        onAddToCart: () async {
                           await cartProvider.addBundle(bundle!, quantity: selectedQuantity);
-                          
+
                           // Show success message
                           context.showSuccessToast('Added ${selectedQuantity}x ${bundle!.name} to cart');
                         },
