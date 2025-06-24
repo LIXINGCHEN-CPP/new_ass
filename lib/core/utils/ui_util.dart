@@ -4,11 +4,14 @@ import '../constants/app_defaults.dart';
 
 class UiUtil {
   /// OPENS BOTTOM SHEET WITH THE GIVEN WIDGET
-  static Future openBottomSheet({
+  /// Opens a bottom sheet with the given widget and returns the result when the
+  /// sheet is closed. This is a thin wrapper around [showModalBottomSheet] so it
+  /// can be awaited for a value.
+  static Future<T?> openBottomSheet<T>({
     required BuildContext context,
     required Widget widget,
   }) async {
-    await showModalBottomSheet(
+    return await showModalBottomSheet<T>(
       context: context,
       builder: (ctx) => widget,
       isScrollControlled: true,

@@ -1,13 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/constants/constants.dart';
+import '../../../core/models/category_model.dart';
+import '../../../core/providers/app_provider.dart';
 import '../components/categories_chip.dart';
+import 'filter_options.dart';
 
-class ProductFiltersDialog extends StatelessWidget {
-  const ProductFiltersDialog({super.key});
+class ProductFiltersDialog extends StatefulWidget {
+  final FilterOptions options;
+
+  const ProductFiltersDialog({Key? key, required this.options}) : super(key: key);
+
+  @override
+  State<ProductFiltersDialog> createState() => _ProductFiltersDialogState();
+}
+
+class _ProductFiltersDialogState extends State<ProductFiltersDialog> {
+  late String _sortBy;
+  late RangeValues _range;
+  late Set<String> _selectedCategories;
+
+  @override
+  void initState() {
+    super.initState();
+    _sortBy = widget.options.sortBy;
+    _range = widget.options.priceRange;
+    _selectedCategories = Set.from(widget.options.categories);
+  }
+
+  void _reset() {
+    setState(() {
+      _sortBy = 'Popularity';
+      _range = const RangeValues(0, 100);
+      _selectedCategories.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final categories = context.read<AppProvider>().categories;
+
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppDefaults.padding),
@@ -23,15 +56,25 @@ class ProductFiltersDialog extends StatelessWidget {
               ),
               margin: const EdgeInsets.all(8),
             ),
-            const _FilterHeader(),
-            const _SortBy(),
-            const _PriceRange(),
-            const _CategoriesSelector(),
-            const _BrandSelector(),
-            _RatingStar(
-              totalStarsSelected: 4,
-              onStarSelect: (v) {
-                debugPrint('Star selected $v');
+            _FilterHeader(onReset: _reset),
+            _SortBy(current: _sortBy, onChanged: (v) {
+              if (v != null) setState(() => _sortBy = v);
+            }),
+            _PriceRange(
+              range: _range,
+              onChanged: (v) => setState(() => _range = v),
+            ),
+            _CategoriesSelector(
+              categories: categories,
+              selected: _selectedCategories,
+              onToggle: (id) {
+                setState(() {
+                  if (_selectedCategories.contains(id)) {
+                    _selectedCategories.remove(id);
+                  } else {
+                    _selectedCategories.add(id);
+                  }
+                });
               },
             ),
             SizedBox(
@@ -39,7 +82,15 @@ class ProductFiltersDialog extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(AppDefaults.padding),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pop(
+                      FilterOptions(
+                        sortBy: _sortBy,
+                        priceRange: _range,
+                        categories: _selectedCategories,
+                      ),
+                    );
+                  },
                   child: const Text('Apply Filter'),
                 ),
               ),
@@ -52,128 +103,16 @@ class ProductFiltersDialog extends StatelessWidget {
   }
 }
 
-class _RatingStar extends StatelessWidget {
-  const _RatingStar({
-    required this.totalStarsSelected,
-    required this.onStarSelect,
-  });
-
-  final int totalStarsSelected;
-  final void Function(int) onStarSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppDefaults.padding),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Rating Star',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: List.generate(
-              /// You cannot add more than 5 star or less than 0 star
-              5,
-              (index) {
-                if (index < totalStarsSelected) {
-                  return InkWell(
-                    onTap: () => onStarSelect(index + 1),
-                    child: const Icon(
-                      Icons.star_rounded,
-                      color: Color(0xFFFFC107),
-                      size: 32,
-                    ),
-                  );
-                } else {
-                  return InkWell(
-                    onTap: () => onStarSelect(index + 1),
-                    child: const Icon(
-                      Icons.star_rounded,
-                      color: Colors.grey,
-                      size: 32,
-                    ),
-                  );
-                }
-              },
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class _BrandSelector extends StatelessWidget {
-  const _BrandSelector();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppDefaults.padding),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Brand',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: Wrap(
-              alignment: WrapAlignment.start,
-              spacing: 16,
-              runSpacing: 16,
-              children: [
-                CategoriesChip(
-                  isActive: true,
-                  label: 'Any',
-                  onPressed: () {},
-                ),
-                CategoriesChip(
-                  isActive: false,
-                  label: 'Square',
-                  onPressed: () {},
-                ),
-                CategoriesChip(
-                  isActive: false,
-                  label: 'Beximco Pharma',
-                  onPressed: () {},
-                ),
-                CategoriesChip(
-                  isActive: false,
-                  label: 'ACI Limited',
-                  onPressed: () {},
-                ),
-                CategoriesChip(
-                  isActive: false,
-                  label: 'See All',
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
 class _CategoriesSelector extends StatelessWidget {
-  const _CategoriesSelector();
+  final List<CategoryModel> categories;
+  final Set<String> selected;
+  final ValueChanged<String> onToggle;
+
+  const _CategoriesSelector({
+    required this.categories,
+    required this.selected,
+    required this.onToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -186,9 +125,9 @@ class _CategoriesSelector extends StatelessWidget {
             child: Text(
               'Categories',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -196,37 +135,17 @@ class _CategoriesSelector extends StatelessWidget {
             width: double.infinity,
             child: Wrap(
               alignment: WrapAlignment.start,
-              runAlignment: WrapAlignment.spaceAround,
-              crossAxisAlignment: WrapCrossAlignment.start,
               spacing: 16,
               runSpacing: 16,
-              children: [
-                CategoriesChip(
-                  isActive: true,
-                  label: 'Office Supplies',
-                  onPressed: () {},
+              children: categories
+                  .map(
+                    (c) => CategoriesChip(
+                  isActive: selected.contains(c.id),
+                  label: c.name,
+                  onPressed: () => onToggle(c.id ?? ''),
                 ),
-                CategoriesChip(
-                  isActive: false,
-                  label: 'Gardening',
-                  onPressed: () {},
-                ),
-                CategoriesChip(
-                  isActive: false,
-                  label: 'Vegetables',
-                  onPressed: () {},
-                ),
-                CategoriesChip(
-                  isActive: false,
-                  label: 'Fish And Meat',
-                  onPressed: () {},
-                ),
-                CategoriesChip(
-                  isActive: false,
-                  label: 'See All',
-                  onPressed: () {},
-                ),
-              ],
+              )
+                  .toList(),
             ),
           )
         ],
@@ -235,15 +154,11 @@ class _CategoriesSelector extends StatelessWidget {
   }
 }
 
-class _PriceRange extends StatefulWidget {
-  const _PriceRange();
+class _PriceRange extends StatelessWidget {
+  final RangeValues range;
+  final ValueChanged<RangeValues> onChanged;
 
-  @override
-  State<_PriceRange> createState() => _PriceRangeState();
-}
-
-class _PriceRangeState extends State<_PriceRange> {
-  RangeValues _currentRangeValues = const RangeValues(40, 80);
+  const _PriceRange({required this.range, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -256,26 +171,22 @@ class _PriceRangeState extends State<_PriceRange> {
             child: Text(
               'Price Range',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
           ),
           RangeSlider(
             max: 100,
             min: 0,
             labels: RangeLabels(
-              _currentRangeValues.start.round().toString(),
-              _currentRangeValues.end.round().toString(),
+              range.start.round().toString(),
+              range.end.round().toString(),
             ),
-            onChanged: (RangeValues values) {
-              setState(() {
-                _currentRangeValues = values;
-              });
-            },
+            onChanged: onChanged,
             activeColor: AppColors.primary,
             inactiveColor: AppColors.gray,
-            values: _currentRangeValues,
+            values: range,
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -295,7 +206,10 @@ class _PriceRangeState extends State<_PriceRange> {
 }
 
 class _SortBy extends StatelessWidget {
-  const _SortBy();
+  final String current;
+  final ValueChanged<String?> onChanged;
+
+  const _SortBy({required this.current, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -306,13 +220,13 @@ class _SortBy extends StatelessWidget {
           Text(
             'Sort By',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
           const Spacer(),
           DropdownButton(
-            value: 'Popularity',
+            value: current,
             underline: const SizedBox(),
             icon: const Icon(
               Icons.arrow_drop_down,
@@ -328,7 +242,7 @@ class _SortBy extends StatelessWidget {
                 child: Text('Price'),
               ),
             ],
-            onChanged: (v) {},
+            onChanged: onChanged,
           )
         ],
       ),
@@ -337,7 +251,8 @@ class _SortBy extends StatelessWidget {
 }
 
 class _FilterHeader extends StatelessWidget {
-  const _FilterHeader();
+  final VoidCallback onReset;
+  const _FilterHeader({required this.onReset});
 
   @override
   Widget build(BuildContext context) {
@@ -351,7 +266,7 @@ class _FilterHeader extends StatelessWidget {
             height: 40,
             width: 40,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () => Navigator.of(context).pop(),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.zero,
                 backgroundColor: AppColors.scaffoldWithBoxBackground,
@@ -366,19 +281,19 @@ class _FilterHeader extends StatelessWidget {
         Text(
           'Filter',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
         SizedBox(
-          width: 56,
+          width: 70,
           child: TextButton(
-            onPressed: () {},
+            onPressed: onReset,
             child: Text(
               'Reset',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.black,
-                  ),
+                color: Colors.black,
+              ),
             ),
           ),
         )
