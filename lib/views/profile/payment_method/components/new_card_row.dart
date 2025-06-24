@@ -5,8 +5,11 @@ import '../../../../core/constants/constants.dart';
 import '../../../../core/routes/app_routes.dart';
 
 class AddNewCardRow extends StatelessWidget {
+  final VoidCallback? onCardAdded;
+
   const AddNewCardRow({
     super.key,
+    this.onCardAdded,
   });
 
   @override
@@ -18,14 +21,18 @@ class AddNewCardRow extends StatelessWidget {
           Text(
             'My Card',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
           const Spacer(),
           IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.paymentCardAdd);
+            onPressed: () async {
+              final result = await Navigator.pushNamed(context, AppRoutes.paymentCardAdd);
+              // 如果添加了新卡片，刷新列表
+              if (result == true) {
+                onCardAdded?.call();
+              }
             },
             icon: SvgPicture.asset(AppIcons.cardAdd),
           )
