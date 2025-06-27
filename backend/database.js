@@ -507,6 +507,60 @@ class Database {
 
     return result.matchedCount > 0;
   }
+
+  // Delete user account permanently
+  async deleteUser(userId, currentPassword) {
+    const db = this.getDb();
+    const bcrypt = require('bcrypt');
+
+    try {
+     
+      const user = await db.collection('users').findOne({
+        _id: new ObjectId(userId),
+        isActive: true
+      });
+
+      if (!user) {
+        return { success: false, message: 'User not found' };
+      }
+
+     
+      const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!passwordMatch) {
+        return { success: false, message: 'Invalid password' };
+      }
+
+      // Start transaction for data integrity
+      const session = this.client.startSession();
+      
+      try {
+        await session.withTransaction(async () => {
+          
+          await db.collection('orders').deleteMany({ userId: userId }, { session });
+          
+          
+          await db.collection('password_reset_codes').deleteMany({ 
+            email: user.email 
+          }, { session });
+          
+          
+          await db.collection('users').deleteOne({ 
+            _id: new ObjectId(userId) 
+          }, { session });
+        });
+        
+        return { success: true, message: 'Account deleted successfully' };
+      } catch (error) {
+        console.error('Error during user deletion transaction:', error);
+        return { success: false, message: 'Failed to delete account' };
+      } finally {
+        await session.endSession();
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      return { success: false, message: 'Failed to delete account' };
+    }
+  }
 }
 
 module.exports = new Database(); 

@@ -790,29 +790,24 @@ router.post('/auth/forgot-password', asyncHandler(async (req, res) => {
   try {
     const { email } = req.body;
 
-    // Validate required fields
+    
     if (!email) {
       return res.status(400).json({
         success: false,
         message: 'Email is required'
       });
     }
-
-    // Check if user exists with this email
     const user = await database.getUserByEmail(email);
 
     if (!user) {
-      // For security, don't reveal if email exists or not
       return res.json({
         success: true,
         message: 'If an account with this email exists, you will receive a password reset code.'
       });
     }
 
-    // Generate 4-digit verification code
     const verificationCode = emailService.generateVerificationCode();
 
-    // Store code in database
     try {
       await database.createPasswordResetCode(email, verificationCode);
     } catch (error) {
@@ -825,7 +820,7 @@ router.post('/auth/forgot-password', asyncHandler(async (req, res) => {
       throw error; // Re-throw if it's a different error
     }
 
-    // Send email with verification code
+    
     const emailResult = await emailService.sendPasswordResetCode(email, verificationCode);
 
     if (!emailResult.success) {
@@ -1001,6 +996,55 @@ router.post('/users/:userId/change-password', asyncHandler(async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to change password',
+      error: error.message
+    });
+  }
+}));
+
+// Delete user account endpoint
+router.delete('/users/:userId/delete-account', asyncHandler(async (req, res) => {
+  try {
+    const { currentPassword } = req.body;
+    const userId = req.params.userId;
+
+    // Validate required fields
+    if (!currentPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Current password is required to delete account'
+      });
+    }
+
+    // Delete user account
+    const result = await database.deleteUser(userId, currentPassword);
+
+    if (!result.success) {
+      if (result.message === 'Invalid password') {
+        return res.status(401).json({
+          success: false,
+          message: 'Current password is incorrect'
+        });
+      } else if (result.message === 'User not found') {
+        return res.status(404).json({
+          success: false,
+          message: 'User account not found'
+        });
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: result.message || 'Failed to delete account'
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      message: 'Account deleted successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete account',
       error: error.message
     });
   }

@@ -5,9 +5,37 @@ import '../../../core/components/app_back_button.dart';
 import '../../../core/constants/constants.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/components/app_settings_tile.dart';
+import '../dialogs/delete_account_dialog.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  
+  Future<void> _showDeleteAccountDialog() async {
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const DeleteAccountDialog();
+      },
+    );
+
+    if (result == true && mounted) {
+      // Account was successfully deleted, navigate to intro login
+      if (mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context, 
+          AppRoutes.introLogin, 
+          (route) => false,
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +102,7 @@ class SettingsPage extends StatelessWidget {
             AppSettingsListTile(
               label: 'Deactivate Account',
               trailing: SvgPicture.asset(AppIcons.right),
-              onTap: () => Navigator.pushNamed(context, AppRoutes.introLogin),
+              onTap: () => _showDeleteAccountDialog(),
             ),
           ],
         ),
