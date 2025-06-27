@@ -87,6 +87,10 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                     }
                   }
                 },
+                onCardSelected: (card) {
+                 
+                  context.showSuccessToast('Card selected for checkout');
+                },
               )
             else
               Container(

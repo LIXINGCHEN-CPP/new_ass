@@ -6,7 +6,6 @@ import '../../../core/routes/app_routes.dart';
 import '../../../core/components/network_image.dart';
 import 'checkout_payment_card_tile.dart';
 import 'checkout_payment_option_tile.dart';
-import '../../profile/payment_method/components/default_card.dart';
 
 class PaymentSystem extends StatefulWidget {
   final PaymentType selectedPaymentType;
@@ -27,49 +26,21 @@ class _PaymentSystemState extends State<PaymentSystem> {
   Widget _buildPaymentDetails() {
     switch (widget.selectedPaymentType) {
       case PaymentType.masterCard:
-        return Column(
-          children: [
-            // My Card section header
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDefaults.padding,
-                vertical: AppDefaults.padding / 2,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'My Card',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                                      Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, AppRoutes.paymentMethod);
-                        },
-                        icon: const Icon(Icons.add, color: Colors.white),
-                        iconSize: 20,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            // Credit Card Display
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppDefaults.padding),
-              child: PaymentDefaultCard(),
-            ),
-          ],
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDefaults.padding,
+            vertical: AppDefaults.padding / 2,
+          ),
+          child: Text(
+            'My Card',
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
         );
 
       case PaymentType.stripe:
