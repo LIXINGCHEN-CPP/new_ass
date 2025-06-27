@@ -24,7 +24,6 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
   bool rememberMyCard = false;
   bool isLoading = false;
 
-  // 可选择的背景图片
   final List<String> backgroundImages = [
     'https://i.imgur.com/AMA5llS.png',
     'https://i.imgur.com/uUDkwQx.png',
@@ -57,7 +56,7 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
   }
 
   Future<void> _saveCard() async {
-    // 验证输入
+ 
     if (holderName.text.trim().isEmpty) {
       _showError('Please enter card holder name');
       return;
@@ -86,18 +85,23 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
         cardHolderName: holderName.text.trim(),
         cvvCode: cvv.text.trim(),
         backgroundImage: backgroundImages[selectedBackgroundIndex],
+        isDefault: rememberMyCard, 
       );
 
-      await CardService.saveCard(card);
+      final result = await CardService.saveCard(card);
 
       if (mounted) {
-        Navigator.of(context).pop(true); // 返回true表示成功添加
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Card added successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        if (result['success']) {
+          Navigator.of(context).pop(true); 
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result['message']),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else {
+          _showError(result['message']);
+        }
       }
     } catch (e) {
       _showError('Failed to save card. Please try again.');

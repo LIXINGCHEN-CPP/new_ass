@@ -1050,6 +1050,151 @@ router.delete('/users/:userId/delete-account', asyncHandler(async (req, res) => 
   }
 }));
 
+// Card Management Endpoints
+// Create a new card
+router.post('/users/:userId/cards', asyncHandler(async (req, res) => {
+  try {
+    const { cardNumber, expiryDate, cardHolderName, cvvCode, backgroundImage, isDefault } = req.body;
+    const userId = req.params.userId;
+
+    // Validate required fields
+    if (!cardNumber || !expiryDate || !cardHolderName || !cvvCode) {
+      return res.status(400).json({
+        success: false,
+        message: 'Card number, expiry date, card holder name, and CVV are required'
+      });
+    }
+
+    // Create card data
+    const cardData = {
+      userId,
+      cardNumber,
+      expiryDate,
+      cardHolderName,
+      cvvCode,
+      backgroundImage: backgroundImage || 'https://i.imgur.com/uUDkwQx.png',
+      isDefault: isDefault || false
+    };
+
+    const cardId = await database.createCard(cardData);
+
+    res.status(201).json({
+      success: true,
+      message: 'Card added successfully',
+      data: { id: cardId.toString() }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add card',
+      error: error.message
+    });
+  }
+}));
+
+// Get user's cards
+router.get('/users/:userId/cards', asyncHandler(async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const cards = await database.getUserCards(userId);
+
+    res.json({
+      success: true,
+      data: cards,
+      count: cards.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch cards',
+      error: error.message
+    });
+  }
+}));
+
+// Update a card
+router.put('/users/:userId/cards/:cardId', asyncHandler(async (req, res) => {
+  try {
+    const { cardId } = req.params;
+    const updateData = req.body;
+
+    const updated = await database.updateCard(cardId, updateData);
+
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: 'Card not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Card updated successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update card',
+      error: error.message
+    });
+  }
+}));
+
+// Delete a card
+router.delete('/users/:userId/cards/:cardId', asyncHandler(async (req, res) => {
+  try {
+    const { userId, cardId } = req.params;
+
+    const deleted = await database.deleteCard(cardId, userId);
+
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        message: 'Card not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Card deleted successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete card',
+      error: error.message
+    });
+  }
+}));
+
+// Get a specific card
+router.get('/users/:userId/cards/:cardId', asyncHandler(async (req, res) => {
+  try {
+    const { cardId } = req.params;
+
+    const card = await database.getCardById(cardId);
+
+    if (!card) {
+      return res.status(404).json({
+        success: false,
+        message: 'Card not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: card
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch card',
+      error: error.message
+    });
+  }
+}));
+
 // Mount Stripe payment routes
 router.use('/payment/stripe', stripeRoutes);
 

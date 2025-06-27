@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_defaults.dart';
 import '../../../core/components/app_back_button.dart';
+import '../../../core/components/custom_toast.dart';
 import '../../../../core/models/card_model.dart';
 import '../../../../core/services/card_service.dart';
 import 'components/new_card_row.dart';
@@ -73,8 +74,18 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
               CardCarousel(
                 cards: cards,
                 onCardDeleted: (index) async {
-                  await CardService.deleteCard(index);
-                  _refreshCards();
+                  if (index >= 0 && index < cards.length) {
+                    final card = cards[index];
+                    if (card.id != null) {
+                      final result = await CardService.deleteCard(card.id!);
+                      if (result['success']) {
+                        context.showSuccessToast(result['message']);
+                        _refreshCards();
+                      } else {
+                        context.showErrorToast(result['message']);
+                      }
+                    }
+                  }
                 },
               )
             else

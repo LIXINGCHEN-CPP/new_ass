@@ -544,6 +544,17 @@ class Database {
           }, { session });
           
           
+          await db.collection('orders').deleteMany({ userId: userId }, { session });
+          
+          
+          await db.collection('password_reset_codes').deleteMany({ 
+            email: user.email 
+          }, { session });
+          
+          // Delete user's cards
+          await db.collection('user_cards').deleteMany({ userId: userId }, { session });
+          
+          
           await db.collection('users').deleteOne({ 
             _id: new ObjectId(userId) 
           }, { session });
@@ -559,6 +570,110 @@ class Database {
     } catch (error) {
       console.error('Error deleting user:', error);
       return { success: false, message: 'Failed to delete account' };
+    }
+  }
+
+  // Card Management Methods
+  async createCard(cardData) {
+    const db = this.getDb();
+    
+    try {
+      // If this is set as default, unset all other default cards for this user
+      if (cardData.isDefault) {
+        await db.collection('user_cards').updateMany(
+          { userId: cardData.userId },
+          { $set: { isDefault: false } }
+        );
+      }
+
+      const result = await db.collection('user_cards').insertOne({
+        ...cardData,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+
+      return result.insertedId;
+    } catch (error) {
+      console.error('Error creating card:', error);
+      throw error;
+    }
+  }
+
+  async getUserCards(userId) {
+    const db = this.getDb();
+    
+    try {
+      const cards = await db.collection('user_cards').find({
+        userId: userId
+      }).sort({ createdAt: -1 }).toArray();
+
+      return cards;
+    } catch (error) {
+      console.error('Error fetching user cards:', error);
+      throw error;
+    }
+  }
+
+  async updateCard(cardId, updateData) {
+    const db = this.getDb();
+    
+    try {
+      // If setting as default, unset all other default cards for this user
+      if (updateData.isDefault) {
+        const card = await db.collection('user_cards').findOne({ _id: new ObjectId(cardId) });
+        if (card) {
+          await db.collection('user_cards').updateMany(
+            { userId: card.userId, _id: { $ne: new ObjectId(cardId) } },
+            { $set: { isDefault: false } }
+          );
+        }
+      }
+
+      const result = await db.collection('user_cards').updateOne(
+        { _id: new ObjectId(cardId) },
+        { 
+          $set: {
+            ...updateData,
+            updatedAt: new Date()
+          }
+        }
+      );
+
+      return result.matchedCount > 0;
+    } catch (error) {
+      console.error('Error updating card:', error);
+      throw error;
+    }
+  }
+
+  async deleteCard(cardId, userId) {
+    const db = this.getDb();
+    
+    try {
+      const result = await db.collection('user_cards').deleteOne({
+        _id: new ObjectId(cardId),
+        userId: userId
+      });
+
+      return result.deletedCount > 0;
+    } catch (error) {
+      console.error('Error deleting card:', error);
+      throw error;
+    }
+  }
+
+  async getCardById(cardId) {
+    const db = this.getDb();
+    
+    try {
+      const card = await db.collection('user_cards').findOne({
+        _id: new ObjectId(cardId)
+      });
+
+      return card;
+    } catch (error) {
+      console.error('Error fetching card by ID:', error);
+      throw error;
     }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/constants/payment_constants.dart';
+import '../../../core/routes/app_routes.dart';
 import '../../../core/components/network_image.dart';
 import 'checkout_payment_card_tile.dart';
 import 'checkout_payment_option_tile.dart';
@@ -47,17 +48,19 @@ class _PaymentSystemState extends State<PaymentSystem> {
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(8),
+                                      Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.paymentMethod);
+                        },
+                        icon: const Icon(Icons.add, color: Colors.white),
+                        iconSize: 20,
+                      ),
                     ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.add, color: Colors.white),
-                      iconSize: 20,
-                    ),
-                  ),
                 ],
               ),
             ),
